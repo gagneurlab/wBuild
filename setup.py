@@ -33,7 +33,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Leonhard Wachutka",
     author_email='leonhard@wachutka.eu',
-    url='https://github.com/wachutka/wbuild',
+    url='https://i12g-gagneurweb.in.tum.de/gitlab/wachutka/wBuild',
     packages=find_packages(include=['wbuild']),
     entry_points={
         'console_scripts': [
