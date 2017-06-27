@@ -8,7 +8,7 @@ from os import listdir
 from os.path import isfile, join
 
 sys.path.insert(0, os.getcwd()+"/.wBuild")
-from wBUtils import *
+from wbuild.wBUtils import *
 
 htmlPath = "Output/html"
 
