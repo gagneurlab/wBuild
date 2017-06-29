@@ -61,7 +61,7 @@ def writeMenu():
         menuString += '   </ul>\n'
         menuString += '</li>\n'
     template = open('.wBuild/template.html').read()
-    template = Template(template).substitute(menu=menuString,title=snakemake.config['projectTitle'],rf=getRecentMenu())
+    template = Template(template).substitute(menu=menuString,title='title',rf=getRecentMenu())#snakemake.config['projectTitle']
     
     f = open('Output/html/index.html', 'w')
     f.write(template)
