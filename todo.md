@@ -17,3 +17,10 @@
   - [ ] wider compilation
   - [ ] bootstrap takes ages to compile
   - [ ] refer to variables by name
+  
+##Info of wbPlaceholders
+{wbPD} = Output/ProcessedData
+{wbPD_P} = Output/ProcessedData/Project
+{wbPD_PP} = Output/ProcessedData/Project/Subproject
+{wbP} = Project
+{wbPP} = Project/Subproject

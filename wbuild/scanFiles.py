@@ -88,7 +88,20 @@ def dumpSMRule(dumpDic, file):
         if field in dumpDic:
             file.write('    ' + field +': '+str(dumpDic[field]) + '\n')
     
+def insertPlaceholders(s, file):
+    path = pathlib.Path(file)
+    PD = pathlib.Path('Output/ProcessedData')
+    P = path.parts[-3]
+    PP = path.parts[-2]
     
+    s = s.replace("{wbPD}",str(PD))
+    s = s.replace("{wbPD_P}",str(PD/P))
+    s = s.replace("{wbPD_PP}",str(PD/P/PP))
+    s = s.replace("{wbP}",str(P))
+    s = s.replace("{wbPP}",str(PP))
+    return s
+    
+        
 def writeRule(r, file):
     # file needs wb to write to Snakefile
     if "wb" not in r["param"] or type(r["param"]['wb']) is not dict:
@@ -99,12 +112,12 @@ def writeRule(r, file):
     #rule = r['file'].replace('.','_').replace('/','_')
 
     # determine input, output and script
-    elem["input"] = joinEmpty([ensureString(elem.get("input")), "RScript = '" + r['file'] + "'"])
+    elem["input"] = insertPlaceholders(joinEmpty([ensureString(elem.get("input")), "RScript = '" + r['file'] + "'"]), r['file'])
     if elem.get("type") == 'script':
-        elem["output"] = ensureString(elem.get("output"))
+        elem["output"] = insertPlaceholders(ensureString(elem.get("output")), r['file'])
         elem["script"] = '\'' + r['file'] + '\''
     else:
-        elem["output"] = joinEmpty([ensureString(elem.get("output")), "wBhtml = '" + r['outputFile'] + "'"])
+        elem["output"] = insertPlaceholders(joinEmpty([ensureString(elem.get("output")), "wBhtml = '" + r['outputFile'] + "'"]),r['file'])
         elem["script"] = "'.wBuild/wBRender.R'"
 
     # remove wb related elements
