@@ -10,6 +10,11 @@ rule show:
 	input: "Output/all.done"
 	shell: "google-chrome Output/html/index.html &"
 
+rule scriptMapping:
+	input: "scriptMapping.wb"
+	output: touch("scriptMapping.done")
+	run: wbuild.autolink.autolink("scriptMapping.wb")
+
 rule graph:
 	shell: "snakemake --dag | dot -Tsvg -Grankdir=LR > Output/html/dep.svg"
 
