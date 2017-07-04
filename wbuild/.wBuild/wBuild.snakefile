@@ -13,7 +13,8 @@ rule show:
 rule scriptMapping:
 	input: "scriptMapping.wb"
 	output: touch("scriptMapping.done")
-	run: wbuild.autolink.autolink("scriptMapping.wb")
+	run: 
+		wbuild.autolink.autolink("scriptMapping.wb")
 
 rule graph:
 	shell: "snakemake --dag | dot -Tsvg -Grankdir=LR > Output/html/dep.svg"
