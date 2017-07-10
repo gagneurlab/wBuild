@@ -6,9 +6,9 @@ parseWBHeader = function(filename)
 	}
 	
 	library(stringr)
-	wbPD = 'Scripts/ProcessedData'
+	wbPD = 'Output/ProcessedData'
 	wildcards = list(
-			`wbPD` = 'Scripts/ProcessedData',
+			`wbPD` = 'Output/ProcessedData',
 			`wbP` = str_split(filename,'/')[[1]][2],
 			`wbPP` = str_split(filename,'/')[[1]][3],
 			`wbPD_P` = paste(wbPD,str_split(filename,'/')[[1]][2],sep ="/"),
@@ -30,12 +30,12 @@ parseWBHeader = function(filename)
 		if(is.null(wb$output))
 		{output = list()}
 		else
-		{output = as.list(gsubfn('\\{.+\\}', repList,unlist(wb$output)))}
+		{output = as.list(gsubfn('\\{[^\\}]+\\}', repList,unlist(wb$output)))}
 		
 		if(is.null(wb$input))
 		{input = list()}
 		else
-		{input = as.list(gsubfn('\\{.+\\}', repList,unlist(wb$input)))}
+		{input = as.list(gsubfn('\\{[^\\}]+\\}', repList,unlist(wb$input)))}
 		
 		
 		Snakemake <- setClass(
@@ -75,6 +75,6 @@ parseWBHeader = function(filename)
 	{
 		message(w,': ', wildcards[[w]])
 	}
-	return(NULL)
+	return(invisible(NULL))
 	
 }

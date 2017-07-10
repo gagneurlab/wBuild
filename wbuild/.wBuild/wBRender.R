@@ -14,8 +14,8 @@ intermediates_dir = tempfile()
 i = dir.create(file.path(dirname(intermediates_dir), basename(intermediates_dir)), showWarnings = FALSE)
 i = file.copy(".wBuild/rmarkdown_show_hide_function.html",intermediates_dir)
 
-file_input = snakemake@input[[length(snakemake@input)]]
-file_output = snakemake@output[[length(snakemake@output)]]
+file_input = snakemake@input[['RScript']]
+file_output = snakemake@output[['wBhtml']]
 
 
 sFile = tempfile()
