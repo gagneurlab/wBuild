@@ -78,3 +78,14 @@ parseWBHeader = function(filename)
 	return(invisible(NULL))
 	
 }
+wbReadRDS = function(name)
+{
+	message('Read ', snakemake@input[[name]],'...')
+	readRDS(snakemake@input[[name]])
+}
+
+wbSaveRDS = function(obj, name)
+{
+	message('Save ', snakemake@output[[name]],'...')
+	saveRDS(obj, snakemake@output[[name]])
+}
