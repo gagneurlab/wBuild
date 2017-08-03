@@ -12,9 +12,9 @@ rule show:
 	input: "Output/all.done"
 	shell: "google-chrome Output/html/index.html &"
 
-rule scriptMapping:
+rule mapScripts:
 	input: "scriptMapping.wb"
-	output: touch("scriptMapping.done")
+	output: touch("Output/scriptMapping.done")
 	run: 
 		wbuild.autolink.autolink("scriptMapping.wb")
 
