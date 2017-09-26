@@ -24,7 +24,7 @@ kProcessor = default_output_format(sFile)
 if (kProcessor$name=="html_document")
 {
 	libPath = paste0(paste0(rep('../',length(strsplit(file_input,'/')[[1]])-1),collapse=''),'Output/html/libR')
-	format = html_document(toc = TRUE,toc_float = TRUE,fig_retina = NULL,code_folding="show",self_contained=FALSE,lib_dir = libPath,css=c('lib/add_content_table.css','lib/leo_style.css'),df_print ='tibble')
+	format = html_document(toc = TRUE,toc_float = TRUE,fig_retina = NULL,code_folding="hide",self_contained=FALSE,lib_dir = libPath,css=c('lib/add_content_table.css','lib/leo_style.css'),df_print ='tibble')
 }else{
 	require(knitrBootstrap)
 	format = do.call(eval(parse(text=kProcessor$name)),kProcessor$options)

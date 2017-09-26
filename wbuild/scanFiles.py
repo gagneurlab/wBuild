@@ -115,11 +115,14 @@ def writeRule(r, file):
     elem["input"] = insertPlaceholders(joinEmpty([ensureString(elem.get("input")), "RScript = '" + r['file'] + "'"]), r['file'])
     if elem.get("type") == 'script':
         elem["output"] = insertPlaceholders(ensureString(elem.get("output")), r['file'])
-        elem["script"] = '\'' + r['file'] + '\''
+        elem["script"] = '\'' + r['file'] + '\''  
+    elif elem.get("type") == 'noindex':
+        elem["output"] = insertPlaceholders(ensureString(elem.get("output")), r['file'])
+        elem["script"] = "'.wBuild/wBRender.R'"
     else:
         elem["output"] = insertPlaceholders(joinEmpty([ensureString(elem.get("output")), "wBhtml = '" + r['outputFile'] + "'"]),r['file'])
         elem["script"] = "'.wBuild/wBRender.R'"
-
+        
     # remove wb related elements
     #elem = {key: elem[key] for key in elem if key not in WB_FIELDS}
     #if not set(elem.keys()).issubset(SNAKEMAKE_FIELDS):
@@ -148,7 +151,7 @@ def writeMdRule(r,file):
 def writeIndexRule(rows,mdrows, file):
     inputFiles = []
     for r in rows:
-        if getYamlParam(r,'type') == 'script':
+        if getYamlParam(r,'type') == 'script' or getYamlParam(r,'type') == 'noindex':
             continue
         inputFiles.append(r['outputFile'])
     

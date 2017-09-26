@@ -20,7 +20,7 @@ def writeSubMenu(top, wbData, level):
         if (pathlib.PurePath(r['file']).parts[level - 1] == top):
             #Is it a file
             if(len(pathlib.PurePath(r['file']).parts) == (level + 1)):
-                if getYamlParam(r,'type') != 'script':
+                if getYamlParam(r,'type') != 'script' and getYamlParam(r,'type') != 'noindex':
                     menuString += '<li><a href="javascript:navigate(\''+ pathlib.PurePath(r['outputFile']).name +'\');">'+ pathlib.PurePath(r['file']).parts[level] +'</a></li>\n'
                 continue
             temp.append(pathlib.PurePath(r['file']).parts[level])

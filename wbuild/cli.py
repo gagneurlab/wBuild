@@ -19,12 +19,16 @@ def main(command):
     demoPath = pathlib.Path(wbuild.__file__).parent / 'demo'
     
     if command=='init':
+        distutils.dir_util.copy_tree(str(wbuildPath),'./.wBuild')
+        click.echo("Init...done")
+    
+    if command=='demo':
         shutil.copy(str(templatePath/'Snakefile'), '.')
         shutil.copy(str(templatePath/'make.config'), '.')
         shutil.copy(str(templatePath/'readme.md'), '.')
         distutils.dir_util.copy_tree(str(wbuildPath),'./.wBuild')
         distutils.dir_util.copy_tree(str(demoPath),'.')
-        click.echo("Init...done")
+        click.echo("demo...done")
 
 if __name__ == "__main__":
     main()
