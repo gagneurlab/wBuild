@@ -75,13 +75,13 @@ def ensureString(elem):
     else:
         raise TypeError("Don't know how to handle type: " + str(type(string_list)))
 
-def dumpSMRule(dumpDic, file):
+def dumpSMRule(dumpDic, file, sFile):
     if 'py' in dumpDic:
         code = dumpDic['py']
         if type(code) is str:
-            file.write(code)
+            file.write(insertPlaceholders(code,sFile))
         elif type(code) is list:
-            [file.write(line+'\n') for line in code]
+            [file.write(insertPlaceholders(line,sFile)+'\n') for line in code]
                 
     file.write('rule ' + dumpDic['rule'] + ':\n')
     for field in SNAKEMAKE_FIELDS:
@@ -136,7 +136,7 @@ def writeRule(r, file):
     file.write('\n')
     #dumpDict = {'rule ' + rule: elem}
     #file.write(yaml.dump(dumpDict, default_flow_style = False, indent=4).replace("\'\'\'", "'").replace("\'\'", "'"))
-    dumpSMRule(elem,file)
+    dumpSMRule(elem,file,r['file'])
     file.write('\n')
 
 def writeMdRule(r,file):
