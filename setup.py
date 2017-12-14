@@ -22,6 +22,7 @@ requirements = [
 setup_requirements = [
     'pytest-runner'
     # TODO(wachutka): put setup requirements (distutils extensions, etc.) here
+    # --- this todo really needed?
 ]
 
 test_requirements = [
