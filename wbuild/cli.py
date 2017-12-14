@@ -38,14 +38,15 @@ def init():
 
     This will create a .wBuild/ folder in the current path
     """
-    # TODO - check if .git exists - warn if it doesn't
-    if not os.path.exists(".git"):
-        logger.warn("Not in a .git repository")
     if os.path.exists(".wBuild"):
-        logger.error("ERROR: .wBuild already exists")
+        logger.error("ERROR: .wBuild already exists. Use update if you want to update the version")
         sys.exit(2)
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
+    shutil.copy(str(templatePath / 'Snakefile'), '.')
+    shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
+    shutil.copy(str(templatePath / 'readme.md'), '.')
+    
     logger.info("init...done")
 
 
@@ -53,8 +54,11 @@ def init():
 def demo():
     """Setup a demo wBuild demo project
     """
+    if os.path.exists(".wBuild"):
+       logger.error("ERROR: .wBuild already exists. Run demo in empty folder.")
+       sys.exit(2)
     templatePath, wbuildPath, demoPath = setup_paths()
-    shutil.copy(str(templatePath / 'Snakefile'), '.')
+    shutil.copy(str(demoPath / 'Snakefile'), '.')
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     shutil.copy(str(templatePath / 'readme.md'), '.')
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
