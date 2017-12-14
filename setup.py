@@ -19,12 +19,12 @@ requirements = [
 ]
 
 setup_requirements = [
+    'pytest-runner'
     # TODO(wachutka): put setup requirements (distutils extensions, etc.) here
 ]
 
 test_requirements = [
-    "py.test"
-    # TODO: put package test requirements here
+    "pytest"
 ]
 
 setup(
