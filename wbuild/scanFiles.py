@@ -160,7 +160,7 @@ def writeMdRule(r, file):
     file.write('rule ' + r['file'].replace('.', '_').replace('/', '_') + ':\n')
     file.write('    input: "' + r['file'] + '"\n')
     file.write('    output: "' + r['outputFile'] + '"\n')
-    file.write('    shell: "pandoc --from markdown --to html --toc --self-contained -s -o {output} {input}"\n')
+    file.write('    shell: "pandoc --from markdown --to html --css .wBuild/lib/github.css --toc --self-contained -s -o {output} {input}"\n')
 
     file.write('\n')
 
