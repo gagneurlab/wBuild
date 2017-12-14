@@ -1,5 +1,6 @@
 import os, sys
 import pathlib
+import re
 #from matplotlib.cbook import iterable
 import code
 sys.path.insert(0, os.getcwd()+"/.wBuild")
@@ -91,14 +92,21 @@ def dumpSMRule(dumpDic, file, sFile):
 def insertPlaceholders(s, file):
     path = pathlib.Path(file)
     PD = pathlib.Path('Output/ProcessedData')
-    P = path.parts[-3]
-    PP = path.parts[-2]
     
+    PP = path.parts[-2]
     s = s.replace("{wbPD}",str(PD))
-    s = s.replace("{wbPD_P}",str(PD/P))
-    s = s.replace("{wbPD_PP}",str(PD/P/PP))
-    s = s.replace("{wbP}",str(P))
     s = s.replace("{wbPP}",str(PP))
+    
+    if len(path.parts) <= 2 and bool(re.search('{wbP(D_P*)?}', file)):
+        print("If using placeholders please make sure you have the right",
+        " directory structure.")
+    
+    if len(path.parts) > 2:
+        P = path.parts[-3]
+        s = s.replace("{wbPD_P}",str(PD/P))
+        s = s.replace("{wbPD_PP}",str(PD/P/PP))
+        s = s.replace("{wbP}",str(P))
+    
     return s
     
         
