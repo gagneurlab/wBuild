@@ -22,7 +22,7 @@ def checkFileName(filename):
     """
     if " " in filename:
         raise ValueError("Space not allowed in the filenames. File: {0}".filename)
-    if "-" in filename:
+    if "-" in os.path.basename(filename):
         raise ValueError("- not allowed in the filenames. File: {0}".filename)
 
 
