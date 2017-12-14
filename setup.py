@@ -13,7 +13,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
-    'click-log'
+    'click-log',
     'PyYAML>=3.12',
     'snakemake>=3.13.2',
     # TODO: put package requirements here
