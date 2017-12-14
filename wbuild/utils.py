@@ -21,7 +21,9 @@ def checkFileName(filename):
     """List of checks for the correct filename
     """
     if " " in filename:
-        raise ValueError("No spaces are allow in the filenames. File: {0}".filename)
+        raise ValueError("Space not allowed in the filenames. File: {0}".filename)
+    if "-" in filename:
+        raise ValueError("- not allowed in the filenames. File: {0}".filename)
 
 
 def findFilesPath(path, patterns):
