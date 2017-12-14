@@ -4,10 +4,11 @@
 #' wb:
 #'  output: 
 #'  - ids: "{wbPD_P}/ids.txt"
+#'  type: script
 #'---
 source('.wBuild/wBuildParser.R')
 parseWBHeader("Scripts/Analysis1/050_PythonCode/020_CreateIDs.R")
 
-ids = c('col1','col2','col3')
-write.table(ids,snakemake@output[['ids']])
+ids = c('SepalLength','SepalWidth','PetalLength','PetalWidth')
+write.table(ids,snakemake@output[['ids']],row.names=FALSE,col.names=FALSE,quote=FALSE)
 
