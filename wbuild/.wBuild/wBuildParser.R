@@ -80,12 +80,28 @@ parseWBHeader = function(filename)
 }
 wbReadRDS = function(name)
 {
-	message('Read ', snakemake@input[[name]],' ...')
-	readRDS(snakemake@input[[name]])
+	message('Read ', snakemake@input[[name]],' ...',appendLF=FALSE)
+	temp = readRDS(snakemake@input[[name]])
+	message('OK')
+	return(temp)
 }
 
 wbSaveRDS = function(obj, name)
 {
-	message('Save ', snakemake@output[[name]],' ...')
+	message('Save ', snakemake@output[[name]],' ...',appendLF=FALSE)
 	saveRDS(obj, snakemake@output[[name]])
+	message('OK')
+}
+wbReadFST = function(name)
+{
+	message('Read ', snakemake@input[[name]],' ...',appendLF=FALSE)
+	temp = read.fst(snakemake@input[[name]],as.data.table=TRUE)
+	message('OK')
+	return(temp)
+}
+wbSaveFST = function(obj, name)
+{
+	message('Save ', snakemake@output[[name]],' ...',appendLF=FALSE)
+	write.fst(obj, snakemake@output[[name]])
+	message('OK')
 }
