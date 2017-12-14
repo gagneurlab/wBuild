@@ -11,4 +11,4 @@ tests:
   script:
     - python --version
     - pip install .
-    - py.test
+    - python setup.py test
