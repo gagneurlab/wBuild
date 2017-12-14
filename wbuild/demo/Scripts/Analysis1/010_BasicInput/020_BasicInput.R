@@ -8,6 +8,7 @@
 source('.wBuild/wBuildParser.R')
 parseWBHeader("Scripts/Analysis1/010_BasicInput/020_BasicInput.R")
 
+# wbReadRDS is a readRDS command that aware of inputs by referring to their names 
 wbReadRDS('iris')
-#plot(iris)
+plot(iris)
 #' #show some markdown features here.
