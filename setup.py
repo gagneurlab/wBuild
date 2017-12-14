@@ -13,8 +13,8 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
-	'PyYAML>=3.12',
-	'snakemake>=3.13.2',
+    'PyYAML>=3.12',
+    'snakemake>=3.13.2',
     # TODO: put package requirements here
 ]
 
@@ -23,6 +23,7 @@ setup_requirements = [
 ]
 
 test_requirements = [
+    "py.test"
     # TODO: put package test requirements here
 ]
 
