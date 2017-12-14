@@ -1,0 +1,14 @@
+# gitlab runner
+image: python:3.5
+
+before_script:
+  - export PIP_CACHE_DIR="/opt/cache/pip"
+
+tests:
+  stage: test
+  tags:
+    - docker
+  script:
+    - python --version
+    - pip install .
+    - py.test
