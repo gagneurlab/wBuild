@@ -1,10 +1,9 @@
 import fnmatch
 import os
 import yaml
-import sys
 import operator
 from functools import reduce
-from wbuild.synthaxCheckers import checkHeaderSynthax
+from wbuild.syntaxCheckers import checkHeaderSynthax
 
 
 class bcolors:
@@ -44,7 +43,7 @@ def getSpinYaml(file):
     yamlHeader = []
     for i, line in enumerate(open(file)):
         # first line has to start with #'---
-        if i == 0 and line.startswith("#'---"):
+        if i == 0 and not line.startswith("#'---"):
             raise ValueError("First line of the file should be equal to \"#'---\" ")
 
         # process
@@ -93,11 +92,12 @@ def getWBData(script_dir="Scripts", htmlPath="Output/html"):
             # run all the synthax checks - will raise an error if it fails
             checkHeaderSynthax(header)
             param = next(yaml.load_all(header))
-        except:
-            print(bcolors.FAIL + bcolors.BOLD + 'Could not parse', f,
-                  '. Include valid yaml header.\n',
-                  'Errors {0}'.format(sys.exc_info()[0]) + bcolors.ENDC)
-            error = True
+        except Exception as e:
+            if not error:
+                print(bcolors.FAIL + bcolors.BOLD + 'Could not parse', f,
+                      '. Include valid yaml header. Not showing any further errors. \n',
+                      'Errors {0}'.format(e) + bcolors.ENDC)
+                error = True
             continue
         if('wb' in param):
             outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('/', '_') + ".html"

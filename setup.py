@@ -26,7 +26,8 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "pytest"
+    'pytest',
+    'pytest-testdirectory',
 ]
 
 setup(

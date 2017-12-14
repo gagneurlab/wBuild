@@ -13,7 +13,7 @@ def no_tabs(header):
       error: error message
     """
     if "\t" in header:
-        return "Tabs found the header. Please remove them"
+        return "Tabs found in the header. Please remove them"
     else:
         return ""
 

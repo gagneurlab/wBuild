@@ -7,7 +7,7 @@ from click.testing import CliRunner
 from wbuild import cli
 
 
-def test_cli_help():
+def test_help():
     """Test the cli help functions"""
     runner = CliRunner()
     result = runner.invoke(cli.main)
@@ -17,6 +17,18 @@ def test_cli_help():
     assert '--help' in help_result.output
     assert 'Show this message and exit.' in help_result.output
 
-# TODO - run the init
-#
-# TODO - run the demo
+
+def test_init(testdirectory):
+    """Test the cli help functions"""
+    init_dir = testdirectory.mkdir("init")
+    r = init_dir.run("wbuild init")
+    assert r.stdout.match('*init...done*')
+
+
+def test_demo(testdirectory):
+    """Test the cli help functions"""
+    init_dir = testdirectory.mkdir("demo")
+    r = init_dir.run("wbuild demo")
+    assert r.stdout.match('*demo...done*')
+
+    r = init_dir.run("snakemake")

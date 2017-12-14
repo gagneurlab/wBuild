@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """CLI interface to wbuild."""
 
+import sys
 import os
 import click
 import wbuild
@@ -42,7 +43,7 @@ def init():
         logger.warn("Not in a .git repository")
     if os.path.exists(".wBuild"):
         logger.error("ERROR: .wBuild already exists")
-        # TODO exit
+        sys.exit(2)
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     logger.info("init...done")
@@ -54,7 +55,7 @@ def demo():
     """
     templatePath, wbuildPath, demoPath = setup_paths()
     shutil.copy(str(templatePath / 'Snakefile'), '.')
-    shutil.copy(str(templatePath / 'make.config'), '.')
+    shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     shutil.copy(str(templatePath / 'readme.md'), '.')
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     distutils.dir_util.copy_tree(str(demoPath), '.')

@@ -11,5 +11,5 @@ from . import autolink
 from . import cli
 from . import createIndex
 from . import scanFiles
-from . import synthaxCheckers
+from . import syntaxCheckers
 from . import utils
