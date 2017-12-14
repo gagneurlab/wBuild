@@ -15,9 +15,10 @@
 
 
 # Ok now we need to show the ids
-
-#' -[id1](Output/html/030_AnalysisOfId_SepalLength.html)
-#' -[id2](Output/html/030_AnalysisOfId_SepalWidth.html)
+#' #Example of two links using markdown syntax
+#' 
+#' - [id1](030_AnalysisOfId_SepalLength.html)
+#' - [id2](030_AnalysisOfId_SepalWidth.html)
 
 #maybe also show how to read in the ids.txt and create the links programticaly
 #I use for e.g.
