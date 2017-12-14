@@ -8,12 +8,14 @@
 #'  - pca: "{wbPD_P}/pca.RDS"
 #' type: script
 #'---
+
+# The following two commands make it possible to run wbReadRDS or snakemake@inputs
+# while running in the interactive R session (say in RStudio)
 source('.wBuild/wBuildParser.R')
 parseWBHeader("Scripts/Analysis1/020_InputOutput/020_InputOutput.R")
 
-# state that script is optional. Only necessary if one does not want to create a hmtl of this file
 
-iris_df <- wbReadRDS('iris')
+iris_df <- wbReadRDS("iris") # shorthand for readRDS(snakemake@input[["iris"]])
 
 ##' ## PCA analysis of iris
 # log transform 
@@ -30,5 +32,4 @@ pca <- as.matrix(log.ir) %*% ir.pca$rotation
 pca <- as.data.frame(pca)
 pca$Species <- iris_df$Species
 
-wbSaveRDS(pca, 'pca')
-
+wbSaveRDS(pca, 'pca') # shorthand for saveRDS(pca, snakemake@output[["pca"]])

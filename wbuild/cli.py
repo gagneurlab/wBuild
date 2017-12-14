@@ -46,7 +46,7 @@ def init():
     shutil.copy(str(templatePath / 'Snakefile'), '.')
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     shutil.copy(str(templatePath / 'readme.md'), '.')
-    
+
     logger.info("init...done")
 
 
@@ -55,8 +55,8 @@ def demo():
     """Setup a demo wBuild demo project
     """
     if os.path.exists(".wBuild"):
-       logger.error("ERROR: .wBuild already exists. Run demo in empty folder.")
-       sys.exit(2)
+        logger.error("ERROR: .wBuild already exists. Run demo in empty folder.")
+        sys.exit(2)
     templatePath, wbuildPath, demoPath = setup_paths()
     shutil.copy(str(demoPath / 'Snakefile'), '.')
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
