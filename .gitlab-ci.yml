@@ -1,0 +1,19 @@
+# gitlab runner
+image: python:3.5
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/pip-cache"
+
+cache:
+  paths:
+    - "$CI_PROJECT_DIR/pip-cache"
+  key: "$CI_PROJECT_ID"
+
+tests:
+  stage: test
+  tags:
+    - docker
+  script:
+    - python --version
+    - pip install .
+    - python setup.py test
