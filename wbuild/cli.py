@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-
-"""Console script for wbuild."""
+"""CLI interface to wbuild."""
 
 import click
 import wbuild
@@ -9,30 +8,42 @@ import shutil
 import distutils.dir_util
 
 
-# TODO - this should be split into multiple sub-commands,
-# leveraging the functionality of click
-@click.command()
-@click.argument('command')
-def main(command):
-    """Console script for wbuild."""
-
-    # print(wbuild.__file__)
+def setup_paths():
+    """Setup the wbuild paths
+    """
     templatePath = pathlib.Path(wbuild.__file__).parent / 'template'
     wbuildPath = pathlib.Path(wbuild.__file__).parent / '.wBuild'
     demoPath = pathlib.Path(wbuild.__file__).parent / 'demo'
-
-    if command == 'init':
-        distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
-        click.echo("Init...done")
-
-    if command == 'demo':
-        shutil.copy(str(templatePath / 'Snakefile'), '.')
-        shutil.copy(str(templatePath / 'make.config'), '.')
-        shutil.copy(str(templatePath / 'readme.md'), '.')
-        distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
-        distutils.dir_util.copy_tree(str(demoPath), '.')
-        click.echo("demo...done")
+    return templatePath, wbuildPath, demoPath
 
 
-if __name__ == "__main__":
-    main()
+@click.group()
+def main():
+    # main command. We could also have some standard flags like --debug:
+    #
+    # @click.group()
+    # @click.option('--debug/--no-debug', default=False)
+    # def main(debug):
+    #     click.echo('Debug mode is %s' % ('on' if debug else 'off'))
+    pass
+
+
+# --------------------------------------------
+# commands
+
+@main.command()
+def init():
+    templatePath, wbuildPath, demoPath = setup_paths()
+    distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
+    click.echo("Init...done")
+
+
+@main.command()
+def demo():
+    templatePath, wbuildPath, demoPath = setup_paths()
+    shutil.copy(str(templatePath / 'Snakefile'), '.')
+    shutil.copy(str(templatePath / 'make.config'), '.')
+    shutil.copy(str(templatePath / 'readme.md'), '.')
+    distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
+    distutils.dir_util.copy_tree(str(demoPath), '.')
+    click.echo("demo...done")
