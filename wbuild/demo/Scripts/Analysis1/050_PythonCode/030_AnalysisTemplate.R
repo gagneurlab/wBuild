@@ -9,3 +9,4 @@
 
 #important :Output has to be called wBhtml
 #type: noindex
+snakemake@wildcards[["id"]]

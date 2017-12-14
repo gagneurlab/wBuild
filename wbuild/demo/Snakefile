@@ -2,9 +2,9 @@ configfile: "wbuild.yaml"
 include: ".wBuild/wBuild.snakefile"
 
 rule all:
-	input: rules.Index.output, "Output/html/readme.html"
-	output: touch("Output/all.done")
+    input: rules.Index.output, "Output/html/readme.html"
+    output: touch("Output/all.done")
 
-rulw downloadIris:
-	output: 'Data/iris.data'
-	shell: "wget http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data > {output}"
+rule downloadIris:
+    output: 'Data/iris_downloaded.data'
+    shell: "wget http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data -O {output}"

@@ -3,7 +3,7 @@
 #' author: Leonhard Wachutka
 #' wb:
 #'  input: 
-#'  - pca: " {wbPD_P}/pca.RDS"
+#'  - pca: "{wbPD_P}/pca.RDS"
 #'---
 
 source('.wBuild/wBuildParser.R')

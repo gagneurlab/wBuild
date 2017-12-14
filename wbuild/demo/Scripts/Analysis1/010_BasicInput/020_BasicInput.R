@@ -1,6 +1,6 @@
 #'---
 #' title: Basic Input Demo
-#' author: Leonhard Wachutka
+#' author: Leonhard Wachutka, Jun Cheng
 #' wb:
 #'  input: 
 #'  - iris: "Data/{wbP}/iris.RDS"
