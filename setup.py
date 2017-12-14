@@ -13,17 +13,21 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'Click>=6.0',
-	'PyYAML>=3.12',
-	'snakemake>=3.13.2',
+    'click-log',
+    'PyYAML>=3.12',
+    'snakemake>=3.13.2',
     # TODO: put package requirements here
 ]
 
 setup_requirements = [
+    'pytest-runner'
     # TODO(wachutka): put setup requirements (distutils extensions, etc.) here
+    # --- this todo really needed?
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    'pytest',
+    'pytest-testdirectory',
 ]
 
 setup(
