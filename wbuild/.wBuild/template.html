@@ -17,6 +17,7 @@
 
       function navigate(url){
 	window.location.href =  window.location.href.split('#')[0]+ '#' + url;
+	window.location.reload(true);
 	window.frames['Iframe'].src =  url;
 
   }    
