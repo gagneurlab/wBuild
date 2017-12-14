@@ -5,9 +5,8 @@
 #'   with open('Data/ids.txt') as f:
 #'    ids = f.read().splitlines()
 #'  input:
-#'  - ids: "Data/ids.txt"
+#'  - idslist: "Data/ids.txt"
 #'  - columns: "`sm expand('Output/html/030_AnalysisOfId_{id}.html', id=ids)`"
-#'  - sc: "Scripts/{wbP}/{wbPP}/030_AnalysisTemplate.R"
 #'---
 
 #py can be any valid python code. E.g. we explicitly state here the ids, instead of reading or get them from the config file
