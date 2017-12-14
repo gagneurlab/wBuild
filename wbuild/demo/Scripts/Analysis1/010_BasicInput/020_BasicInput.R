@@ -4,6 +4,9 @@
 #' wb:
 #'  input: 
 #'  - iris: "Data/{wbP}/iris.RDS"
+#' output:
+#'  html_document:
+#'   code_folding: show
 #'---
 source('.wBuild/wBuildParser.R')
 parseWBHeader("Scripts/Analysis1/010_BasicInput/020_BasicInput.R")
