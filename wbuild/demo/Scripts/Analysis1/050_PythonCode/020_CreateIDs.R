@@ -5,6 +5,10 @@
 #'  output: 
 #'  - ids: "{wbPD_P}/ids.txt"
 #'  type: script
+#' output:
+#'  html_document:
+#'   code_folding: show
+#'   code_download: TRUE
 #'---
 source('.wBuild/wBuildParser.R')
 parseWBHeader("Scripts/Analysis1/050_PythonCode/020_CreateIDs.R")

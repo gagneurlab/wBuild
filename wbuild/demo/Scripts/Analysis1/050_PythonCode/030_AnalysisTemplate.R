@@ -7,6 +7,10 @@
 #'  output:
 #'  - wBhtml: "Output/html/030_AnalysisOfId_{id}.html"
 #'  type: noindex
+#' output:
+#'  html_document:
+#'   code_folding: show
+#'   code_download: TRUE
 #'---
 
 #important :Output has to be called wBhtml

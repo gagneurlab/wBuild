@@ -7,11 +7,13 @@
 #' output:
 #'  html_document:
 #'   code_folding: show
+#'   code_download: TRUE
 #'---
+#' #Basic Demo
 source('.wBuild/wBuildParser.R')
 parseWBHeader("Scripts/Analysis1/010_BasicInput/020_BasicInput.R")
 
 # wbReadRDS is a readRDS command that aware of inputs by referring to their names 
-wbReadRDS('iris')
-plot(iris)
+iris_df <- wbReadRDS('iris')
+plot(iris_df)
 #' #show some markdown features here.

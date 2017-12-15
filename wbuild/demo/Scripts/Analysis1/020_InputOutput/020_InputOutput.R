@@ -6,7 +6,11 @@
 #'  - iris: "Data/{wbP}/iris.RDS"
 #'  output:
 #'  - pca: "{wbPD_P}/pca.RDS"
-#' type: script
+#' output:
+#'  html_document:
+#'   code_folding: show
+#'   code_download: TRUE
+#' 
 #'---
 
 # The following two commands make it possible to run wbReadRDS or snakemake@inputs
