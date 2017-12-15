@@ -17,9 +17,10 @@
 
       function navigate(url){
 	window.location.href =  window.location.href.split('#')[0]+ '#' + url;
-	window.location.reload(true);
 	window.frames['Iframe'].src =  url;
-
+	window.frames['Iframe'].location =  url;
+	window.frames['Iframe'].reload(true);
+	
   }    
   </script>
   <style>
