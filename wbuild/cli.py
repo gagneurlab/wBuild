@@ -13,7 +13,6 @@ import logging
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
 
-
 def setup_paths():
     """Setup the wbuild paths
     """
@@ -25,6 +24,7 @@ def setup_paths():
 
 @click.group()
 @click_log.simple_verbosity_option(logger)
+@click.version_option('1.1.1',prog_name='wBuild')
 def main():
     pass
 
