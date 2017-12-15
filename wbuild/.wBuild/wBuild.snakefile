@@ -26,7 +26,7 @@ rule clean:
 
 rule publish:
     input: "Output/all.done"
-    shell: "rsync -rt Output/html/ {config[webDir]}"
+    shell: "rsync -Ort Output/html/ {config[webDir]}"
 
 rule markdown:
     input: "{file}.md"
