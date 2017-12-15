@@ -32,7 +32,7 @@ test_requirements = [
 
 setup(
     name='wbuild',
-    version='0.1.4',
+    version='1.0',
     description="Automtic build tool for R Reports",
     long_description=readme + '\n\n' + history,
     author="Leonhard Wachutka",
