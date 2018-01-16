@@ -82,7 +82,7 @@ wbReadRDS = function(name)
 {
 	message('Read ', snakemake@input[[name]],' ...',appendLF=FALSE)
 	temp = readRDS(snakemake@input[[name]])
-	message('OK')
+	message(' OK')
 	return(temp)
 }
 
@@ -90,18 +90,35 @@ wbSaveRDS = function(obj, name)
 {
 	message('Save ', snakemake@output[[name]],' ...',appendLF=FALSE)
 	saveRDS(obj, snakemake@output[[name]])
-	message('OK')
+	message(' OK')
 }
 wbReadFST = function(name)
 {
 	message('Read ', snakemake@input[[name]],' ...',appendLF=FALSE)
 	temp = read.fst(snakemake@input[[name]],as.data.table=TRUE)
-	message('OK')
+	message(' OK')
 	return(temp)
 }
 wbSaveFST = function(obj, name)
 {
 	message('Save ', snakemake@output[[name]],' ...',appendLF=FALSE)
 	write.fst(obj, snakemake@output[[name]])
-	message('OK')
+	message(' OK')
 }
+wbRead = function(name)
+{
+	isFst = str_detect(name,regex('\\.FST$', ignore_case=TRUE))
+	isRds = str_detect(name,regex('\\.RDS$', ignore_case=TRUE))
+	if(isFst)
+	{
+		return(wbReadFST(name))
+	}
+	if(isRds)
+	{
+		return(wbReadRDS(name))
+	}
+	stop('Could not determine format of ', snakemake@input[[name]])
+}
+
+
+
