@@ -105,10 +105,11 @@ wbSaveFST = function(obj, name)
 	write.fst(obj, snakemake@output[[name]])
 	message(' OK')
 }
+
 wbRead = function(name)
 {
-	isFst = str_detect(name,regex('\\.FST$', ignore_case=TRUE))
-	isRds = str_detect(name,regex('\\.RDS$', ignore_case=TRUE))
+	isFst = str_detect(snakemake@input[[name]],regex('\\.FST$', ignore_case=TRUE))
+	isRds = str_detect(snakemake@input[[name]],regex('\\.RDS$', ignore_case=TRUE))
 	if(isFst)
 	{
 		return(wbReadFST(name))
