@@ -5,9 +5,9 @@ import re
 from wbuild.utils import getWBData, getMDData, getYamlParam, pathsepsToUnderscore
 
 pathsep = os.sep
-sys.path.insert(0, os.getcwd() + pathsep + ".wBuild")
+sys.path.insert(0, os.getcwd() + "/.wBuild")
 
-htmlPath = "Output" + pathsep + "html"
+htmlPath = "Output/html"
 
 WB_FIELDS = {"type"}
 # SNAKEMAKE  = ["input", "output", "threads"]

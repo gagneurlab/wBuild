@@ -35,7 +35,9 @@ def findFilesPath(path, patterns):
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
         for filename in reduce(operator.add, (fnmatch.filter(filenames, p) for p in patterns)):
             checkFileName(filename)
-            matches.append(os.path.join(root, filename))
+            absFilepath = os.path.join(root, filename)
+            if not absFilepath in matches:
+                matches.append(absFilepath)
     return sorted(matches)
 
 
@@ -45,28 +47,30 @@ def getSpinYaml(file):
     yamlHeader = []
     for i, line in enumerate(open(file)):
         # first line has to start with #'---
-        if i == 0 and not line.startswith("#'---"):
-            raise ValueError("First line of the file should be equal to \"#'---\" ")
+        while not line.startswith("#'---"):
+            continue
 
         # process
         li = line.strip()
         if li.startswith("#'"):
             yamlHeader.append(li[2:])
 
-        # terminate on the second occurence of #'---
+        # terminate if that's already "#'---" (=end of YAML-designated area)
         if i != 0 and line.startswith("#'---"):
             break
+
 
     return '\n'.join(yamlHeader)
 
 
 def checkYamlHeader(file):
-    """Check the yaml header for synthax checks
+    """Check if there is YAML info anywhere in the file
     """
     with open(file, "r") as f:
-        line = f.readline()
-    if(line.startswith("#'---")):
-        return True
+        lines = f.readlines()
+    for line in lines:
+        if(line.startswith("#'---")):
+            return True
     return False
 
 
@@ -86,23 +90,18 @@ def getWBData(script_dir="Scripts", htmlPath="Output/html"):
     out = []
     error = False
     for f in findFilesPath(script_dir, ['*.r', '*.R']):
-        try:
-            if not checkYamlHeader(f):
-                # Ignore files not starting with
-                continue
-            header = getSpinYaml(f)
-            # run all the synthax checks - will raise an error if it fails
-            checkHeaderSynthax(header)
-            param = next(yaml.load_all(header))
-        except Exception as e:
-            if not error:
-                print(bcolors.FAIL + bcolors.BOLD + 'Could not parse', f,
-                      '. Include valid yaml header. Not showing any further errors. \n',
-                      'Errors {0}'.format(e) + bcolors.ENDC)
-                error = True
+        if not checkYamlHeader(f):
+            # Ignore files not containing YAML-described areas
+            continue
+        header = getSpinYaml(f)
+        param, err = parseParamFromYAML(header, error)
+        if err: #error parsing
+            error = err
             continue
         if('wb' in param):
-            outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('/', '_') + ".html"
+            outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('\\', '/') + ".html"
+            # ensure file path is linux format (for Win)
+            f = f.replace('\\','/')
             out.append({'file': f, 'outputFile': outFile, 'param': param})
     if error:
         raise ValueError("Errors occured in parsing the R files. Please fix them.")
@@ -124,7 +123,8 @@ def getMDData(script_dir="Scripts", htmlPath="Output/html"):
     """
     out = []
     for f in findFilesPath(script_dir, ['*.md']):
-        outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('/', '_') + ".html"
+        outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('\\', '/') + ".html"
+        f = f.replace('\\', '/')
         out.append({'file': f, 'outputFile': outFile, 'param': []})
     return out
 
@@ -133,6 +133,28 @@ def getYamlParam(r, paramName):
     if 'wb' in r['param'] and type(r['param']['wb']) is dict and paramName in r['param']['wb']:
         return r['param']['wb'][paramName]
     return None
+
+def parseParamFromYAML(header, error):
+    try:
+        param = next(yaml.load_all(header))
+    except (yaml.YAMLError,yaml.MarkedYAMLError) as e:
+        if not error:
+            error = True
+        if hasattr(e, 'problem_mark'):
+            if e.context != None:
+                print('Error while parsing YAML file:\n' + str(e.problem_mark) + '\n  ' +
+                      str(e.problem) + ' ' + str(e.context) +
+                      '\nPlease correct the header and retry.')
+                return None, error
+            else:
+                print('Error while parsing YAML file:\n' + str(e.problem_mark) + '\n  ' +
+                      str(e.problem) + '\nPlease correct the header and retry.')
+                return None, error
+        else:
+            print("YAMLError parsing yaml file.")
+            return None, error
+
+    return param, error
 
 def pathsepsToUnderscore(systemPath):
     """Convert all system path separators to underscores. Product is used as a unique ID for rules in scanFiles.py"""
