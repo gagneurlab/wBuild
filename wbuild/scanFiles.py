@@ -2,10 +2,12 @@ import os
 import sys
 import pathlib
 import re
-from wbuild.utils import getWBData, getMDData, getYamlParam
-sys.path.insert(0, os.getcwd() + "/.wBuild")
+from wbuild.utils import getWBData, getMDData, getYamlParam, pathsepsToUnderscore
 
-htmlPath = "Output/html"
+pathsep = os.sep
+sys.path.insert(0, os.getcwd() + pathsep + ".wBuild")
+
+htmlPath = "Output" + pathsep + "html"
 
 WB_FIELDS = {"type"}
 # SNAKEMAKE  = ["input", "output", "threads"]
@@ -98,7 +100,7 @@ def dumpSMRule(dumpDic, file, sFile):
 
 def insertPlaceholders(s, file):
     path = pathlib.Path(file)
-    PD = pathlib.Path('Output/ProcessedData')
+    PD = pathlib.Path('Output' + pathsep + 'ProcessedData')
 
     PP = path.parts[-2]
     s = s.replace("{wbPD}", str(PD))
@@ -146,7 +148,7 @@ def writeRule(r, file):
 
     # remove fields not in SNAKEMAKE_FIELDS
     # elem = {key: elem[key] for key in elem if key in SNAKEMAKE_FIELDS}
-    elem['rule'] = r['file'].replace('.', '_').replace('/', '_')
+    elem['rule'] = pathsepsToUnderscore(r['file'])
     # write to file
     file.write('\n')
     # dumpDict = {'rule ' + rule: elem}
@@ -157,7 +159,7 @@ def writeRule(r, file):
 
 def writeMdRule(r, file):
     file.write('\n')
-    file.write('rule ' + r['file'].replace('.', '_').replace('/', '_') + ':\n')
+    file.write('rule ' + pathsepsToUnderscore(r['file']) + ':\n')
     file.write('    input: "' + r['file'] + '"\n')
     file.write('    output: "' + r['outputFile'] + '"\n')
     file.write('    shell: "pandoc --from markdown --to html --css .wBuild/lib/github.css --toc --self-contained -s -o {output} {input}"\n')

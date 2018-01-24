@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# emacs 
+# emacs
 *~
 
 # C extensions
@@ -66,3 +66,6 @@ target/
 # emacs
 *~
 #*#
+
+# IDEA Project files
+.idea/

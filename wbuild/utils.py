@@ -133,3 +133,7 @@ def getYamlParam(r, paramName):
     if 'wb' in r['param'] and type(r['param']['wb']) is dict and paramName in r['param']['wb']:
         return r['param']['wb'][paramName]
     return None
+
+def pathsepsToUnderscore(systemPath):
+    """Convert all system path separators to underscores. Product is used as a unique ID for rules in scanFiles.py"""
+    return systemPath.replace('.', '_').replace('/', '_').replace('\\', '_')
