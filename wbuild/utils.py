@@ -1,10 +1,14 @@
 import fnmatch
 import os
 import yaml
+import yaml.scanner
+import yaml.parser
+import yaml.error
 import operator
 from functools import reduce
-from wbuild.syntaxCheckers import checkHeaderSynthax
+import wbuild.cli
 
+logger = wbuild.cli.logger
 
 class bcolors:
     HEADER = '\033[95m'
@@ -17,144 +21,163 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 
-def checkFileName(filename):
-    """List of checks for the correct filename
+def checkFilename(filename):
+    """
+    :param filename: to check
+    :return: has appropriate name?
+    :raises: ValueError if the name is inappropriate
     """
     if " " in filename:
-        raise ValueError("Space not allowed in the filenames. File: {0}".filename)
+        raise ValueError("Spaces are not allowed in the filenames. File: {0}",filename)
     if "-" in os.path.basename(filename):
-        raise ValueError("- not allowed in the filenames. File: {0}".filename)
+        raise ValueError("- are not allowed in the filenames. File: {0}", filename)
+    return True
 
-
-def findFilesPath(path, patterns):
-    """Recursively search for files following a certain pattern
+def findFilesRecursive(startingPath, patterns):
     """
-    matches = []
-    for root, dirnames, filenames in os.walk(path):
+    :param startingPath: root path of the search
+    :param patterns: patterns to search file names for
+    :return: paths to files matching the patterns
+    """
+    matchedFilepaths = []
+    for root, dirnames, filenames in os.walk(startingPath):
         dirnames[:] = [d for d in dirnames if not d[0] == '_']
         dirnames[:] = [d for d in dirnames if not d[0] == '.']
-        for filename in reduce(operator.add, (fnmatch.filter(filenames, p) for p in patterns)):
-            checkFileName(filename)
-            absFilepath = os.path.join(root, filename)
-            if not absFilepath in matches:
-                matches.append(absFilepath)
-    return sorted(matches)
+        for file in reduce(operator.add, (fnmatch.filter(filenames, p) for p in patterns)):
+            checkFilename(file)
+            absFilepath = os.path.join(root, file)
+            if not absFilepath in matchedFilepaths:
+                matchedFilepaths.append(absFilepath)
+    sortedMatchedFilepaths = sorted(matchedFilepaths)
+    logger.debug("Found files in scope of wBuild: ", sortedMatchedFilepaths)
+    return sortedMatchedFilepaths
 
 
-def getSpinYaml(file):
-    """Retrieves the yaml header (including)
+def parseYAMLHeader(filepath):
+    """
+
+    :param filepath: path to the file
+    :return: String representation of the YAML header in the file, including inter-document framing ("---")
     """
     yamlHeader = []
-    for i, line in enumerate(open(file)):
-        # first line has to start with #'---
-        while not line.startswith("#'---"):
-            continue
-
+    for i, line in enumerate(open(filepath).readlines()):
         # process
-        li = line.strip()
-        if li.startswith("#'"):
-            yamlHeader.append(li[2:])
+        yamlHeader.append(line.strip()[2:])
 
         # terminate if that's already "#'---" (=end of YAML-designated area)
         if i != 0 and line.startswith("#'---"):
             break
 
+    result = '\n'.join(yamlHeader)
+    logger.debug("Got ", result, "as a result of parsing YAML header from ", filepath, ".")
+    return result
 
-    return '\n'.join(yamlHeader)
 
-
-def checkYamlHeader(file):
-    """Check if there is YAML info anywhere in the file
+def hasYAMLHeader(filepath):
     """
-    with open(file, "r") as f:
+    :param filepath: path to the file
+    :return: file contains YAML header?
+    """
+    with open(filepath, "r") as f:
         lines = f.readlines()
-    for line in lines:
-        if(line.startswith("#'---")):
-            return True
+    line = lines[0]
+    if(line.startswith("#'---")):
+        return True
+    logger.info("The file" + filepath + "doesn't contain YAML header at the very beginning of the document and so was ignored.")
     return False
 
 
-def getWBData(script_dir="Scripts", htmlPath="Output/html"):
-    """Parse all the R files
+def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
+    """
 
-    Args:
-      script_dir: Relative path to the Scripts directory
-      htmlPath: Relative path to the html output path
-
-    Returns:
-      a list of dictionaries with fields:
+    :param script_dir: Relative path to the Scripts directory
+    :param htmlPath: Relative path to the html output path
+    :return: a list of dictionaries with fields:
       - file - what is the input R file
       - outputFile - there to put the output html file
-      - param - parsed yaml header
+      - param - parsed yaml params
     """
-    out = []
-    error = False
-    for f in findFilesPath(script_dir, ['*.r', '*.R']):
-        if not checkYamlHeader(f):
-            # Ignore files not containing YAML-described areas
+    parsedInfos = []
+    #errorOccured = False
+    for filename in findFilesRecursive(script_dir, ['*.r', '*.R']):
+        if not hasYAMLHeader(filename):
+            # Ignore files without YAML infos
             continue
-        header = getSpinYaml(f)
-        param, err = parseParamFromYAML(header, error)
-        if err: #error parsing
-            error = err
-            continue
-        if('wb' in param):
-            outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('\\', '/') + ".html"
-            # ensure file path is linux format (for Win)
-            f = f.replace('\\','/')
-            out.append({'file': f, 'outputFile': outFile, 'param': param})
-    if error:
-        raise ValueError("Errors occured in parsing the R files. Please fix them.")
-    return out
+        header = parseYAMLHeader(filename)
+        # run all the synthax checks - will raise an error if it fails
+        yamlParamsDict = parseYamlParams(header, filename)
+        if yamlParamsDict == None: #parsing error occured
+            errorOccured = True
+            continue #go on parsing next file
+
+        if('wb' in yamlParamsDict):# the header contains wb informations
+            outFile = htmlPath + "/" + os.path.splitext(filename)[0].replace('/', '_') + ".html"
+            parsedInfos.append({'file': filename, 'outputFile': outFile, 'param': yamlParamsDict})
+
+    logger.debug("Parsed informations from R files: ", str(parsedInfos))
+    #if errorOccured:
+    #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
+    return parsedInfos
 
 
-def getMDData(script_dir="Scripts", htmlPath="Output/html"):
-    """Parse all the .md files
 
-    Args:
-      script_dir: Relative path to the Scripts directory
-      htmlPath: Relative path to the html output path
+def parseMDFiles(script_dir="Scripts", htmlPath="Output/html"):
+    """
 
-    Returns:
-      a list of dictionaries with fields:
+    :param script_dir: Relative path to the Scripts directory
+    :param htmlPath: Relative path to the html output path
+    :return: a list of dictionaries with fields:
       - file - what is the input .md file
       - outputFile - there to put the output html file
       - param - parsed yaml header - always an empty list
     """
-    out = []
-    for f in findFilesPath(script_dir, ['*.md']):
+    logger.debug("Finding .md files:\n")
+    foundMDFiles = []
+    for f in findFilesRecursive(script_dir, ['*.md']):
         outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('\\', '/') + ".html"
+        logger.debug("Found ", outFile, ".\n")
         f = f.replace('\\', '/')
-        out.append({'file': f, 'outputFile': outFile, 'param': []})
-    return out
+        foundMDFiles.append({'file': f, 'outputFile': outFile, 'param': []})
+    logger.debug(".md files search finished\n\n")
+    return foundMDFiles
 
 
 def getYamlParam(r, paramName):
     if 'wb' in r['param'] and type(r['param']['wb']) is dict and paramName in r['param']['wb']:
-        return r['param']['wb'][paramName]
+        foundParam = r['param']['wb'][paramName]
+        logger.debug("Got YAML param: ", foundParam)
+        return foundParam
     return None
 
-def parseParamFromYAML(header, error):
+def parseYamlParams(header, f):
+    """
+    :param header: String form of YAML header
+    :param f: Filename of a file from where the header was parsed
+    :return: Parameters dictionary parsed from the header; None if parsing errors occured
+    """
     try:
         param = next(yaml.load_all(header))
-    except (yaml.YAMLError,yaml.MarkedYAMLError) as e:
-        if not error:
-            error = True
+    except (yaml.scanner.ScannerError, yaml.parser.ParserError, yaml.error.YAMLError, yaml.error.MarkedYAMLError) as e:
         if hasattr(e, 'problem_mark'):
             if e.context != None:
-                print('Error while parsing YAML file:\n' + str(e.problem_mark) + '\n  ' +
+                logger.warning('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
                       str(e.problem) + ' ' + str(e.context) +
                       '\nPlease correct the header and retry.')
-                return None, error
             else:
-                print('Error while parsing YAML file:\n' + str(e.problem_mark) + '\n  ' +
+                logger.warning('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
                       str(e.problem) + '\nPlease correct the header and retry.')
-                return None, error
         else:
-            print("YAMLError parsing yaml file.")
-            return None, error
+            logger.warning("YAMLError parsing yaml file.")
 
-    return param, error
+        return None
+    except Exception as e:
+        logger.warning(bcolors.FAIL + bcolors.BOLD + 'Could not parse', f,
+              '. Include valid yaml header. Not showing any further errors. \n',
+              'Errors {0}'.format(e) + bcolors.ENDC)
+        return None
+
+    logger.debug("Parsed params: ", str(param))
+    return param
 
 def pathsepsToUnderscore(systemPath):
     """Convert all system path separators to underscores. Product is used as a unique ID for rules in scanFiles.py"""

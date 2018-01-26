@@ -5,7 +5,7 @@ import shutil
 from string import Template
 from os import listdir
 from os.path import isfile, join
-from wbuild.utils import getWBData, getMDData, getYamlParam
+from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam
 
 sys.path.insert(0, os.getcwd() + "/.wBuild")  # TODO - is this line required?
 
@@ -48,8 +48,8 @@ def getRecentMenu():
 
 
 def writeMenu():
-    wbData = getWBData()
-    mdData = getMDData()
+    wbData = parseWBInfosFromRFiles()
+    mdData = parseMDFiles()
     wbData += mdData
     menuString = ""
     temp = []

@@ -10,6 +10,7 @@ import shutil
 import distutils.dir_util
 import click_log
 import logging
+
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
 
@@ -21,6 +22,12 @@ def setup_paths():
     demoPath = pathlib.Path(wbuild.__file__).parent / 'demo'
     return templatePath, wbuildPath, demoPath
 
+def getMainLogger():
+    """
+
+    :return: logger with CLI-adjusted verbosity
+    """
+    return logger
 
 @click.group()
 @click_log.simple_verbosity_option(logger)
