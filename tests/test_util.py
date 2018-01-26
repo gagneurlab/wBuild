@@ -1,4 +1,4 @@
-"""wBuild's unit tests"""
+"""wBuild's utils.py tests"""
 import unittest
 import wbuild.utils
 from yaml import MarkedYAMLError, YAMLError
@@ -16,6 +16,6 @@ class UtilsTestCase(unittest.TestCase):
         with self.assertRaises(YAMLError):
             wbuild.utils.parseParamFromYAML(wrongYAML, False)
     '''
-    
+
 if __name__ == '__main__':
     unittest.main()
