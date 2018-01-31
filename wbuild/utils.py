@@ -108,6 +108,10 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
             errorOccured = True
             continue #go on parsing next file
 
+
+        if type(yamlParamsDict) is str: #allow parsing one tag without double points as string; put it in a dict and check later on
+            yamlParamsDict = {yamlParamsDict: None}
+
         if('wb' in yamlParamsDict):# the header contains wb informations
             outFile = htmlPath + "/" + os.path.splitext(filename)[0].replace('/', '_') + ".html"
             parsedInfos.append({'file': filename, 'outputFile': outFile, 'param': yamlParamsDict})
