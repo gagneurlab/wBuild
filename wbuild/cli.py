@@ -85,7 +85,7 @@ def update():
 
     logger.info("Removing .wBuild")
     shutil.rmtree(".wBuild")
-    logger.info("Running .Init")
+    logger.info("Running .init")
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     logger.info("update...done")
