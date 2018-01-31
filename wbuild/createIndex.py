@@ -14,6 +14,14 @@ htmlPath = "Output/html"
 
 
 def writeSubMenu(top, wbData, level):
+    """
+    Recursive call to construct the dropdown list and hover-over side-menus in it adhereing to a "top" toolbar category.
+
+    :param top: "top" toolbar directory to be appointed to
+    :param wbData: wb relevant data of all scanned files
+    :param level: deepness of the current submenu (first dropdown list, then hover-over side-menus in the html)
+    :return: deeply constructed dropdown list of the top toolbar category as an HTML string
+    """
     menuString = ''
     temp = []
     newWb = []
@@ -38,6 +46,9 @@ def writeSubMenu(top, wbData, level):
 
 
 def getRecentMenu():
+    """
+    :return: HTML string: "Recently viewed" menu contents
+    """
     menuString = ""
     htmlPath = "Output/html"
     rFiles = sorted([join(htmlPath, f) for f in listdir(htmlPath) if isfile(join(htmlPath, f))], key=os.path.getmtime, reverse=True)[:10]
@@ -47,22 +58,28 @@ def getRecentMenu():
     return menuString
 
 
-def writeMenu():
+def writeIndexHTMLMenu():
+    """
+    Scan for files involved in the current HTML rendering and fill the HTML quick access toolbar correspondingly
+    """
     wbData = parseWBInfosFromRFiles()
     mdData = parseMDFiles()
     wbData += mdData
     menuString = ""
     temp = []
-    for r in wbData:
+    for r in wbData: #for all of the scanned files, collect their paths
         temp.append(pathlib.PurePath(r['file']).parts[1])
     temp = sorted(set(temp))
     for top in temp:
         menuString += '<li class="dropdown">\n'
+        #write the current directory's name to the main ("top") toolbar tab
         menuString += '   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">' + top + '<span class="caret"></span></a>\n'
         menuString += '   <ul class="dropdown-menu multi-level" role="menu">\n'
+        #write sub-directories to the dropdown list of the "top" tabs
         menuString += writeSubMenu(top, wbData, 2)
         menuString += '   </ul>\n'
         menuString += '</li>\n'
+    #fill the HTML template with the constructed tag structure
     template = open('.wBuild/template.html').read()
     template = Template(template).substitute(menu=menuString, title='title', rf=getRecentMenu())  # snakemake.config['projectTitle']
 
@@ -72,7 +89,7 @@ def writeMenu():
 
 
 def ci():
-    writeMenu()
+    writeIndexHTMLMenu()
 
     libDir = "Output/html/lib"
 
