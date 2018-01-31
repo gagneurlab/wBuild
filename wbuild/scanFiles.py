@@ -120,9 +120,6 @@ def insertPlaceholders(s, file):
 
 
 def writeRule(r, file):
-    # file needs wb to write to Snakefile
-    if "wb" not in r["param"] or type(r["param"]['wb']) is not dict:
-        return
     elem = r["param"]["wb"]
 
     # extract rule
