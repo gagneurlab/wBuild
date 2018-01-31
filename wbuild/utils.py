@@ -8,8 +8,6 @@ import operator
 from functools import reduce
 import wbuild.cli
 
-logger = wbuild.cli.logger
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -49,7 +47,7 @@ def findFilesRecursive(startingPath, patterns):
             if not absFilepath in matchedFilepaths:
                 matchedFilepaths.append(absFilepath)
     sortedMatchedFilepaths = sorted(matchedFilepaths)
-    logger.debug("Found files in scope of wBuild: ", sortedMatchedFilepaths)
+    print("Found files in scope of wBuild: ", sortedMatchedFilepaths)
     return sortedMatchedFilepaths
 
 
@@ -69,7 +67,7 @@ def parseYAMLHeader(filepath):
             break
 
     result = '\n'.join(yamlHeader)
-    logger.debug("Got ", result, "as a result of parsing YAML header from ", filepath, ".")
+    print("Got ", result, "as a result of parsing YAML header from ", filepath, ".")
     return result
 
 
@@ -83,7 +81,7 @@ def hasYAMLHeader(filepath):
     line = lines[0]
     if(line.startswith("#'---")):
         return True
-    logger.info("The file" + filepath + "doesn't contain YAML header at the very beginning of the document and so was ignored.")
+    print("The file" + filepath + "doesn't contain YAML header at the very beginning of the document and so was ignored.")
     return False
 
 
@@ -114,7 +112,7 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
             outFile = htmlPath + "/" + os.path.splitext(filename)[0].replace('/', '_') + ".html"
             parsedInfos.append({'file': filename, 'outputFile': outFile, 'param': yamlParamsDict})
 
-    logger.debug("Parsed informations from R files: ", str(parsedInfos))
+    print("Parsed informations from R files: ", str(parsedInfos))
     #if errorOccured:
     #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
@@ -131,21 +129,21 @@ def parseMDFiles(script_dir="Scripts", htmlPath="Output/html"):
       - outputFile - there to put the output html file
       - param - parsed yaml header - always an empty list
     """
-    logger.debug("Finding .md files:\n")
+    print("Finding .md files:\n")
     foundMDFiles = []
     for f in findFilesRecursive(script_dir, ['*.md']):
         outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('\\', '/') + ".html"
-        logger.debug("Found ", outFile, ".\n")
+        print("Found ", outFile, ".\n")
         f = f.replace('\\', '/')
         foundMDFiles.append({'file': f, 'outputFile': outFile, 'param': []})
-    logger.debug(".md files search finished\n\n")
+    print(".md files search finished\n\n")
     return foundMDFiles
 
 
 def getYamlParam(r, paramName):
     if 'wb' in r['param'] and type(r['param']['wb']) is dict and paramName in r['param']['wb']:
         foundParam = r['param']['wb'][paramName]
-        logger.debug("Got YAML param: ", foundParam)
+        print("Got YAML param: ", foundParam)
         return foundParam
     return None
 
@@ -160,23 +158,23 @@ def parseYamlParams(header, f):
     except (yaml.scanner.ScannerError, yaml.parser.ParserError, yaml.error.YAMLError, yaml.error.MarkedYAMLError) as e:
         if hasattr(e, 'problem_mark'):
             if e.context != None:
-                logger.warning('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
+                print('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
                       str(e.problem) + ' ' + str(e.context) +
                       '\nPlease correct the header and retry.')
             else:
-                logger.warning('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
+                print('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
                       str(e.problem) + '\nPlease correct the header and retry.')
         else:
-            logger.warning("YAMLError parsing yaml file.")
+            print("YAMLError parsing yaml file.")
 
         return None
     except Exception as e:
-        logger.warning(bcolors.FAIL + bcolors.BOLD + 'Could not parse', f,
+        print(bcolors.FAIL + bcolors.BOLD + 'Could not parse', f,
               '. Include valid yaml header. Not showing any further errors. \n',
               'Errors {0}'.format(e) + bcolors.ENDC)
         return None
 
-    logger.debug("Parsed params: ", str(param))
+    print("Parsed params: ", str(param))
     return param
 
 def pathsepsToUnderscore(systemPath):

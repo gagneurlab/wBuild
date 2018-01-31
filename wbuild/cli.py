@@ -27,6 +27,8 @@ def getMainLogger():
 
     :return: logger with CLI-adjusted verbosity
     """
+    #Set propagate to allow printing to the console
+    logger.propagate = True
     return logger
 
 @click.group()

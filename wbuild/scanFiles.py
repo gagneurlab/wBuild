@@ -3,12 +3,10 @@ import sys
 import pathlib
 import re
 
-from wbuild.cli import getMainLogger
 from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam, pathsepsToUnderscore
 
 pathsep = os.sep
 sys.path.insert(0, os.getcwd() + "/.wBuild")
-logger = getMainLogger()
 htmlPath = "Output/html"
 
 WB_FIELDS = {"type"}
@@ -28,7 +26,7 @@ SNAKEMAKE_FIELDS = ["input",
 
 
 def writeDependencyFile():
-    logger.info("Updating dependencies...")
+    print("Updating dependencies...")
     wbData = parseWBInfosFromRFiles()
     mdData = parseMDFiles()
     with open('.wBuild.depend', 'w') as f:
@@ -46,7 +44,7 @@ def writeDependencyFile():
 
         # write build index rule
         writeIndexRule(wbData, mdData, f)
-    logger.info("Done.\n")
+    print("Done.\n")
 
 
 def joinEmpty(string_list):
