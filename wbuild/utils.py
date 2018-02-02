@@ -6,7 +6,6 @@ import yaml.parser
 import yaml.error
 import operator
 from functools import reduce
-import wbuild.cli
 
 class bcolors:
     HEADER = '\033[95m'
@@ -105,7 +104,6 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
         # run all the synthax checks - will raise an error if it fails
         yamlParamsDict = parseYamlParams(header, filename)
         if yamlParamsDict == None: #parsing error occured
-            errorOccured = True
             continue #go on parsing next file
 
 
@@ -113,8 +111,8 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
             yamlParamsDict = {yamlParamsDict: None}
 
         if('wb' in yamlParamsDict):# the header contains wb informations
-            outFile = htmlPath + "/" + os.path.splitext(filename)[0].replace('/', '_') + ".html"
-            parsedInfos.append({'file': filename, 'outputFile': outFile, 'param': yamlParamsDict})
+            outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
+            parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
 
     print("Parsed informations from R files: ", str(parsedInfos))
     #if errorOccured:
@@ -136,10 +134,9 @@ def parseMDFiles(script_dir="Scripts", htmlPath="Output/html"):
     print("Finding .md files:\n")
     foundMDFiles = []
     for f in findFilesRecursive(script_dir, ['*.md']):
-        outFile = htmlPath + "/" + os.path.splitext(f)[0].replace('\\', '/') + ".html"
+        outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(f)[0])+ ".html"
         print("Found ", outFile, ".\n")
-        f = f.replace('\\', '/')
-        foundMDFiles.append({'file': f, 'outputFile': outFile, 'param': []})
+        foundMDFiles.append({'file': linuxify(f), 'outputFile': outFile, 'param': []})
     print(".md files search finished\n\n")
     return foundMDFiles
 
@@ -181,6 +178,24 @@ def parseYamlParams(header, f):
     print("Parsed params: ", str(param))
     return param
 
-def pathsepsToUnderscore(systemPath):
-    """Convert all system path separators to underscores. Product is used as a unique ID for rules in scanFiles.py"""
-    return systemPath.replace('.', '_').replace('/', '_').replace('\\', '_')
+def pathsepsToUnderscore(systemPath, dotsToUnderscore = False):
+    """Convert all system path separators and dots to underscores. Product is used as a unique ID for rules in scanFiles.py or the output HTML files
+    :param systemPath: path to convert in
+    :param dotsToUnderscore: if the dot should be converted as well. Defaults to false
+    :return: path string with converted separators
+    """
+    if dotsToUnderscore:
+        return systemPath.replace('.', '_').replace('/', '_').replace('\\', '_')
+    return systemPath.replace('/', '_').replace('\\', '_')
+
+def linuxify(winSepStr, doubleBackslash = False):
+    """
+    Convert windows (path) string to the linux format.
+
+    :param winSepStr: (path) string with windows-like "\" separators
+    :param doubleBackslash: if the slashes in the winSepStr are double (happens when you read a macro string raw. Ex.: "C:\\Program Files\\a.txt"
+    :return: str with substituted "\" -> "/"
+    """
+    if doubleBackslash:
+        return winSepStr.replace("\\\\", "/")
+    return winSepStr.replace("\\", "/")

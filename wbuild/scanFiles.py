@@ -5,7 +5,7 @@ import re
 
 from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam, pathsepsToUnderscore
 
-pathsep = os.sep
+pathsep = "/"
 sys.path.insert(0, os.getcwd() + "/.wBuild")
 htmlOuputPath = "Output/html"
 
@@ -127,7 +127,7 @@ def insertPlaceholders(dest, source):
     :return: dest with replaced placeholders
     """
     path = pathlib.Path(source) #get the path to the file
-    PD = pathlib.Path('Output' + pathsep + 'ProcessedData')
+    PD = pathlib.Path('Output/ProcessedData')
 
     PP = path.parts[-2] #last two nodes of the path
     dest = dest.replace("{wbPD}", str(PD))
@@ -180,7 +180,7 @@ def writeRule(r, file):
 
     # remove fields not in SNAKEMAKE_FIELDS
     # wbInfos = {key: wbInfos[key] for key in wbInfos if key in SNAKEMAKE_FIELDS}
-    wbInfos['rule'] = pathsepsToUnderscore(r['file']) # convert filepath to the unique id of the rule
+    wbInfos['rule'] = pathsepsToUnderscore(r['file'], True) # convert filepath to the unique id of the rule
     # write to file
     file.write('\n')
     # dumpDict = {'rule ' + rule: wbInfos}

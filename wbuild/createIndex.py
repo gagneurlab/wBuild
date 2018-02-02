@@ -47,6 +47,8 @@ def writeSubMenu(top, wbData, level):
 
 def getRecentMenu():
     """
+    Support recently edited files list to the HTML web output.
+
     :return: HTML string: "Recently viewed" menu contents
     """
     menuString = ""
