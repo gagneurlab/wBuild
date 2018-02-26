@@ -199,3 +199,17 @@ def linuxify(winSepStr, doubleBackslash = False):
     if doubleBackslash:
         return winSepStr.replace("\\\\", "/")
     return winSepStr.replace("\\", "/")
+
+def fetchHTMLOutputDir(key):
+    """
+    Proves local wBuild config (wbuild.yaml) and looks for "key" parameter.
+    :return: key param value. In case of absence None.
+    """
+    fh = open(".wbuild/wbuild.yaml", "r")
+    configDict = yaml.load(fh)
+    if configDict == None:
+        print("Error parsing .wbuild/wbuild.yaml, working with defaults...")
+        return None
+    if key in configDict:
+        return configDict[key]
+    return None

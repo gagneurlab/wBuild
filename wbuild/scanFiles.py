@@ -3,11 +3,13 @@ import sys
 import pathlib
 import re
 
-from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam, pathsepsToUnderscore
+from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam, pathsepsToUnderscore, fetchHTMLOutputDir
 
 pathsep = "/"
 sys.path.insert(0, os.getcwd() + "/.wBuild")
-htmlOuputPath = "Output/html"
+fetchedHTMLOutput = fetchHTMLOutputDir("htmlOutputPath")
+htmlOutputPath = fetchedHTMLOutput if (fetchedHTMLOutput != None) else "Output/html"
+print("End html output path is ", htmlOutputPath, "\n")
 
 # SNAKEMAKE  = ["input", "output", "threads"]
 
@@ -31,7 +33,7 @@ def writeDependencyFile():
     Entry point for writing .wBuild.depend.
     """
     print("Updating dependencies...")
-    wbData = parseWBInfosFromRFiles()
+    wbData = parseWBInfosFromRFiles(htmlPath=htmlOutputPath)
     mdData = parseMDFiles()
     with open('.wBuild.depend', 'w') as f: #start off with the header
         f.write('######\n')
@@ -195,7 +197,7 @@ def writeMdRule(ruleInfos, file):
     :param file: file to write the rule to
     """
     file.write('\n')
-    file.write('rule ' + pathsepsToUnderscore(ruleInfos['file']) + ':\n')
+    file.write('rule ' + pathsepsToUnderscore(ruleInfos['file'], True) + ':\n')
     file.write('    input: "' + ruleInfos['file'] + '"\n')
     file.write('    output: "' + ruleInfos['outputFile'] + '"\n')
     file.write('    shell: "pandoc --from markdown --to html --css .wBuild/lib/github.css --toc --self-contained -s -o {output} {input}"\n')
@@ -225,7 +227,7 @@ def writeIndexRule(wbRRows, wbMDrows, file):
     file.write('\n')
     file.write('rule Index:\n')
     file.write('    input: \n        "' + '",\n        "'.join(inputFiles) + '"\n')
-    file.write('    output: "' + htmlOuputPath + '/index.html"\n')
+    file.write('    output: "' + htmlOutputPath + '/index.html"\n')
     # file.write('    script: ".wBuild/createIndex.py"\n')
     file.write('    run:\n')
     file.write('        import wbuild.createIndex\n')

@@ -69,3 +69,6 @@ target/
 
 # IDEA Project files
 .idea/
+
+#wbuild depend
+wbuild/.wBuild.depend
