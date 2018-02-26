@@ -51,6 +51,16 @@ source_suffix = '.rst'
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
 
+# Text addendum to the beginning of _each_ file (useful for defining roles)
+rst_prolog = """
+.. role:: bash(code)
+   :language: bash
+.. role:: latex(code)
+   :language: latex
+.. role:: python(code)
+   :language: python
+"""
+
 # The master toctree document.
 master_doc = 'index'
 
