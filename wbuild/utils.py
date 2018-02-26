@@ -205,7 +205,10 @@ def fetchHTMLOutputDir(key):
     Proves local wBuild config (wbuild.yaml) and looks for "key" parameter.
     :return: key param value. In case of absence None.
     """
-    fh = open(".wbuild/wbuild.yaml", "r")
+    try:
+        fh = open(".wbuild/wbuild.yaml", "r")
+    except IOError:
+        return None
     configDict = yaml.load(fh)
     if configDict == None:
         print("Error parsing .wbuild/wbuild.yaml, working with defaults...")
