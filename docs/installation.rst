@@ -40,17 +40,24 @@ as Snakemake **inevitably uses them** while working with wBuild.
 You can install packages for R with :code:`install.packages(packagename)` directive. Find out more
 for instance `here <https://www.r-bloggers.com/installing-r-packages/>`_.
 
+Additionally for *Windows* users
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You need to add :code:`R_HOME` and pandoc home variables to your Path for Snakemake CLI to run correctly.
+See p.2 in `this instruction <http://www.endmemo.com/program/R/installr.php>`.
+
+Now, you are all ready and set up to install the ``wBuild` itself.
+
 Stable release
 --------------
 
+Please make sure you've read `Requirements`_ first.
+|
 To install wBuild, run this command in your terminal:
 
 .. code-block:: console
 
     $ pip install wbuild
-
-This is the preferred method to install wBuild, as it will always install the most recent stable release.
-
 
 
 From sources
