@@ -82,9 +82,9 @@ def writeIndexHTMLMenu():
         menuString += '</li>\n'
     #fill the HTML template with the constructed tag structure
     template = open('.wBuild/template.html').read()
-    template = Template(template).substitute(menu=menuString, title='title', rf=getRecentMenu())  # snakemake.config['projectTitle']
+    template = Template(template).substitute(menu=menuString, title='title', rf=getRecentMenu())  # snakewbuild.yaml['projectTitle']
 
-    f = open('Output/html/index.html', 'w')
+    f = open(htmlOutputPath + '/index.html', 'w')
     f.write(template)
     f.close()
 

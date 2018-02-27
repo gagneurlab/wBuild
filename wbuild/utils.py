@@ -202,16 +202,16 @@ def linuxify(winSepStr, doubleBackslash = False):
 
 def fetchHTMLOutputDir(key):
     """
-    Proves local wBuild config (make.config) and looks for "key" parameter.
+    Proves local wBuild config (wbuild.yaml) and looks for "key" parameter.
     :return: key param value. In case of absence None.
     """
     try:
-        fh = open("make.config", "r")
+        fh = open("wbuild.yaml", "r")
     except IOError:
         return None
     configDict = next(yaml.load_all(fh))
     if configDict == None:
-        print("Error parsing make.config, working with defaults...")
+        print("Error parsing wbuild.yaml, working with defaults...")
         return None
     if key in configDict:
         return configDict[key]

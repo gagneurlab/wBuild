@@ -1,4 +1,4 @@
-configfile: "make.config"
+configfile: "wbuild.yaml"
 include: ".wBuild/wBuild.snakefile"
 
 rule all:

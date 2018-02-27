@@ -53,7 +53,7 @@ def init():
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     shutil.copy(str(templatePath / 'Snakefile'), '.')
-    shutil.copy(str(templatePath / 'make.config'), '.')
+    shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     shutil.copy(str(templatePath / 'readme.md'), '.')
 
     logger.info("init...done")
@@ -68,8 +68,7 @@ def demo():
         sys.exit(2)
     templatePath, wbuildPath, demoPath = setup_paths()
     shutil.copy(str(templatePath / 'Snakefile'), '.')
-    shutil.copy(str(templatePath / 'make.config'), '.')
-    shutil.copy(str(templatePath / 'readme.md'), '.')
+    shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     distutils.dir_util.copy_tree(str(demoPath), '.')
     logger.info("demo...done")
