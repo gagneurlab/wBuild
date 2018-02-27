@@ -1,5 +1,7 @@
 .. highlight:: shell
 
+.. _installation:
+
 ============
 Installation
 ============
@@ -22,15 +24,16 @@ Advanced users who want to get the Python packages elsehow can skip this step.
 2. snakemake
 ~~~~~~~~~~~~
 
-Snakemake is essential to wBuild workflow (learn why in the `Overview of functionality <readme.html#overview-of-functionality>`_).
+Snakemake is essential to wBuild workflow (learn why in the :ref:`Overview of functionality <overview-of-functionality>`).
 You can get Snakemake either using :bash:`pip` or building from `sources <https://bitbucket.org/snakemake/snakemake/>`_.
 
 3. R and packages
-~~~~~
+~~~~~~~~~~~~~~~~~
 
 The original purpose of wBuild's work is to let you put additional build/dependencies info in your R scripts, so we suppose
 `you have already installed R <https://www.r-project.org/>`_. Now, the very important step for installation is to install
 various **R packages**:
+
 * `knitr`
 * `rmarkdown`
 * `pandoc`
@@ -46,13 +49,15 @@ Additionally for *Windows* users
 You need to add :code:`R_HOME` and pandoc home variables to your Path for Snakemake CLI to run correctly.
 See p.2 in `this instruction <http://www.endmemo.com/program/R/installr.php>`.
 
+.. _install-wbuild:
+
 Now, you are all ready and set up to install the ``wBuild` itself.
 
 Stable release
 --------------
 
 Please make sure you've read `Requirements`_ first.
-|
+
 To install wBuild, run this command in your terminal:
 
 .. code-block:: console
