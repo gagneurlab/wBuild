@@ -7,7 +7,7 @@ Here, we show one example of using shell command to download `iris.data` from we
 `Snakefile`:
 
 ```yaml
-configfile: "wbuild.yaml"
+configfile: "make.config"
 include: ".wBuild/wBuild.snakefile"
 
 rule all:
