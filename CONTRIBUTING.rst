@@ -28,7 +28,7 @@ Report bugs at https://github.com/wachutka/wbuild/issues.
 If you are reporting a bug, please include:
 
 
-.. code-block:: markdown
+.. code-block:: md
 
     #### Environment
 
@@ -108,7 +108,7 @@ Please make sure you've read the user :ref:`overview <user-overview>` to underst
 :ref:`features list <features>` could be especially interesting here.
 
 Setting up the development environment
---------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Ready to contribute? Here's how to set up `wbuild` for local development.
 
@@ -145,6 +145,44 @@ Ready to contribute? Here's how to set up `wbuild` for local development.
 
 7. Submit a pull request through the GitHub website.
 
+In-code documentation
+~~~~~~~~~~~~~~~~~~~~~
+
+The code of wBuild is well-documented, and it would be nice to keep it that way. Apart from looking in the code,
+here you find the documentation for the functions of wBuild:
+
+CLI (:code:`wbuild.cli`)
+""""""""""""""""""""""""
+
+.. automodule:: wbuild.cli
+   :members:
+
+Files scanning (:code:`wbuild.scanFiles`)
+"""""""""""""""""""""""""""""""""""""""""
+
+
+.. automodule:: wbuild.scanFiles
+   :members:
+
+Service functions (:code:`wbuild.utils`)
+""""""""""""""""""""""""""""""""""""""""
+
+.. automodule:: wbuild.utils
+   :members:
+
+HTML output index creation (:code:`wbuild.createIndex`)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. automodule:: wbuild.createIndex
+   :members:
+
+Script mapping (:code:`wbuild.autolink`)
+""""""""""""""""""""""""""""""""""""""""
+
+See also :ref:`the overview of this feature <script-mapping>`
+
+.. automodule:: wbuild.autolink
+   :members:
 
 Pull Request Guidelines
 ~~~~~~~~~~~~~~~~~~~~~~~
