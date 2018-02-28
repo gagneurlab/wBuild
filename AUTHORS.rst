@@ -7,6 +7,8 @@ Development Lead
 
 * Leonhard Wachutka <leonhard@wachutka.eu>
 
+.. _contibutors-list:
+
 Contributors
 ------------
 
