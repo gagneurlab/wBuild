@@ -102,6 +102,36 @@ htmlOutputPath
 Placeholders
 ------------
 
+Placeholders provide the ability to refer to your current position in your system's filepath with a pair of letters instead
+of absolute, relative paths. It's best shown in an example:
+.. code-block:: md
+
+    #' wb:
+    #'  input:
+    #'  - iris: "Data/{wbP}/iris.RDS"
+    #'  output:
+    #'  - pca: " {wbPD_P}/pca.RDS"
+
+Here, we use :code:`wbP` for the name of the current project (say, Analysis01) and :code:`wbPD_P` for the name of the
+output directory for processed data slash project name, say :code:`Output/ProcessedData/Analysis01`.
+
+Here is the conscise list of the placeholders:
+
+wbPD
+    [output directory for processed data], e.g. `Output/ProcessedData`
+
+wbP
+    [current project], e.g.  `Analysis1`
+
+wbPP
+    [subfolder name], e.g. `020_InputOutput`
+
+wbPD_P
+    [output directory for processed data]/[current project], e.g. `Output/ProcessedData/Analysis1`
+
+wbPD_PP
+    [output directory for processed data]/[current project]/[subfolder name], e.g. `Output/ProcessedData/Analysis1/020_InputOutput`
+
 
 .. _script-mapping:
 

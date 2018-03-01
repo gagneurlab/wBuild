@@ -85,7 +85,7 @@ def update():
         raise ValueError(".wBuild doesn't exists. Please run wBuild init first or move to the right directory")
 
     logger.info("Removing .wBuild")
-    shutil.rmtree(".wBuild")
+    shutil.rmtree("./.wBuild")
     logger.info("Running .init")
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
