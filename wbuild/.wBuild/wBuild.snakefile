@@ -26,10 +26,10 @@ rule clean:
 
 rule publish:
     input: "Output/all.done"
-    shell: "rsync -Ort {config[htmlOutputPath]}/{config[webDir]}"
+    shell: "rsync -Ort {config[htmlOutputPath]} {config[webDir]}"
 
 rule markdown:
     input: "{file}.md"
-    output: "{config[htmlOutputPath]}/{file}.html"
+    output: expand("{htmlOutputPath}/{{file}}.html", htmlOutputPath = config["htmlOutputPath"])
     shell: "pandoc --from markdown --to html --css .wBuild/lib/github.css --toc --self-contained -s -o {output} {input}"
 
