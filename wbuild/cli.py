@@ -10,6 +10,7 @@ import shutil
 import distutils.dir_util
 import click_log
 import logging
+
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
 
@@ -21,10 +22,18 @@ def setup_paths():
     demoPath = pathlib.Path(wbuild.__file__).parent / 'demo'
     return templatePath, wbuildPath, demoPath
 
+def getMainLogger():
+    """
+
+    :return: logger with CLI-adjusted verbosity
+    """
+    #Set propagate to allow printing to the console
+    logger.propagate = True
+    return logger
 
 @click.group()
 @click_log.simple_verbosity_option(logger)
-@click.version_option('1.1.5',prog_name='wBuild')
+@click.version_option('1.1.6',prog_name='wBuild')
 def main():
     pass
 
@@ -58,9 +67,8 @@ def demo():
         logger.error("ERROR: .wBuild already exists. Run demo in empty folder.")
         sys.exit(2)
     templatePath, wbuildPath, demoPath = setup_paths()
-    shutil.copy(str(demoPath / 'Snakefile'), '.')
+    shutil.copy(str(templatePath / 'Snakefile'), '.')
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
-    shutil.copy(str(templatePath / 'readme.md'), '.')
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     distutils.dir_util.copy_tree(str(demoPath), '.')
     logger.info("demo...done")
@@ -77,8 +85,8 @@ def update():
         raise ValueError(".wBuild doesn't exists. Please run wBuild init first or move to the right directory")
 
     logger.info("Removing .wBuild")
-    shutil.rmtree(".wBuild")
-    logger.info("Running .Init")
+    shutil.rmtree("./.wBuild")
+    logger.info("Running .init")
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     logger.info("update...done")

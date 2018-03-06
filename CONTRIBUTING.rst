@@ -4,46 +4,89 @@
 Contributing
 ============
 
-Contributions are welcome, and they are greatly appreciated! Every
-little bit helps, and credit will always be given.
+.. _welcome-contributing:
 
-You can contribute in many ways:
+Welcome!
+--------
 
-Types of Contributions
-----------------------
+Thanks for your interest in the technical side of our project.
+Contributions to wBuild are a great way to level up your skill, tackle the problem you are facing with the program faster
+and receive some nice and fun Open Source experience!
+Last but not least, contributions are very welcome from our side, and they are greatly appreciated! You'll help anybody
+using wBuild, and we'll surely give a credit for you in :ref:`contributors <contributors-list>`.
 
-Report Bugs
+There are several ways to contribute:
+
+Ways of contributing to wBuild
+------------------------------
+
+Bug reports
 ~~~~~~~~~~~
 
 Report bugs at https://github.com/wachutka/wbuild/issues.
 
 If you are reporting a bug, please include:
 
-* Your operating system name and version.
-* Any details about your local setup that might be helpful in troubleshooting.
-* Detailed steps to reproduce the bug.
 
-Fix Bugs
-~~~~~~~~
+.. code-block:: md
+
+    #### Environment
+
+        Your operating system, version of wBuild, version of Snakemake; any further details of your particular local setup
+        that could be relevant
+
+    #### Issue description
+
+        Generally describe the issue.
+
+    #### Steps to reproduce the issue
+
+        Describe what did you do in the context of program before the bug came out.
+        For example:
+            1. Initiate wBuild in project
+            2. Remove wBuild.depend
+            3. Launch snakemake publish rule
+            ....
+
+    #### What's the expected result?
+
+        Describe the result of your actions that you have expected.
+
+
+    #### What's the actual result?
+
+        Describe the result of your actions that you have faced.
+
+
+    #### Additional details / screenshot
+
+        Include any additional details that you consider relevant.
+
+    - ![Screenshot]()
+    -
+
+Bug fixes
+~~~~~~~~~
 
 Look through the GitHub issues for bugs. Anything tagged with "bug"
-and "help wanted" is open to whoever wants to implement it.
+and "help wanted" is open for your work.
+Initiative bug fixes are also :ref:`highly welcome! <welcome-contributing>`
 
-Implement Features
+Implement features
 ~~~~~~~~~~~~~~~~~~
 
 Look through the GitHub issues for features. Anything tagged with "enhancement"
 and "help wanted" is open to whoever wants to implement it.
 
-Write Documentation
+Write documentation
 ~~~~~~~~~~~~~~~~~~~
 
 wBuild could always use more documentation, whether as part of the
 official wBuild docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
-Submit Feedback
-~~~~~~~~~~~~~~~
+Request/propose a feature
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The best way to send feedback is to file an issue at https://github.com/wachutka/wbuild/issues.
 
@@ -54,8 +97,18 @@ If you are proposing a feature:
 * Remember that this is a volunteer-driven project, and that contributions
   are welcome :)
 
-Get Started!
-------------
+Working with wBuild code
+------------------------
+
+Prepare
+~~~~~~~
+
+Please make sure you've read the user :ref:`overview <user-overview>` to understand the basics of wBuild -
+:ref:`wBuild position in the Snakemake workflow <overview-of-functionality>`, :ref:`demo project <running-demo>` as well as
+:ref:`features list <features>` could be especially interesting here.
+
+Setting up the development environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Ready to contribute? Here's how to set up `wbuild` for local development.
 
@@ -92,8 +145,47 @@ Ready to contribute? Here's how to set up `wbuild` for local development.
 
 7. Submit a pull request through the GitHub website.
 
+In-code documentation
+~~~~~~~~~~~~~~~~~~~~~
+
+The code of wBuild is well-documented, and it would be nice to keep it that way. Apart from looking in the code,
+here you find the documentation for the functions of wBuild:
+
+CLI (:code:`wbuild.cli`)
+""""""""""""""""""""""""
+
+.. automodule:: wbuild.cli
+   :members:
+
+Files scanning (:code:`wbuild.scanFiles`)
+"""""""""""""""""""""""""""""""""""""""""
+
+
+.. automodule:: wbuild.scanFiles
+   :members:
+
+Service functions (:code:`wbuild.utils`)
+""""""""""""""""""""""""""""""""""""""""
+
+.. automodule:: wbuild.utils
+   :members:
+
+HTML output index creation (:code:`wbuild.createIndex`)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+.. automodule:: wbuild.createIndex
+   :members:
+
+Script mapping (:code:`wbuild.autolink`)
+""""""""""""""""""""""""""""""""""""""""
+
+See also :ref:`the overview of this feature <script-mapping>`
+
+.. automodule:: wbuild.autolink
+   :members:
+
 Pull Request Guidelines
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Before you submit a pull request, check that it meets these guidelines:
 
@@ -104,11 +196,3 @@ Before you submit a pull request, check that it meets these guidelines:
 3. The pull request should work for Python 2.6, 2.7, 3.3, 3.4 and 3.5, and for PyPy. Check
    https://travis-ci.org/wachutka/wbuild/pull_requests
    and make sure that the tests pass for all supported Python versions.
-
-Tips
-----
-
-To run a subset of tests::
-
-
-    $ python -m unittest tests.test_wbuild

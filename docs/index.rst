@@ -8,15 +8,11 @@ Contents:
 
    readme
    installation
-   usage
-   modules
+   features
    contributing
    authors
    history
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Search the documentation
+===============
+:ref:`search`

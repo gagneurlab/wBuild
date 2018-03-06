@@ -10,7 +10,7 @@ include: "../.wBuild.depend"
 
 rule show:
     input: "Output/all.done"
-    shell: "google-chrome Output/html/index.html &"
+    shell: "google-chrome {config[htmlOutputPath]}/index.html &"
 
 rule mapScripts:
     input: "scriptMapping.wb"
@@ -19,17 +19,17 @@ rule mapScripts:
         wbuild.autolink.autolink("scriptMapping.wb")
 
 rule graph:
-    shell: "snakemake --dag | dot -Tsvg -Grankdir=LR > Output/html/dep.svg"
+    shell: "snakemake --dag | dot -Tsvg -Grankdir=LR > {config[htmlOutputPath]}/dep.svg"
 
 rule clean:
-    shell: "rm -R Output/html/* || true && rm .wBuild.depend || true && rm -R .wBuild/__pycache__ || true "
+    shell: "rm -R {config[htmlOutputPath]}* || true && rm .wBuild.depend || true && rm -R .wBuild/__pycache__ || true "
 
 rule publish:
     input: "Output/all.done"
-    shell: "rsync -Ort Output/html/ {config[webDir]}"
+    shell: "rsync -Ort {config[htmlOutputPath]} {config[webDir]}"
 
 rule markdown:
     input: "{file}.md"
-    output: "Output/html/{file}.html"
+    output: expand("{htmlOutputPath}/{{file}}.html", htmlOutputPath = config["htmlOutputPath"])
     shell: "pandoc --from markdown --to html --css .wBuild/lib/github.css --toc --self-contained -s -o {output} {input}"
 
