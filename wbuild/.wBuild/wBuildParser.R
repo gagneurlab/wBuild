@@ -1,5 +1,6 @@
-parseWBHeader = function(filename)
+parseWBHeader = function(filename, ...)
 {
+	addWildCards = list(...)
 	if(exists('snakemake') && snakemake@rule != 'WB')
 	{
 		filename = snakemake@input[['RScript']]
@@ -13,7 +14,7 @@ parseWBHeader = function(filename)
 			`wbPP` = str_split(filename,'/')[[1]][3],
 			`wbPD_P` = paste(wbPD,str_split(filename,'/')[[1]][2],sep ="/"),
 			`wbPD_PP` = paste(wbPD,str_split(filename,'/')[[1]][2],str_split(filename,'/')[[1]][3], sep='/'))
-	
+	wildcards = c(wildcards,addWildCards)
 	if(!exists('snakemake') || snakemake@rule == 'WB')
 	{
 		library(methods)
@@ -120,6 +121,3 @@ wbRead = function(name)
 	}
 	stop('Could not determine format of ', snakemake@input[[name]])
 }
-
-
-
