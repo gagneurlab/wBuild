@@ -30,10 +30,3 @@ def test_wBuildDemo_isCreated(testdirectory):
     r = init_dir.run("wbuild demo")
     assert r.stdout.match('*demo...done*')
 
-@mock.patch('subprocess.check_output')
-def test_updateWBMessageShown(testdirectory, wbuild_depr_mock):
-    wbuild_depr_mock.return_value = "wbuild==0.1.5"
-    init_dir = testdirectory.mkdir("init")
-    r = init_dir.run("wbuild init")
-    upd = init_dir.run("wbuild update")
-    assert "version" in upd
