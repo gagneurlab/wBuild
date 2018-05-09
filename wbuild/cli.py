@@ -83,9 +83,16 @@ def update():
     # - if it does, update it
     if not os.path.exists(".wBuild"):
         raise ValueError(".wBuild doesn't exists. Please run wBuild init first or move to the right directory")
-
     logger.info("Removing .wBuild")
     shutil.rmtree("./.wBuild")
+    import subprocess
+    deprecatedPackages = subprocess.check_output(['pip','list','--outdated']).decode("utf-8")
+    if 'wbuild' in deprecatedPackages:
+        logger.warning("Newer version of wBuild available.")
+        updateConf = input("Update wBuild using pip (requires internet connection)? (y/n)")
+        if 'y' in updateConf:
+            subprocess.call(['pip','install','wbuild','upgrade'])
+            logger.info("wBuild successfully updated!")
     logger.info("Running .init")
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')

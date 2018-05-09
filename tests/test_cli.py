@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `wbuild` package."""
+"""Tests for `wbuild` command-line interface."""
+from unittest import mock
 
 from click.testing import CliRunner
 from wbuild import cli
@@ -28,3 +29,11 @@ def test_wBuildDemo_isCreated(testdirectory):
     print("Directory created!")
     r = init_dir.run("wbuild demo")
     assert r.stdout.match('*demo...done*')
+
+@mock.patch('subprocess.check_output')
+def test_updateWBMessageShown(testdirectory, wbuild_depr_mock):
+    wbuild_depr_mock.return_value = "wbuild==0.1.5"
+    init_dir = testdirectory.mkdir("init")
+    r = init_dir.run("wbuild init")
+    upd = init_dir.run("wbuild update")
+    assert "version" in upd
