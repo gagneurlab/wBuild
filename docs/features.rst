@@ -66,10 +66,12 @@ Snakemake tags
 One can also state Snakemake options in "wb" block of the YAML header and even `refer to them in this R script later` using
 :code:`snakemake@`. Here, we mark that we will use 10 threads when executing this script:
 
-#' wb:
-#'  input:
-#'  - iris: "Data/iris_downloaded.data"
-#'  threads: 10
+.. code-block::
+
+    #' wb:
+    #'  input:
+    #'  - iris: "Data/iris_downloaded.data"
+    #'  threads: 10
 
 The specified thread variable can then be refered to by name in our R script: :code:`snakemake@threads`
 
@@ -104,6 +106,7 @@ Placeholders
 
 Placeholders provide the ability to refer to your current position in your system's filepath with a pair of letters instead
 of absolute, relative paths. It's best shown in an example:
+
 .. code-block:: md
 
     #' wb:

@@ -121,7 +121,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'classic'
+html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     "externalrefs" : "true",
     "sidebarbgcolor" : "navy",
@@ -129,9 +129,7 @@ html_theme_options = {
     "sidebartextcolor" : "white",
     "bgcolor" : "whitesmoke",
     "textcolor" : "black",
-    "bodyfont" : "Georgia, serif",
-    "headfont" : "Georgia, serif",
-    "headtextcolor" : "darkolivegreen",
+    "headtextcolor" : "darkolivegreen"
 }
 
 # Theme options are theme-specific and customize the look and feel of a
