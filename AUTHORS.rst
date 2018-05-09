@@ -2,12 +2,13 @@
 Credits
 =======
 
-Development Lead
+Development Team
 ----------------
 
 * Leonhard Wachutka <leonhard@wachutka.eu>
+* Stefan Dvoretskii <stefan.dvoretskii@gmail.com>
 
-.. _contibutors-list:
+.. _contributors-list:
 
 Contributors
 ------------

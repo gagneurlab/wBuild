@@ -2,19 +2,23 @@
 wBuild
 ======
 
+.. _user-overview:
+
 Overview
 --------
 wBuild is all about making your day easier resolving, updating and cascading various dependencies, pipeline rules and
 code structs. Why bother clicking various files and directories in your project one-by-one? Instead of that, wBuild lets you
 specify all the needed information in a YAML header right in your code and let the automated :code:`Snakemake` processes do the rest!
 
-You can learn more about the features that `wBuild provides` either taking a look at the :ref:`features list <features>`
-or :ref:`looking at the HTML output of the demo project <running-demo>`.
+You can learn more about the features that wBuild provides either taking a look at the :ref:`features list <features>`
+or :ref:`looking at the HTML output of the demo project <running-demo>`. Another interesting thing to take a look at could be
+the :ref:`installation requirements & procedure <installation>` and, in particular, :ref:`wBuild project tree structure <project-structure>`.
 
 You can find functionality overview of wBuild and its relationship with Snakemake :ref:`here <overview-of-functionality>`.
 
 Example
--------------
+-------
+
 We create a script in R and provide a YAML header with wBuild-supported tags (link to more) :
 
 .. code-block:: R
@@ -45,6 +49,10 @@ We create a script in R and provide a YAML header with wBuild-supported tags (li
 Running :bash:`snakemake` (provided you've already :ref:`initiated wbuild <wbuild-init>` in your project using :bash:`wbuild init`) will now automatically
 parse the parameter out of the header and create an HTML output showing the results of our petal analysis - found in :code:`./Output/html`
 by default along with a nice navigable HTML structure.
+
+**Note** that snakemake is configured to run only if the :code:`all.done` file is **not** placed in the :code:`{wbPD}/..`.
+Therefore, remove it manually first if you want to run the whole pipeline again without modifying files!
+
 
 .. image:: /res/images/HTML_output_demo.png
    :scale: 70%
@@ -84,6 +92,7 @@ of a workflow involving wBuild. Following diagram represents general functional 
 As you see Snakemake actually takes the **main** role in a typical wBuild workflow, so every user is *very much encouraged* to
 learn more about Snakemake. You can learn more about Snakemake `in its official documentation <http://snakemake.readthedocs.io/en/stable/>`_.
 You are also welcome to take a look at the more :ref:`technial features <features>` that wBuild provides.
+So be sure to delete it each time you want to restart the pipeline once again!
 
 |
 
