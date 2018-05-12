@@ -45,7 +45,6 @@ def init():
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     shutil.copy(str(templatePath / 'Snakefile'), '.')
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
-    shutil.copy(str(templatePath / 'readme.md'), '.')
 
     logger.info("wBuild initialised!")
 
