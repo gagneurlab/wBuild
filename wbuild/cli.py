@@ -22,15 +22,6 @@ def setup_paths():
     demoPath = pathlib.Path(wbuild.__file__).parent / 'demo'
     return templatePath, wbuildPath, demoPath
 
-def getMainLogger():
-    """
-
-    :return: logger with CLI-adjusted verbosity
-    """
-    #Set propagate to allow printing to the console
-    logger.propagate = True
-    return logger
-
 @click.group()
 @click_log.simple_verbosity_option(logger)
 @click.version_option('1.1.6',prog_name='wBuild')
