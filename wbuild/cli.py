@@ -46,7 +46,7 @@ def init():
     shutil.copy(str(templatePath / 'Snakefile'), '.')
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
 
-    logger.info("wBuild initialised!")
+    logger.info("init...done")
 
 
 @main.command()
