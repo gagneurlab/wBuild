@@ -36,7 +36,7 @@ def main():
 def init():
     """Initialize the repository with wbuild.
 
-    This will create a .wBuild/ folder in the current path
+    This will prepare wBuild in the current project
     """
     if os.path.exists(".wBuild"):
         logger.error("ERROR: .wBuild already exists. Use update if you want to update the version")
@@ -47,7 +47,7 @@ def init():
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     shutil.copy(str(templatePath / 'readme.md'), '.')
 
-    logger.info("init...done")
+    logger.info("wBuild initialised!")
 
 
 @main.command()
