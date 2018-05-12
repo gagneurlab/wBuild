@@ -3,13 +3,15 @@ import glob
 from yaml import load
 from os import link
 from pathlib import Path
-
+from wbuild.utils import Config
 
 def autolink(config):
-    S = Path('Scripts')
+    conf = Config()
+    scriptsPath = conf.get("scriptsPath")
+    S = Path(scriptsPath)
     tasks = load(open(config))
 
-    for filename in glob.iglob('Scripts/**/*.ln.R', recursive=True):
+    for filename in glob.iglob(scriptsPath + '/**/*.ln.R', recursive=True):
         os.remove(filename)
 
     for task in tasks:

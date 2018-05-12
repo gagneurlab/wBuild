@@ -5,13 +5,9 @@ import shutil
 from string import Template
 from os import listdir
 from os.path import isfile, join
-from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam, fetchHTMLOutputDir
+from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam, Config
 
 sys.path.insert(0, os.getcwd() + "/.wBuild")  # TODO - is this line required?
-
-fetchedHTMLOutput = fetchHTMLOutputDir("htmlOutputPath")
-htmlOutputPath = fetchedHTMLOutput if fetchedHTMLOutput else "Output/html"
-
 
 def writeSubMenu(top, wbData, level):
     """
@@ -52,6 +48,8 @@ def getRecentMenu():
     :return: HTML string: "Recently viewed" menu contents
     """
     menuString = ""
+    conf = Config()
+    htmlOutputPath = conf.get("htmlOutputPath")
     rFiles = sorted([join(htmlOutputPath, f) for f in listdir(htmlOutputPath) if isfile(join(htmlOutputPath, f))], key=os.path.getmtime, reverse=True)[:10]
     for f in rFiles:
         fo = pathlib.PurePath(f).name
@@ -63,8 +61,11 @@ def writeIndexHTMLMenu():
     """
     Scan for files involved in the current HTML rendering and fill the HTML quick access toolbar correspondingly
     """
-    wbData = parseWBInfosFromRFiles(htmlPath=htmlOutputPath)
-    mdData = parseMDFiles(htmlPath=htmlOutputPath)
+    conf = Config()
+    htmlOutputPath = conf.get("htmlOutputPath")
+    scriptsPath = conf.get("scriptsPath")
+    wbData = parseWBInfosFromRFiles(script_dir= scriptsPath, htmlPath=htmlOutputPath)
+    mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     wbData += mdData
     menuString = ""
     temp = []
@@ -92,6 +93,8 @@ def writeIndexHTMLMenu():
 def ci():
     writeIndexHTMLMenu()
 
+    conf = Config()
+    htmlOutputPath = conf.get("htmlOutputPath")
     libDir = htmlOutputPath + "/lib"
 
     if os.path.exists(libDir):

@@ -172,7 +172,7 @@ def parseYamlParams(header, f):
               'Errors {0}'.format(e) + bcolors.ENDC)
         return None
 
-    logger.debug("Parsed params: " +  str(param) + "\n.")
+    logger.debug("Parsed params: " + str(param) + "\n.")
     return param
 
 def pathsepsToUnderscore(systemPath, dotsToUnderscore = False):
@@ -197,19 +197,44 @@ def linuxify(winSepStr, doubleBackslash = False):
         return winSepStr.replace("\\\\", "/")
     return winSepStr.replace("\\", "/")
 
-def fetchHTMLOutputDir(key):
-    """
-    Proves local wBuild config (wbuild.yaml) and looks for "key" parameter.
-    :return: key param value. In case of absence None.
-    """
-    try:
-        fh = open("wbuild.yaml", "r")
-    except IOError:
-        return None
-    configDict = next(yaml.load_all(fh))
-    if configDict == None:
-        logger.error("Error parsing wbuild.yaml, working with defaults...")
-        return None
-    if key in configDict:
-        return configDict[key]
-    return None
+class Config:
+
+    path = "wbuild.yaml"
+    instance = None
+
+    def __init__(self):
+        if Config.instance != None:
+            self.conf_dict = Config.instance.conf_dict
+            return
+        #load defaults
+        self.loadDefaultConfiguration()
+
+        try:
+            fh = open(Config.path, "r")
+        except IOError:
+            raise IOError("Can not read config. Are you sure you have enough rights and config path (wbuild.yaml) "
+                         "is "
+                         "right?")
+        configDict = next(yaml.load_all(fh))
+        if configDict == None:
+            logger.error("Error parsing wbuild.yaml - format is wrong. Working with defaults...")
+        else:
+            self.conf_dict = merge_two_dicts(self.conf_dict, configDict)
+        #fill Singleton
+        Config.instance = self
+
+    def loadDefaultConfiguration(self):
+        self.conf_dict = {"htmlOutputPath": "Output/html", "processedDataPath": "Output/ProcessedData",
+                          "scriptsPath": "Scripts", "projectTitle": "Project"}
+
+    def get(self, attrname):
+        if (attrname in self.conf_dict):
+            return self.conf_dict[attrname]
+        else:
+            raise AttributeError("There is no attribute " + attrname + " in the configuration file loaded!")
+
+def merge_two_dicts(x, y):
+    z = x.copy()  # start with x's keys and values
+    z.update(y)  # modifies z with y's keys and values & returns None
+    return z
+
