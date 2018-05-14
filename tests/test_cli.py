@@ -22,7 +22,7 @@ def test_wBuildHelp_isShown():
 def test_newDirSuccessfullyInitiated(testdirectory):
     init_dir = testdirectory.mkdir("init")
     # create readme.md to avoid readme copying dialog
-    open('readme.md', 'w+')
+    open(init_dir.path() + '/readme.md', 'w+')
     r = init_dir.run("wbuild init")
 
     assert r.stdout.match('*init...done*')
