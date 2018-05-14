@@ -4,6 +4,7 @@
 """Tests for `wbuild` command-line interface."""
 from unittest import mock
 
+import os
 from click.testing import CliRunner
 from wbuild import cli
 
@@ -20,7 +21,10 @@ def test_wBuildHelp_isShown():
 
 def test_newDirSuccessfullyInitiated(testdirectory):
     init_dir = testdirectory.mkdir("init")
+    os.chdir(testdirectory)
+    open('readme.md', 'w+')
     r = init_dir.run("wbuild init")
+
     assert r.stdout.match('*init...done*')
 
 
