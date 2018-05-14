@@ -45,6 +45,11 @@ def init():
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     shutil.copy(str(templatePath / 'Snakefile'), '.')
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
+    if not os.path.isfile("readme.md"):
+        copyReadme = input("wBuild needs readme.md in a root folder of your project. Shall we create the default "
+                           "one? (y/n)")
+        if 'y' in copyReadme:
+            shutil.copy(str(templatePath / 'readme.md'), '.')
 
     logger.info("init...done")
 
@@ -81,7 +86,7 @@ def update():
         logger.warning("Newer version of wBuild available.")
         updateConf = input("Update wBuild using pip (requires internet connection)? (y/n)")
         if 'y' in updateConf:
-            subprocess.call(['pip','install','wbuild','upgrade'])
+            subprocess.call(['pip','install','wbuild','--upgrade'])
             logger.info("wBuild successfully updated!")
     logger.info("Running .init")
     templatePath, wbuildPath, demoPath = setup_paths()
