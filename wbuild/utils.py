@@ -176,7 +176,8 @@ def parseYamlParams(header, f):
     return param
 
 def pathsepsToUnderscore(systemPath, dotsToUnderscore = False):
-    """Convert all system path separators and dots to underscores. Product is used as a unique ID for rules in scanFiles.py or the output HTML files
+    """
+    Convert all system path separators and dots to underscores. Product is used as a unique ID for rules in scanFiles.py or the output HTML files
     :param systemPath: path to convert in
     :param dotsToUnderscore: if the dot should be converted as well. Defaults to false
     :return: path string with converted separators

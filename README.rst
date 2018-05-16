@@ -19,7 +19,10 @@ You can find functionality overview of wBuild and its relationship with Snakemak
 Example
 -------
 
-We create a script in R and provide a YAML header with wBuild-supported tags (link to more) :
+First, we :ref:`install <installation>` all the needed software requirements, including wBuild.
+Then, we :ref:`initialize wbuild <wbuild-init>` which creates :ref:`wBuild files <project-structure>` in our project.
+
+After that, we create an R script in the  and provide a :ref:`YAML header <yaml-headers>` with wBuild-supported tags:
 
 .. code-block:: R
 
@@ -46,9 +49,11 @@ We create a script in R and provide a YAML header with wBuild-supported tags (li
     colnames(iris_df) = gsub('\\.','',colnames(iris_df))
     hist(iris_df[[id]],main=id)
 
-Running :bash:`snakemake` (provided you've already :ref:`initiated wbuild <wbuild-init>` in your project using :bash:`wbuild init`) will now automatically
-parse the parameter out of the header and create an HTML output showing the results of our petal analysis - found in :code:`./Output/html`
-by default along with a nice navigable HTML structure.
+Running :bash:`snakemake` now in the root directory of your project will now automatically
+parse the parameters out of scripts headers and create an HTML output showing the results of our petal analysis - found in HTML output directory
+(:code:`./Output/html` by default) along with a nice navigable HTML structure. Let's open one of the output HTML files, use the
+upper footer to navigate to the :ref:`needed subproject <scripts-structure>` (here *Analysis1*), and we will see a nicely rendered output of our
+script:
 
 .. image:: /res/images/HTML_output_demo.png
    :scale: 70%
@@ -64,35 +69,35 @@ You can read more about :ref:`publishing the output HTML to your common server <
 Running demo
 ~~~~~~~~~~~~
 * Install wBuild. You can learn more about the installation process :ref:`here <installation>`.
-* Navigate to an empty directory
+* Navigate to an *empty* directory.
 * Run :bash:`wbuild demo`. This will create a wBuild demo project with various examples.
 * Explore the files in :bash:`Scripts/`
-* Run :bash:`snakemake` to let Snakemake do its thing and compile the project. You can learn why snakemake is so important under `Functionality`_.
+* Run :bash:`snakemake` to let Snakemake do its thing (see below) and compile the project.
 * Open :code:`Output/html/index.html` in your web browser. From there, you can browse through sites showing and describing :ref:`basic features <features>` of wBuild on an example analysis.
 
 .. _overview-of-functionality:
 
-Functionality
--------------
-wBuild is bound to make the day of writing and publishing analysis scripts and their output easier. It is, however, *not really
-a standalone application*, much more **a plugin and "code generator" for the later use of Snakemake**, which is *inevitable* part
-of a workflow involving wBuild. Following diagram represents general functional relationship between Snakemake and wBuild:
+Functionality & workflow
+------------------------
+wBuild is *not really a standalone application*, much more **a plugin and "code generator" for the later use of Snakemake**, which is *inevitable* part
+of a workflow involving wBuild: this way, you run :code:`snakemake` CLI each time you want to build and render your project!
+Following diagram represents general functional relationship between Snakemake and wBuild:
 
 
 .. image:: /res/images/snakemake_wbuild_diag.jpg
-   :scale: 80%
+   :scale: 75%
 
 |
 |
 
-As you see Snakemake actually takes the **main** role in a typical wBuild workflow, so every user is *very much encouraged* to
-learn more about Snakemake. You can learn more about Snakemake `in its official documentation <http://snakemake.readthedocs.io/en/stable/>`_.
+As you see, *Snakemake* actually takes the **main** role in a typical wBuild workflow, so every user is *encouraged* to
+learn more about Snakemake - for instance `in its official documentation <http://snakemake.readthedocs.io/en/stable/>`_.
 You are also welcome to take a look at the more :ref:`technial features <features>` that wBuild provides.
-So be sure to delete it each time you want to restart the pipeline once again!
 
-|
 
-* Enables reproducible research by appending every R-markdown script to the global analysis pipeline written in snakemake
+A small overview of the functionality that wBuild provides:
+
+* wBuild enables reproducible research by appending every R-markdown script to the global analysis pipeline written in snakemake
 * All R scripts using R-markdown get compiled via Rmarkdown and rendered in a navigable web-page
 * This is achieved by writing the snakemake rules directly in the header of your R scripts
 * Headers allow the same flexibility (i.e. usage of python) as in the traditional Snakefile
@@ -102,20 +107,24 @@ So be sure to delete it each time you want to restart the pipeline once again!
 wBuild project structure
 ------------------------
 
-Assert :code:`ROOT` is the root directory of your wBuild supported project. Then
+Assert :code:`ROOT` is the root directory of your wBuild project.
 
 ROOT/.wBuild
-    Is a directory with static wBuild files that *is not supposed to be changed unless necessary*. There are all the
-    service files located
+    Is a directory with static wBuild files that *is not to be changed unless necessary*. There are all the
+    service files located.
 
 ROOT/wbuild.yaml
-    Is a configuration file. Deleting will disrupt the wBuild work! See :ref:`configuration file <configuration-file>`.
+    It is a configuration file. Deleting will disrupt the wBuild work! See :ref:`configuration file <configuration-file>`.
 
 ROOT/.wBuild.depend
-    File *autogenerated* by wBuild. Contains rule information for the :code:`snakemake workflow <overview-of-functionality>`.
+    File *autogenerated* by wBuild. Contains rule information for the :ref:`Snakemake pipeline <overview-of-functionality>`.
+
+.. _scripts-structure:
 
 ROOT/Scripts
-    Is a directory where all your scripts should be located by default.
+    Is a root directory where all your scripts should be located. Subdirectories contain the **subprojects**, which is a
+    useful thing to have if you e.g. want to divide your scripts in tabs in the HTML output or
+    :ref:`map the same script to the various data <script-mapping>`
 
 ROOT/Output
     Is a default output directory. It's subdirectories, :code:`html` and :code:`ProcessedData`, are paths for

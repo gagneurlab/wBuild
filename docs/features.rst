@@ -9,7 +9,7 @@ Overview
 
 We all know that doing data analysis day-to-day could easily turn into routine work - so wBuild exactly to reduce the
 amount of time you spend to :ref:`publish the output of your script <publishing-the-output>`, :ref:`declare the needed input files <specify-input>`,
-:ref:`run Py code as a part of work pipeline <execute-py-code>`, :ref:`use placeholders to structure your Snakemake job <use_placeholders>`,
+:ref:`run Py code as a part of work pipeline <execute-py-code>`, :ref:`use placeholders to structure your Snakemake job <use-placeholders>`,
 :ref:`map your project's scripts together <script-mapping>` and many more.
 
 You are also welcome to find all of the `examples` showing the listed features :ref:`running the demo project <running-demo>`.
@@ -31,6 +31,10 @@ documented under :bash:`wbuild -h`
     To be called on an already initialized project. Updates :bash:`.wbuild` directory to the newest version using
     :ref:`installed <install-wbuild>` Python :code:`wbuild` package.
 
+All these commands should be executed from the **root directory of the project**.
+
+.. _yaml-headers:
+
 Parsing YAML headers
 --------------------
 In following, we present a basic YAML header:
@@ -50,24 +54,24 @@ In following, we present a basic YAML header:
 
 Note that for the header to be parsed, you currently need to **source** :code:`.wBuild\wBuildParser.R` and **call**
 :code:`parseWBHeader()` with the path to your current script as an argument.
-wBuild requires users to define information of the scripts in RMarkdown YAML-format header. Besides standard RMarkdown header,
-wBuild reads `rules for Snakemake`_ from wb block. Important tags for this block are input and output. wBuild reads inputs and outputs,
-and then builds dependence graph. By default, the script will be excuted by taking the inputs and produce outputs (if any),
+wBuild requires users to define information of the scripts in RMarkdown YAML-format header.
+wBuild scans it and outputs `rules for Snakemake`_. :code:`wb` block is a "wBuild-own" one.
+Important tags here are input and output. These are used to :ref:`costruct the snakemake pipeline <overview-of-functionality>`,
 and :ref:`render the script into an HTML format <publishing-the-output>`.
 
-Technically speaking, there are generally two sets of tags that could be used in this YAML header: wBuild-own and Snakemake tags.
+Tags that can be provided mainly follow the logic of Snakemake and partially that of wbuild.
 
-**Please note**: YAML tags have a strict format that they should follow, e.g. there should be *no tabs*, **only spaces!**.
-`Read more about the YAML syntax`_.
+**Please note**: YAML tags have a strict format that they should follow - e.g. there should be *no tabs*, **only spaces!**
+You can `read more about the YAML syntax`_.
 
-.. _Read more about the YAML syntax: http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
+.. _read more about the YAML syntax: http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
 
-wBuild-own YAML tags
-~~~~~~~~~~~~~~~~~~~~
+Tags
+~~~~
 
 To make working with R projects even more comfortable, there are a few additional YAML tags that wBuild provides. They are:
 
-.. _specify_input:
+.. _specify-input:
 
 input
     Specify any input files you would like to use. You can later call them from the R code using :code:`snakemake@input[[<input_file_var>]]`.
@@ -85,14 +89,14 @@ type
     Tag describing the type of the file. Can be: :code:`script` for R Scripts, :code:`noindex` for Markdown and :code:`empty`
     for the rest.
 
+The information stated under this tags is later synchronised with Snakemake.
 
-Snakemake tags
-~~~~~~~~~~~~~~
+.. _snakemake-tags:
 
 One can also state Snakemake options in "wb" block of the YAML header and even `refer to them in this R script later` using
 :code:`snakemake@`. Here, we mark that we will use 10 threads when executing this script:
 
-.. code-block::
+.. code-block:: R
 
     #' wb:
     #'  input:
@@ -100,6 +104,7 @@ One can also state Snakemake options in "wb" block of the YAML header and even `
     #'  threads: 10
 
 The specified thread variable can then be refered to by name in our R script: :code:`snakemake@threads`
+
 
 Snakemake special features
 --------------------------
@@ -109,8 +114,8 @@ Use following addenda to :code:`snakemake` CLI:
 --dag
     Construct the directed acyclic graph of the current snakemake workflow.
 
-Index -f
-    Prints file structure information - helpful to see if any needed files are on their place.
+There are also some special rules that are not getting executed as a part of the usual workflow which can be run separately. Consult
+:code:`.wBuild/wBuild.snakefile` in your project to find out more.
 
 .. _rules for Snakemake: http://snakemake.readthedocs.io/en/stable/snakefiles/rules.html
 
@@ -120,7 +125,7 @@ Publishing the output
 ---------------------
 
 Snakemake renders your project, including script text and their outputs, to a nice viewable *structure of HTML files*. You can
-specify the output path by putting/changing the :ref:`htmlOutputPath <html-output-path>` value inside the :ref:`wbuild.yaml <configuration-file>` file found
+specify the output path by putting/changing the htmlOutputPath value inside the :ref:`configuration <configuration-file>` file found
 in the root directory of your wBuild-initiated project. Your HTML gets output to :code:`Output/html` by default.
 
 Markdown
@@ -135,7 +140,6 @@ Configuration file
 ------------------
 
 :code:`wbuild.yaml` file that is found in the root directory of the project stands for the configuration file of wBuild.
-|**IMPORTANT**: Please, do not remove any key-value pairs from it or move this file *unless you know what you are doing*.
 In this file you can adjust various properties of wBuild workflow:
 
 .. _html-output-path:
@@ -146,6 +150,11 @@ htmlOutputPath
 
 processedDataPath
     `Relative` path to the data output directory. Default is :code:`Output/ProcessedData`
+
+scriptsPath
+    `Relative` path to the root Scripts directory.
+
+**IMPORTANT**: Please, do not remove any key-value pairs from it or move this file *unless you know what you are doing*.
 
 .. _use-placeholders:
 
@@ -169,22 +178,25 @@ output directory for processed data slash project name, say :code:`Output/Proces
 Here is the conscise list of the placeholders:
 
 wbPD
-    [output directory for processed data], e.g. :code:`Output/ProcessedData`
+    <output directory for processed data>, e.g. :code:`Output/ProcessedData`
 
 wbP
-    [current project], e.g.  :code:`Analysis1`
+    <current project>, e.g.  :code:`Analysis1`
 
 wbPP
-    [subfolder name], e.g. :code:`020_InputOutput`
+    <subfolder name>, e.g. :code:`020_InputOutput`
 
 wbPD_P
-    [output directory for processed data]/[current project], e.g. :code:`Output/ProcessedData/Analysis1`
+    <output directory for processed data>/<current project>, e.g. :code:`Output/ProcessedData/Analysis1`
 
 wbPD_PP
-    [output directory for processed data]/[current project]/[subfolder name], e.g. :code:`Output/ProcessedData/Analysis1/020_InputOutput`
+    <output directory for processed data>/<current project>/<subfolder name>, e.g. :code:`Output/ProcessedData/Analysis1/020_InputOutput`
 
 
 .. _script-mapping:
 
 Script mapping
 --------------
+
+This advanced feature allows you to use the same script to analyse the similarly structured data as a part of various
+subprojects.

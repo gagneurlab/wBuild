@@ -123,13 +123,6 @@ pygments_style = 'sphinx'
 # a list of builtin themes.
 html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
-    "externalrefs" : "true",
-    "sidebarbgcolor" : "navy",
-    "sidebarbtncolor" : "white",
-    "sidebartextcolor" : "white",
-    "bgcolor" : "whitesmoke",
-    "textcolor" : "black",
-    "headtextcolor" : "darkolivegreen"
 }
 
 # Theme options are theme-specific and customize the look and feel of a
