@@ -7,7 +7,8 @@ Features
 Overview
 --------
 
-We all know that doing data analysis day-to-day could easily turn into routine work - so wBuild exactly to reduce the
+We all know that doing data analysis day-to-day could easily turn into routine work and it is often hard to have fully reproducible code. Can you say for sure that you can redo your whole analysis only provided the raw data and your code? 
+wBuild is designed to reduce the
 amount of time you spend to :ref:`publish the output of your script <publishing-the-output>`, :ref:`declare the needed input files <specify-input>`,
 :ref:`run Py code as a part of work pipeline <execute-py-code>`, :ref:`use placeholders to structure your Snakemake job <use-placeholders>`,
 :ref:`map your project's scripts together <script-mapping>` and many more.
@@ -16,7 +17,7 @@ You are also welcome to find all of the `examples` showing the listed features :
 
 Command-line interface
 ----------------------
-Basically, command-line interface of wBuild is responsible `only` for code-generation. There are three instructions, also shortly
+The command-line interface of wBuild is responsible `only` for preparing a project directory to be processed by snakemake and wBuild. There are three instructions, also shortly
 documented under :bash:`wbuild -h`
 
 :bash:`wbuild demo`
@@ -28,7 +29,7 @@ documented under :bash:`wbuild -h`
     Initialize `wBuild` in an already existing project. This command prepares all important wrappers and files for Snakemake.
 
 :bash:`wbuild update`
-    To be called on an already initialized project. Updates :bash:`.wbuild` directory to the newest version using
+    To be called on an already initialized project. Updates :bash:`.wbuild` directory to the latest version using
     :ref:`installed <install-wbuild>` Python :code:`wbuild` package.
 
 All these commands should be executed from the **root directory of the project**.
@@ -52,8 +53,7 @@ In following, we present a basic YAML header:
     #' type: script
     #'---
 
-Note that for the header to be parsed, you currently need to **source** :code:`.wBuild\wBuildParser.R` and **call**
-:code:`parseWBHeader()` with the path to your current script as an argument.
+
 wBuild requires users to define information of the scripts in RMarkdown YAML-format header.
 wBuild scans it and outputs `rules for Snakemake`_. :code:`wb` block is a "wBuild-own" one.
 Important tags here are input and output. These are used to :ref:`costruct the snakemake pipeline <overview-of-functionality>`,
@@ -66,6 +66,10 @@ You can `read more about the YAML syntax`_.
 
 .. _read more about the YAML syntax: http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
 
+If you want to access information from the header of a script from within the script (code self-reflection), need to **source** :code:`.wBuild\wBuildParser.R` and **call**
+:code:`parseWBHeader()` with the path to your script as an argument. 
+
+
 Tags
 ~~~~
 
@@ -74,10 +78,10 @@ To make working with R projects even more comfortable, there are a few additiona
 .. _specify-input:
 
 input
-    Specify any input files you would like to use. You can later call them from the R code using :code:`snakemake@input[[<input_file_var>]]`.
+    Specify any input files you would like to use. You can later access them from the R code using :code:`snakemake@input[[<input_file_var>]]`.
 
 output
-    The same as input - called using :code:`snakemake@output`.
+    The same as input - accessed using :code:`snakemake@output`.
 
 .. _execute-py-code:
 
@@ -112,7 +116,7 @@ Snakemake special features
 Use following addenda to :code:`snakemake` CLI:
 
 --dag
-    Construct the directed acyclic graph of the current snakemake workflow.
+    Construct the directed acyclic graph of the current snakemake workflow and display as svg.
 
 There are also some special rules that are not getting executed as a part of the usual workflow which can be run separately. Consult
 :code:`.wBuild/wBuild.snakefile` in your project to find out more.
