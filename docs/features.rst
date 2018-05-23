@@ -7,13 +7,16 @@ Features
 Overview
 --------
 
-We all know that doing data analysis day-to-day could easily turn into routine work and it is often hard to have fully reproducible code. Can you say for sure that you can redo your whole analysis only provided the raw data and your code? 
+We all know that doing data analysis day-to-day could easily turn into routine work and it is often hard to have fully reproducible code. Can you say for sure that you can redo your whole analysis only provided the raw data and your code?
 wBuild is designed to reduce the
 amount of time you spend to :ref:`publish the output of your script <publishing-the-output>`, :ref:`declare the needed input files <specify-input>`,
 :ref:`run Py code as a part of work pipeline <execute-py-code>`, :ref:`use placeholders to structure your Snakemake job <use-placeholders>`,
 :ref:`map your project's scripts together <script-mapping>` and many more.
 
-You are also welcome to find all of the `examples` showing the listed features :ref:`running the demo project <running-demo>`.
+Demo project
+------------
+It is highly recommended to see all of the `examples` of using the features :ref:`in the demo project <running-demo>`.
+There you also have additional documentation that explains the features and working with them!
 
 Command-line interface
 ----------------------
@@ -67,7 +70,7 @@ You can `read more about the YAML syntax`_.
 .. _read more about the YAML syntax: http://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html
 
 If you want to access information from the header of a script from within the script (code self-reflection), need to **source** :code:`.wBuild\wBuildParser.R` and **call**
-:code:`parseWBHeader()` with the path to your script as an argument. 
+:code:`parseWBHeader()` with the path to your script as an argument.
 
 
 Tags

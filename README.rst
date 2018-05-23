@@ -7,10 +7,8 @@ wBuild
 Overview
 --------
 wBuild is all about making your day easier resolving, updating and cascading various dependencies, pipeline rules and
-code structs. Why bother clicking various files and directories in your project one-by-one? Instead of that, wBuild lets you
-specify all the needed information in a YAML header right in your code and let the automated :code:`Snakemake` processes do the rest!
-[LW: this part should be more specific to the intended use case: R]
-
+code structs. The program lets you specify all the needed information in a YAML header right in your R code and let
+the automated :code:`Snakemake` processes do the rest!
 
 
 You can learn more about the features that wBuild provides either taking a look at the :ref:`features list <features>`
@@ -84,22 +82,20 @@ Functionality & workflow
 ------------------------
 wBuild is *not really a standalone application*, much more **a plugin and "code generator" for the later use of Snakemake**, which is *inevitable* part
 of a workflow involving wBuild: this way, you run :code:`snakemake` CLI each time you want to build and render your project!
-Following diagram represents general functional relationship between Snakemake and wBuild:
 
+First, wBuild executes the initial, `setup` part of the workflow:
 
-.. image:: /res/images/snakemake_wbuild_diag.jpg
-   :scale: 75%
+.. image:: /res/images/snakemake_wbuild_diag_setup.jpg
+    :scale: 80%
 
 |
+After that comes the project build phase. During this step, snakemake with a help of wBuild does process your project and
+creates the results. Following diagram shows the process:
+
+.. image:: /res/images/snakemake_wbuild_diag_build.jpg
+    :scale: 80%
+
 |
-
-
-[- LW: wbuild init - initiate in exisiting project directory
-- use straight lines for the arrows, align the text
-- clear flow diagramm
-- .. the whole digramm is quiet crowded
-]
-
 As you see, *Snakemake* actually takes the **main** role in a typical wBuild workflow, so every user is *encouraged* to
 learn more about Snakemake - for instance `in its official documentation <http://snakemake.readthedocs.io/en/stable/>`_.
 You are also welcome to take a look at the more :ref:`technial features <features>` that wBuild provides.
