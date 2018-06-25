@@ -20,7 +20,8 @@ requirements = [
 ]
 
 setup_requirements = [
-    'pytest-runner'
+    'pytest-runner',
+    'pyyaml'
     # TODO(wachutka): put setup requirements (distutils extensions, etc.) here
     # --- this todo really needed?
 ]
@@ -38,7 +39,7 @@ setup(
     author="Leonhard Wachutka",
     author_email='leonhard@wachutka.eu',
     url='https://i12g-gagneurweb.in.tum.de/gitlab/wachutka/wBuild',
-    packages=find_packages(include=['wbuild']),
+    packages=find_packages(include=['wbuild', 'pyyaml']),
     entry_points={
         'console_scripts': [
             'wbuild=wbuild.cli:main'
