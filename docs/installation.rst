@@ -26,6 +26,7 @@ Advanced users who want to get the Python packages elsehow can skip this step.
 
 Snakemake is essential to wBuild workflow (learn why in the :ref:`Overview of functionality <overview-of-functionality>`).
 You can get Snakemake either using :bash:`pip` or building from `sources <https://bitbucket.org/snakemake/snakemake/>`_.
+By :ref:`installing wBuild from pip <install-wbuild>` you automatically install the Snakemake, should it be absent.
 
 3. R and packages
 ~~~~~~~~~~~~~~~~~
@@ -47,11 +48,13 @@ Additionally for *Windows* users
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You need to add :code:`R_HOME` and pandoc home variables to your Path for Snakemake CLI to run correctly.
-See p.2 in `this instruction <http://www.endmemo.com/program/R/installr.php>`.
+See p.2 in `this instruction`_.
+
+.. _this instruction: http://www.endmemo.com/program/R/installr.php
 
 .. _install-wbuild:
 
-Now, you are all ready and set up to install the ``wBuild` itself.
+Now, you are all ready and set up to install the `wBuild` itself.
 
 Stable release
 --------------

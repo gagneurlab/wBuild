@@ -22,15 +22,6 @@ def setup_paths():
     demoPath = pathlib.Path(wbuild.__file__).parent / 'demo'
     return templatePath, wbuildPath, demoPath
 
-def getMainLogger():
-    """
-
-    :return: logger with CLI-adjusted verbosity
-    """
-    #Set propagate to allow printing to the console
-    logger.propagate = True
-    return logger
-
 @click.group()
 @click_log.simple_verbosity_option(logger)
 @click.version_option('1.1.6',prog_name='wBuild')
@@ -45,7 +36,7 @@ def main():
 def init():
     """Initialize the repository with wbuild.
 
-    This will create a .wBuild/ folder in the current path
+    This will prepare wBuild in the current project
     """
     if os.path.exists(".wBuild"):
         logger.error("ERROR: .wBuild already exists. Use update if you want to update the version")
@@ -54,7 +45,11 @@ def init():
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     shutil.copy(str(templatePath / 'Snakefile'), '.')
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
-    shutil.copy(str(templatePath / 'readme.md'), '.')
+    if not os.path.isfile("readme.md"):
+        copyReadme = input("wBuild needs readme.md in a root folder of your project. Shall we create the default "
+                           "one? (y/n)")
+        if 'y' in copyReadme:
+            shutil.copy(str(templatePath / 'readme.md'), '.')
 
     logger.info("init...done")
 
@@ -83,9 +78,16 @@ def update():
     # - if it does, update it
     if not os.path.exists(".wBuild"):
         raise ValueError(".wBuild doesn't exists. Please run wBuild init first or move to the right directory")
-
     logger.info("Removing .wBuild")
     shutil.rmtree("./.wBuild")
+    import subprocess
+    deprecatedPackages = subprocess.check_output(['pip','list','--outdated']).decode("utf-8")
+    if 'wbuild' in deprecatedPackages:
+        logger.warning("Newer version of wBuild available.")
+        updateConf = input("Update wBuild using pip (requires internet connection)? (y/n)")
+        if 'y' in updateConf:
+            subprocess.call(['pip','install','wbuild','--upgrade'])
+            logger.info("wBuild successfully updated!")
     logger.info("Running .init")
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')

@@ -10,6 +10,7 @@ Contents:
    installation
    features
    contributing
+   faq
    authors
    history
 

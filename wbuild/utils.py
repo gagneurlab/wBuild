@@ -6,6 +6,7 @@ import yaml.parser
 import yaml.error
 import operator
 from functools import reduce
+from snakemake.logging import logger
 
 class bcolors:
     HEADER = '\033[95m'
@@ -16,7 +17,6 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-
 
 def checkFilename(filename):
     """
@@ -46,7 +46,7 @@ def findFilesRecursive(startingPath, patterns):
             if not absFilepath in matchedFilepaths:
                 matchedFilepaths.append(absFilepath)
     sortedMatchedFilepaths = sorted(matchedFilepaths)
-    print("Found files in scope of wBuild: ", sortedMatchedFilepaths)
+    logger.debug("Found files in scope of wBuild: " + str(sortedMatchedFilepaths) + ".\n")
     return sortedMatchedFilepaths
 
 
@@ -66,7 +66,7 @@ def parseYAMLHeader(filepath):
             break
 
     result = '\n'.join(yamlHeader)
-    print("Got ", result, "as a result of parsing YAML header from ", filepath, ".")
+    logger.debug("Got " + result + "as a result of parsing YAML header from " + filepath + ".\n")
     return result
 
 
@@ -80,7 +80,6 @@ def hasYAMLHeader(filepath):
     line = lines[0]
     if(line.startswith("#'---")):
         return True
-    print("The file" + filepath + "doesn't contain YAML header at the very beginning of the document and so was ignored.")
     return False
 
 
@@ -114,7 +113,7 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
             outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
             parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
 
-    print("Parsed informations from R files: ", str(parsedInfos))
+    logger.debug("Parsed informations from R files: " + str(parsedInfos))
     #if errorOccured:
     #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
@@ -131,20 +130,18 @@ def parseMDFiles(script_dir="Scripts", htmlPath="Output/html"):
       - outputFile - there to put the output html file
       - param - parsed yaml header - always an empty list
     """
-    print("Finding .md files:\n")
+    logger.debug("Finding .md files:\n")
     foundMDFiles = []
     for f in findFilesRecursive(script_dir, ['*.md']):
         outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(f)[0])+ ".html"
-        print("Found ", outFile, ".\n")
+        logger.debug("Found " + outFile + ".\n")
         foundMDFiles.append({'file': linuxify(f), 'outputFile': outFile, 'param': []})
-    print(".md files search finished\n\n")
     return foundMDFiles
 
 
 def getYamlParam(r, paramName):
     if 'wb' in r['param'] and type(r['param']['wb']) is dict and paramName in r['param']['wb']:
         foundParam = r['param']['wb'][paramName]
-        print("Got YAML param: ", foundParam)
         return foundParam
     return None
 
@@ -159,14 +156,14 @@ def parseYamlParams(header, f):
     except (yaml.scanner.ScannerError, yaml.parser.ParserError, yaml.error.YAMLError, yaml.error.MarkedYAMLError) as e:
         if hasattr(e, 'problem_mark'):
             if e.context != None:
-                print('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
+                logger.error('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
                       str(e.problem) + ' ' + str(e.context) +
                       '\nPlease correct the header and retry.')
             else:
-                print('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
+                logger.error('Error while parsing YAML area in the file ' + f + ':\n' + str(e.problem_mark) + '\n  ' +
                       str(e.problem) + '\nPlease correct the header and retry.')
         else:
-            print("YAMLError parsing yaml file.")
+            logger.error("YAMLError parsing yaml file.")
 
         return None
     except Exception as e:
@@ -175,11 +172,12 @@ def parseYamlParams(header, f):
               'Errors {0}'.format(e) + bcolors.ENDC)
         return None
 
-    print("Parsed params: ", str(param))
+    logger.debug("Parsed params: " + str(param) + "\n.")
     return param
 
 def pathsepsToUnderscore(systemPath, dotsToUnderscore = False):
-    """Convert all system path separators and dots to underscores. Product is used as a unique ID for rules in scanFiles.py or the output HTML files
+    """
+    Convert all system path separators and dots to underscores. Product is used as a unique ID for rules in scanFiles.py or the output HTML files
     :param systemPath: path to convert in
     :param dotsToUnderscore: if the dot should be converted as well. Defaults to false
     :return: path string with converted separators
@@ -200,19 +198,44 @@ def linuxify(winSepStr, doubleBackslash = False):
         return winSepStr.replace("\\\\", "/")
     return winSepStr.replace("\\", "/")
 
-def fetchHTMLOutputDir(key):
-    """
-    Proves local wBuild config (wbuild.yaml) and looks for "key" parameter.
-    :return: key param value. In case of absence None.
-    """
-    try:
-        fh = open("wbuild.yaml", "r")
-    except IOError:
-        return None
-    configDict = next(yaml.load_all(fh))
-    if configDict == None:
-        print("Error parsing wbuild.yaml, working with defaults...")
-        return None
-    if key in configDict:
-        return configDict[key]
-    return None
+class Config:
+
+    path = "wbuild.yaml"
+    instance = None
+
+    def __init__(self):
+        if Config.instance != None:
+            self.conf_dict = Config.instance.conf_dict
+            return
+        #load defaults
+        self.loadDefaultConfiguration()
+
+        try:
+            fh = open(Config.path, "r")
+        except IOError:
+            raise IOError("Can not read config. Are you sure you have enough rights and config path (wbuild.yaml) "
+                         "is "
+                         "right?")
+        configDict = next(yaml.load_all(fh))
+        if configDict == None:
+            logger.error("Error parsing wbuild.yaml - format is wrong. Working with defaults...")
+        else:
+            self.conf_dict = merge_two_dicts(self.conf_dict, configDict)
+        #fill Singleton
+        Config.instance = self
+
+    def loadDefaultConfiguration(self):
+        self.conf_dict = {"htmlOutputPath": "Output/html", "processedDataPath": "Output/ProcessedData",
+                          "scriptsPath": "Scripts", "projectTitle": "Project"}
+
+    def get(self, attrname):
+        if (attrname in self.conf_dict):
+            return self.conf_dict[attrname]
+        else:
+            raise AttributeError("There is no attribute " + attrname + " in the configuration file loaded!")
+
+def merge_two_dicts(x, y):
+    z = x.copy()  # start with x's keys and values
+    z.update(y)  # modifies z with y's keys and values & returns None
+    return z
+

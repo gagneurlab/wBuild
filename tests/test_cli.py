@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `wbuild` package."""
+"""Tests for `wbuild` command-line interface."""
+from unittest import mock
 
+import os
 from click.testing import CliRunner
 from wbuild import cli
 
@@ -19,7 +21,10 @@ def test_wBuildHelp_isShown():
 
 def test_newDirSuccessfullyInitiated(testdirectory):
     init_dir = testdirectory.mkdir("init")
+    # create readme.md to avoid readme copying dialog
+    open(init_dir.path() + '/readme.md', 'w+')
     r = init_dir.run("wbuild init")
+
     assert r.stdout.match('*init...done*')
 
 
@@ -28,3 +33,4 @@ def test_wBuildDemo_isCreated(testdirectory):
     print("Directory created!")
     r = init_dir.run("wbuild demo")
     assert r.stdout.match('*demo...done*')
+
