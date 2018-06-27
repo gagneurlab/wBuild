@@ -2,40 +2,44 @@
 
 Automatic build tool for R Reports
 
+## Documentation
+
+Full documentation is available at https://wbuild.readthedocs.io
+
 ## Features
 
-
-* Enables reproducible research by appending every R-markdown script to the global analysis pipeline written in snakemake
-* All R scripts using R-markdown get compiled via Rmarkdown and rendered in a navigable web-page
-* This is achieved by writing the snakemake rules directly in the header of your R scripts
-  * Headers allow the same flexibility (i.e. usage of python) as in the traditional Snakefile
+* Supports reproducible research
+  * Append R-markdown scripts to the Snakemake pipeline
+* Render the R scripts to a structured web page
+* Snakemake rules written directly in the header of scripts
+  * Dependencies updated automatically!
 
 ## Installation
 
+Install using pip:
+
 - `pip install wBuild`
 
-Within the Gagneurlab, load python version /opt/modules/i12g/anaconda/3-4.1.1/ using module system..
+See "Installation" tab in the documentation for more details.
 
 ## Getting started
   
 * Navigate to an empty directory
-* Run `wbuild demo`. This will create a wBuild demo project with various examples.
+* Run `wbuild demo`. This will create a wBuild demo project with various examples
 * Explore the files in `Scripts/`
-* View the compiled version of the demo project: <https://i12g-gagneurweb.in.tum.de/project/wBuild/>
-* Run `snakemake` to compile the projects
-* Open `Output/html/index.html` in your web browser.
+* Run `snakemake` to build the project
+* Open `Output/html/index.html` in your web browser
+  * There you will find useful and understandable examples of features and operations with wBuild
 
 ## Usage
 
 * Navigate to the root of your project (new or existing)
 * Run `wbuild init`
 * Run `snakemake`
-  
-## Documentation
 
-- Run `wbuild --help` or `wbuild <command> --help` to learn more about available wBuild commands.
-- See the documentation/demo page at <https://i12g-gagneurweb.in.tum.de/project/wBuild/>
+## GitHub
 
+wBuild is an open-source software. The source-code is available at https://github.com/gagneurlab/wBuild.
 
 ## Credits
 

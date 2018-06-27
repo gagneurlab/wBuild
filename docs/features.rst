@@ -135,6 +135,9 @@ Snakemake renders your project, including script text and their outputs, to a ni
 specify the output path by putting/changing the htmlOutputPath value inside the :ref:`configuration <configuration-file>` file found
 in the root directory of your wBuild-initiated project. Your HTML gets output to :code:`Output/html` by default.
 
+There is also a way to automatically **fetch your output to a webserver**: typing :code:`snakemake publish` copies the whole HTML output directory
+to the directory specified in **projectWebDir** parameter in the :ref:`configuration file <configuration-file>`.
+
 Markdown
 --------
 
@@ -160,6 +163,9 @@ processedDataPath
 
 scriptsPath
     `Relative` path to the root Scripts directory.
+
+projectWebDir
+    Path to the output directory for :code:`snakemake publish`.
 
 **IMPORTANT**: Please, do not remove any key-value pairs from it or move this file *unless you know what you are doing*.
 
