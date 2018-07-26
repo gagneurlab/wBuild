@@ -1,3 +1,7 @@
+Have you already done this?
+- [ ] Skim through FAQ section of the docu (https://wbuild.readthedocs.io/en/latest/faq.html)
+- [ ] Rebuild your project
+
 
 #### Environment
 
