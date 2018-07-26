@@ -9,4 +9,13 @@ Therefore, please remove it manually first if you want to run the whole pipeline
 to force a recreation of the index page. Normally you will then be pointed to the place where your pipeline is broken.
 
 **Q: I want to remove a file from the pipeline:**
+
 A: Just move it into a folder starting with an underscore `_`.
+
+**Q:Can I use my input/output variables defined in header in the code afterwards?**
+
+Of course you can! See :ref:`tags section <specify-input>` for more information how. 
+
+**Q:Hey, but I don't run snakemake now, and still would like to have something to debug!**
+
+You are not alone! See the bottom of :ref:`information about in-script headers <yaml-headers>` - there is a special function fo that!
