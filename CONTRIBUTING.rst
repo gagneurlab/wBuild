@@ -23,7 +23,7 @@ Ways of contributing to wBuild
 Bug reports
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/wachutka/wbuild/issues.
+Report bugs at https://github.com/gagneurlab/wBuild/issues.
 
 If you are reporting a bug, please include:
 
@@ -88,7 +88,7 @@ articles, and such.
 Request/propose a feature
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/wachutka/wbuild/issues.
+The best way to send feedback is to file an issue at https://github.com/gagneurlab/wBuild/issues.
 
 If you are proposing a feature:
 
@@ -145,18 +145,8 @@ Ready to contribute? Here's how to set up `wbuild` for local development.
 
 7. Submit a pull request through the GitHub website.
 
-Pull Request Guidelines
-~~~~~~~~~~~~~~~~~~~~~~~
-
-Before you submit a pull request, check that it meets these guidelines:
-
-1. The pull request should include tests.
-2. If the pull request adds functionality, the docs should be updated. Put
-   your new functionality into a function with a docstring, and add the
-   feature to the list in README.rst.
-3. The pull request should work for Python 2.6, 2.7, 3.3, 3.4 and 3.5, and for PyPy. Check
-   https://travis-ci.org/wachutka/wbuild/pull_requests
-   and make sure that the tests pass for all supported Python versions.
+If the pull request adds functionality, we kindly ask you to also update the docs, telling about this new cool stuff! 
+Put your new functionality into a function with a docstring, and add this feature to the list in README.rst.
 
 Code documentation
 ------------------
