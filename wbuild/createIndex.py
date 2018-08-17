@@ -64,6 +64,7 @@ def writeIndexHTMLMenu():
     conf = Config()
     htmlOutputPath = conf.get("htmlOutputPath")
     scriptsPath = conf.get("scriptsPath")
+    pageTitle = conf.get("projectTitle")
     wbData = parseWBInfosFromRFiles(script_dir= scriptsPath, htmlPath=htmlOutputPath)
     mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     wbData += mdData
@@ -83,7 +84,7 @@ def writeIndexHTMLMenu():
         menuString += '</li>\n'
     #fill the HTML template with the constructed tag structure
     template = open('.wBuild/template.html').read()
-    template = Template(template).substitute(menu=menuString, title='title', rf=getRecentMenu())  # snakewbuild.yaml['projectTitle']
+    template = Template(template).substitute(menu=menuString, title=pageTitle, rf=getRecentMenu())  # snakewbuild.yaml['projectTitle']
 
     f = open(htmlOutputPath + '/index.html', 'w')
     f.write(template)
