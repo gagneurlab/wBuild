@@ -14,8 +14,15 @@ A: Just move it into a folder starting with an underscore `_`.
 
 **Q:Can I use my input/output variables defined in header in the code afterwards?**
 
-Of course you can! See :ref:`tags section <specify-input>` for more information how. 
+A: Of course you can! See :ref:`tags section <specify-input>` for more information how. 
 
 **Q:Hey, but I don't run snakemake now, and still would like to have something to debug!**
 
-You are not alone! See the bottom of :ref:`information about in-script headers <yaml-headers>` - there is a special function fo that!
+A:You are not alone! See the bottom of :ref:`information about in-script headers <yaml-headers>` - there is a special callable for that!
+
+
+**Q:All the time I push/pull from my VCS (e.g. git), the modification times of the files get updated. Why, and how to avoid it?**
+
+A: (All) VCS work this way. Unluckily, there's a little we can do about it on our side, since algorithm of comparing timestamps in builds comes from Snakemake.
+But you can take care about it yourself relatively easily, e.g. using :code:`touch -r` to restore the modification date of file(s).
+See e.g. https://stackoverflow.com/questions/2458042/restore-a-files-modification-time-in-git for more information.
