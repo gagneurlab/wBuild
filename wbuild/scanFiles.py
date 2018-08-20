@@ -99,8 +99,12 @@ def ensureString(elem):
             return "'" + elem + "'"
         else:
             return elem
+    elif type(elem) is dict:
+        raise TypeError("A wBuild tag is a dict, whereas it can be list or string only. Please check if you have indented"
+                        " all the YAML \'output\' tags in your scripts properly. \nwBuild output should be listed one level deeper than external (knitr) output."
+                        "(The latter one should be on the same level with \'wb\' tag)")
     else:
-        raise TypeError("Don't know how to handle type: " + str(type(elem)))
+        raise TypeError("Can't parse type " + str(type(elem)) + "as a valid workflow information under a wBuild YAML tag (input or output).")
 
 
 def dumpSMRule(ruleInfos, outputFile, inputFile):
