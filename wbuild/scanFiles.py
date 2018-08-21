@@ -99,8 +99,8 @@ def ensureString(elem):
         else:
             return elem
     elif type(elem) is dict:
-        elemArr = ["'" + k + "': " + escapeSMString(elem[k]) for k in elem]
-        return "{ " + ", ".join(elemArr) + " }"
+        elemArr = [k + " = " + escapeSMString(elem[k]) for k in elem]
+        return ", ".join(elemArr)
     elif type(elem) is int:
         return str(elem)
     else:
