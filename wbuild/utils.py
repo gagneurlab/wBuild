@@ -122,6 +122,33 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
     #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
 
+def parseWBInfosFromRFile(filename, htmlPath="Output/html"):
+    """
+    :param filename: Relative path to the Scripts directory
+    :param htmlPath: Relative path to the html output path
+    :return: a list of dictionaries with fields:
+      - filen - what is the input R file
+      - outputFile - there to put the output html file
+      - param - parsed yaml params
+    """
+    parsedInfos = []
+    #errorOccured = False
+    if not hasYAMLHeader(filename):
+        # Ignore files without YAML infos
+        print('Header not valid')
+    header = parseYAMLHeader(filename)
+    # run all the synthax checks - will raise an error if it fails
+    yamlParamsDict = parseYamlParams(header, filename)
+    if type(yamlParamsDict) is str: #allow parsing one tag without double points as string; put it in a dict and check later on
+        yamlParamsDict = {yamlParamsDict: None}
+    if('wb' in yamlParamsDict):# the header contains wb informations
+        outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
+        parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
+
+    logger.debug("Parsed informations from R files: " + str(parsedInfos))
+    #if errorOccured:
+    #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
+    return parsedInfos
 
 
 def parseMDFiles(script_dir="Scripts", htmlPath="Output/html"):
