@@ -37,6 +37,29 @@ documented under :bash:`wbuild -h`
 
 All these commands should be executed from the **root directory of the project**.
 
+Snakemake CLI
+~~~~~~~~~~~~~
+
+Most of the job of building your project is done by Snakemake, :ref:`as explained here <overview-of-functionality>`. There
+are also several special Snakemake rules that wBuild provides. The most important include:
+
+snakemake mapScripts
+    Do :ref:`script mapping <script-mapping>`
+
+snakemake publish
+    Publish your html output pages to your :ref:`projectWebDir <publishing-the-output>`
+
+snakemake clean
+    Deletes html output, generated dependencies file and Python cache.
+
+.. _restore-mod-date:
+
+snakemake restoreModDate
+    Restore previous modification date of all the files. Comes handy for pulling changes from VCS, where all the mod.dates
+    get changed.
+
+:ref:`See more <special-features>` about this down the page.
+
 .. _yaml-headers:
 
 Parsing YAML headers
@@ -112,6 +135,7 @@ One can also state Snakemake options in "wb" block of the YAML header and even `
 
 The specified thread variable can then be refered to by name in our R script: :code:`snakemake@threads`
 
+.. _snakemake-features:
 
 Snakemake special features
 --------------------------
