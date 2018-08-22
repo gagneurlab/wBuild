@@ -239,3 +239,24 @@ def merge_two_dicts(x, y):
     z.update(y)  # modifies z with y's keys and values & returns None
     return z
 
+
+def writeWbuildVersion():
+    """
+    Write wBuild version to .wBuild/.version
+    """
+    with open(".wBuild/.version", 'w') as file:
+        import wbuild
+        file.write(wbuild.__version__)
+        file.close()
+
+def wbuildVersionIsCurrent():
+    """
+    Read wBuild version from .wBuild/.version and compare it to wbuild module version from pckg mngr.
+    :return: True if wBuild up-to-date, False if not
+    """
+    with open(".wBuild/.version", 'r') as file:
+        static_v = file.read()
+
+    import wbuild
+    dynamic_v = wbuild.__version__
+    return dynamic_v in static_v

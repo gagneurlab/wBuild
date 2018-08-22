@@ -4,7 +4,7 @@ import pathlib
 import re
 from snakemake.logging import logger
 from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam, pathsepsToUnderscore, \
-    Config
+    Config, wbuildVersionIsCurrent, bcolors
 
 pathsep = "/"
 sys.path.insert(0, os.getcwd() + "/.wBuild")
@@ -30,6 +30,11 @@ def writeDependencyFile():
     """
     Entry point for writing .wBuild.depend.
     """
+    if not wbuildVersionIsCurrent():
+        print(bcolors.WARNING + "Version of the project's static .wBuild lib is not the same as the dynamically loaded "
+                                "wBuild"
+                                "version. It is strongly recommended to update .wBuild lib using \'wbuild update\'; "
+                                "otherwise, the consistency of the build can not be guaranteed." + bcolors.ENDC)
     logger.info("Structuring dependencies...")
     conf = Config()
     htmlOutputPath = conf.get("htmlOutputPath")

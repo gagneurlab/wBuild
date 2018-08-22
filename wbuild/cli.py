@@ -10,7 +10,7 @@ import shutil
 import distutils.dir_util
 import click_log
 import logging
-
+import wbuild.utils as utils
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
 
@@ -50,6 +50,7 @@ def init():
                            "one? (y/n)")
         if 'y' in copyReadme:
             shutil.copy(str(templatePath / 'readme.md'), '.')
+    utils.writeWbuildVersion()
 
     logger.info("init...done")
 
@@ -66,6 +67,7 @@ def demo():
     shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
     distutils.dir_util.copy_tree(str(demoPath), '.')
+    utils.writeWbuildVersion()
     logger.info("demo...done")
 
 
@@ -91,4 +93,5 @@ def update():
     logger.info("Running .init")
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
+    utils.writeWbuildVersion()
     logger.info("update...done")
