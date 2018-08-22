@@ -3,7 +3,7 @@ import wbuild
 import wbuild.scanFiles
 import wbuild.autolink
 
-if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in sys.argv) and not config["wbDump"] == 'T':
+if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in sys.argv) and not "wbDump" in config.keys():
     wbuild.scanFiles.writeDependencyFile()
 
 include: "../.wBuild.depend"
