@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//wbuild/__init__.py=utf-8
 encoding//wbuild/cli.py=utf-8
 encoding//wbuild/wbuild.py=utf-8
 encoding/setup.py=utf-8

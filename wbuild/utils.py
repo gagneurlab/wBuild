@@ -5,6 +5,7 @@ import yaml.scanner
 import yaml.parser
 import yaml.error
 import operator
+import re
 from functools import reduce
 from snakemake.logging import logger
 
@@ -46,8 +47,11 @@ def findFilesRecursive(startingPath, patterns):
             if not absFilepath in matchedFilepaths:
                 matchedFilepaths.append(absFilepath)
     sortedMatchedFilepaths = sorted(matchedFilepaths)
-    logger.debug("Found files in scope of wBuild: " + str(sortedMatchedFilepaths) + ".\n")
-    return sortedMatchedFilepaths
+    conf = Config()
+    regex = re.compile(conf.get("fileRegex"))
+    reFiles = list(filter(regex.search, sortedMatchedFilepaths))
+    logger.debug("Found files in scope of wBuild: " + str(reFiles) + ".\n")
+    return reFiles
 
 
 def parseYAMLHeader(filepath):
