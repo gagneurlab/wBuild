@@ -195,6 +195,9 @@ def writeRule(r, file, dump=False):
     # extract rule
     # rule = r['file'].replace('.','_').replace('/','_')
 
+    if wbInfos == None:
+        return
+
     # determine input, output and script
     wbInfos["input"] = insertPlaceholders(joinEmpty([ensureString(wbInfos.get("input")), "RScript = '" + inputFile + "'"]), inputFile)
     if wbInfos.get("type") == 'script':
