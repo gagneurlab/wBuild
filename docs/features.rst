@@ -237,3 +237,25 @@ Script mapping
 
 This advanced feature allows you to use the same script to analyse the similarly structured data as a part of various
 subprojects.
+
+It all begins with a configure file :code:`scriptsMapping.wb` in the root directory of your project. There, you put a YAML *list of* YAML formatted **dictionaries** with two keys:
+
+src
+    A **YAML list** of *file* paths to create links from.
+dst
+    A **YAML list** of **directories** paths to put file links *into*.
+    
+Running :code:`snakemake mapScripts` then creates symbolic links for *all the 'src' files* in any of *'dst' directories*. **IMPORTANT**: Give only paths _without_ Scripts directory name - Scripts path will automatically be taken from :ref:`configuration file <configuration-file>` under key :code:`scriptsPath`.
+
+Below is an example of a proper :code:`scriptsMapping.wb` file:
+
+.. code-block:: YAML
+
+- src: 
+  - _Template/preprocessData.R
+  - _Template/PCAoutliers.R
+  dst: 
+  - Principal_Analysis/allIntensities
+  - Principal_Analysis/withoutFamilies
+  - Principal_Analysis/withoutReplicates
+  - Principal_Analysis/withoutReplicatesAndFamilies
