@@ -5,6 +5,7 @@ import yaml.scanner
 import yaml.parser
 import yaml.error
 import operator
+import re
 from functools import reduce
 from snakemake.logging import logger
 
@@ -46,8 +47,11 @@ def findFilesRecursive(startingPath, patterns):
             if not absFilepath in matchedFilepaths:
                 matchedFilepaths.append(absFilepath)
     sortedMatchedFilepaths = sorted(matchedFilepaths)
-    logger.debug("Found files in scope of wBuild: " + str(sortedMatchedFilepaths) + ".\n")
-    return sortedMatchedFilepaths
+    conf = Config()
+    regex = re.compile(conf.get("fileRegex"))
+    reFiles = list(filter(regex.search, sortedMatchedFilepaths))
+    logger.debug("Found files in scope of wBuild: " + str(reFiles) + ".\n")
+    return reFiles
 
 
 def parseYAMLHeader(filepath):
@@ -118,6 +122,33 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
     #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
 
+def parseWBInfosFromRFile(filename, htmlPath="Output/html"):
+    """
+    :param filename: Relative path to the Scripts directory
+    :param htmlPath: Relative path to the html output path
+    :return: a list of dictionaries with fields:
+      - filen - what is the input R file
+      - outputFile - there to put the output html file
+      - param - parsed yaml params
+    """
+    parsedInfos = []
+    #errorOccured = False
+    if not hasYAMLHeader(filename):
+        # Ignore files without YAML infos
+        print('Header not valid')
+    header = parseYAMLHeader(filename)
+    # run all the synthax checks - will raise an error if it fails
+    yamlParamsDict = parseYamlParams(header, filename)
+    if type(yamlParamsDict) is str: #allow parsing one tag without double points as string; put it in a dict and check later on
+        yamlParamsDict = {yamlParamsDict: None}
+    if('wb' in yamlParamsDict):# the header contains wb informations
+        outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
+        parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
+
+    logger.debug("Parsed informations from R files: " + str(parsedInfos))
+    #if errorOccured:
+    #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
+    return parsedInfos
 
 
 def parseMDFiles(script_dir="Scripts", htmlPath="Output/html"):
@@ -239,3 +270,24 @@ def merge_two_dicts(x, y):
     z.update(y)  # modifies z with y's keys and values & returns None
     return z
 
+
+def writeWbuildVersion():
+    """
+    Write wBuild version to .wBuild/.version
+    """
+    with open(".wBuild/.version", 'w') as file:
+        import wbuild
+        file.write(wbuild.__version__)
+        file.close()
+
+def wbuildVersionIsCurrent():
+    """
+    Read wBuild version from .wBuild/.version and compare it to wbuild module version from pckg mngr.
+    :return: True if wBuild up-to-date, False if not
+    """
+    with open(".wBuild/.version", 'r') as file:
+        static_v = file.read()
+
+    import wbuild
+    dynamic_v = wbuild.__version__
+    return dynamic_v in static_v

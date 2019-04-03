@@ -37,6 +37,29 @@ documented under :bash:`wbuild -h`
 
 All these commands should be executed from the **root directory of the project**.
 
+Snakemake CLI
+~~~~~~~~~~~~~
+
+Most of the job of building your project is done by Snakemake, :ref:`as explained here <overview-of-functionality>`. There
+are also several special Snakemake rules that wBuild provides. The most important include:
+
+snakemake mapScripts
+    Do :ref:`script mapping <script-mapping>`
+
+snakemake publish
+    Publish your html output pages to your :ref:`projectWebDir <publishing-the-output>`
+
+snakemake clean
+    Deletes html output, generated dependencies file and Python cache.
+
+.. _restore-mod-date:
+
+snakemake restoreModDate
+    Restore previous modification date of all the files. Comes handy for pulling changes from VCS, where all the mod.dates
+    get changed.
+
+:ref:`See more <special-features>` about this down the page.
+
 .. _yaml-headers:
 
 Parsing YAML headers
@@ -112,6 +135,7 @@ One can also state Snakemake options in "wb" block of the YAML header and even `
 
 The specified thread variable can then be refered to by name in our R script: :code:`snakemake@threads`
 
+.. _snakemake-features:
 
 Snakemake special features
 --------------------------
@@ -213,3 +237,25 @@ Script mapping
 
 This advanced feature allows you to use the same script to analyse the similarly structured data as a part of various
 subprojects.
+
+It all begins with a configure file :code:`scriptsMapping.wb` in the root directory of your project. There, you put a YAML *list of* YAML formatted **dictionaries** with two keys:
+
+src
+    A **YAML list** of *file* paths to create links from.
+dst
+    A **YAML list** of **directories** paths to put file links *into*.
+    
+Running :code:`snakemake mapScripts` then creates symbolic links for *all the 'src' files* in any of *'dst' directories*. **IMPORTANT**: Give only paths _without_ Scripts directory name - Scripts path will automatically be taken from :ref:`configuration file <configuration-file>` under key :code:`scriptsPath`.
+
+Below is an example of a proper :code:`scriptsMapping.wb` file:
+
+.. code-block:: YAML
+
+- src: 
+  - _Template/preprocessData.R
+  - _Template/PCAoutliers.R
+  dst: 
+  - Principal_Analysis/allIntensities
+  - Principal_Analysis/withoutFamilies
+  - Principal_Analysis/withoutReplicates
+  - Principal_Analysis/withoutReplicatesAndFamilies
