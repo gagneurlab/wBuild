@@ -249,13 +249,15 @@ Running :code:`snakemake mapScripts` then creates symbolic links for *all the 's
 
 Below is an example of a proper :code:`scriptsMapping.wb` file:
 
-.. code-block:: YAML
+.. code-block:: yaml
 
-- src: 
-  - _Template/preprocessData.R
-  - _Template/PCAoutliers.R
-  dst: 
-  - Principal_Analysis/allIntensities
-  - Principal_Analysis/withoutFamilies
-  - Principal_Analysis/withoutReplicates
-  - Principal_Analysis/withoutReplicatesAndFamilies
+  - src: 
+    - _Template/preprocessData.R
+    - _Template/PCAoutliers.R
+    dst: 
+    - Principal_Analysis/allIntensities
+    - Principal_Analysis/withoutFamilies
+    - Principal_Analysis/withoutReplicates
+    - Principal_Analysis/withoutReplicatesAndFamilies
+
+Here, we map two scripts, :code:`preprocessData.R` and :code:`PCAoutliers.R`, to be in each of the four projects of :code:`Principal_Analysis`. :ref:`Placeholders <use-placeholders>` then do their thing to speak to the right :code:`ProcessedData` sub-directories, based on the current subproject.
