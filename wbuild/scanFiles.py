@@ -164,7 +164,7 @@ def insertPlaceholders(dest, source):
     processedDataPath = conf.get("processedDataPath")
     PD = pathlib.Path(processedDataPath)
 
-    PP = path.parts[-2] #last two nodes of the path
+    PP = path.parts[-2]
     dest = dest.replace("{wbPD}", str(PD))
     dest = dest.replace("{wbPP}", str(PP))
 
@@ -173,7 +173,7 @@ def insertPlaceholders(dest, source):
               " directory structure.")
 
     if len(path.parts) > 2:
-        P = path.parts[-3] if !path.parts[-3].startswith("Scripts") else path.parts[-2]
+        P = path.parts[-3]
         dest = dest.replace("{wbPD_P}", str(PD / P))
         dest = dest.replace("{wbPD_PP}", str(PD / P / PP))
         dest = dest.replace("{wbP}", str(P))
