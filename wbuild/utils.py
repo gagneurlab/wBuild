@@ -183,7 +183,7 @@ def parseYamlParams(header, f):
     :return: Parameters dictionary parsed from the header; None if parsing errors occured
     """
     try:
-        param = next(yaml.load_all(header))
+        param = next(yaml.safe_load_all(header))
     except (yaml.scanner.ScannerError, yaml.parser.ParserError, yaml.error.YAMLError, yaml.error.MarkedYAMLError) as e:
         if hasattr(e, 'problem_mark'):
             if e.context != None:
@@ -247,7 +247,7 @@ class Config:
             raise IOError("Can not read config. Are you sure you have enough rights and config path (wbuild.yaml) "
                          "is "
                          "right?")
-        configDict = next(yaml.load_all(fh))
+        configDict = next(yaml.safe_load_all(fh))
         if configDict == None:
             logger.error("Error parsing wbuild.yaml - format is wrong. Working with defaults...")
         else:
