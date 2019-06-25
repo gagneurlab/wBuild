@@ -1,5 +1,6 @@
 import fnmatch
 import os
+import sys
 import yaml
 import yaml.scanner
 import yaml.parser
@@ -8,6 +9,7 @@ import operator
 import re
 from functools import reduce
 from snakemake.logging import logger
+from snakemake import get_argument_parser, parse_config, SNAKEFILE_CHOICES
 
 class bcolors:
     HEADER = '\033[95m'
@@ -206,13 +208,17 @@ def parseYamlParams(header, f):
     logger.debug("Parsed params: " + str(param) + "\n.")
     return param
 
-def pathsepsToUnderscore(systemPath, dotsToUnderscore = False):
+def pathsepsToUnderscore(systemPath, dotsToUnderscore = False, trimPrefix=True):
     """
     Convert all system path separators and dots to underscores. Product is used as a unique ID for rules in scanFiles.py or the output HTML files
     :param systemPath: path to convert in
     :param dotsToUnderscore: if the dot should be converted as well. Defaults to false
     :return: path string with converted separators
     """
+    if trimPrefix:
+        conf = Config()
+        systemPath = removeFilePrefix(systemPath, conf.snakeroot)
+
     if dotsToUnderscore:
         return systemPath.replace('.', '_').replace('/', '_').replace('\\', '_')
     return systemPath.replace('/', '_').replace('\\', '_')
@@ -231,39 +237,84 @@ def linuxify(winSepStr, doubleBackslash = False):
 
 class Config:
 
-    path = "wbuild.yaml"
+    sysargs = None
+    args = None
+    config = None
+    config_dict = None
+    path = "wBuild.yaml"
+    snakefile = "Snakefile"
+    snakeroot = ""
     instance = None
 
     def __init__(self):
-        if Config.instance != None:
-            self.conf_dict = Config.instance.conf_dict
+        # check if it is already initialized
+        if self.instance != None:
+            self.conf = self.instance.conf
+            self.conf_dict = self.instance.conf_dict
+            self.args = self.instance.args
+            self.path = self.instance.path
+            self.snakefile = self.instance.snakefile
+            self.snakeroot = self.instance.snakeroot
             return
+
+        # we dont need the first argument aka call to snakemake
+        self.sysargs = sys.argv[1:]
+
+        parser = get_argument_parser()
+        self.args = parser.parse_args(self.sysargs)
+        self.path = self.args.configfile
+        self.snakefile = self.args.snakefile
+        self.config = parse_config(self.args)
+
+        if self.path is None:
+            for p in ["wbuild.yaml", "config.yaml", "wBuild.yaml"]:
+                if os.path.exists(p):
+                    self.path = p
+                    break
+        else:
+            self.path=os.path.abspath(self.path)
+
+        # this is taken from the snakemake main file
+        if self.snakefile is None:
+            for p in SNAKEFILE_CHOICES:
+                if os.path.exists(p):
+                    self.snakefile = p
+                    break
+        self.snakeroot = os.path.dirname(self.snakefile)
+
         #load defaults
         self.loadDefaultConfiguration()
 
         try:
-            fh = open(Config.path, "r")
+            fh = open(self.path, "r")
         except IOError:
-            raise IOError("Can not read config. Are you sure you have enough rights and config path (wbuild.yaml) "
-                         "is "
-                         "right?")
+            raise IOError("Can not read config. Are you sure you have enough "
+                          "rights and config path (wbuild.yaml) is right?")
         configDict = next(yaml.safe_load_all(fh))
         if configDict == None:
             logger.error("Error parsing wbuild.yaml - format is wrong. Working with defaults...")
         else:
             self.conf_dict = merge_two_dicts(self.conf_dict, configDict)
+
         #fill Singleton
         Config.instance = self
 
     def loadDefaultConfiguration(self):
-        self.conf_dict = {"htmlOutputPath": "Output/html", "processedDataPath": "Output/ProcessedData",
-                          "scriptsPath": "Scripts", "projectTitle": "Project"}
+        prefixScripts = self.snakeroot
+        if len(prefixScripts) > 0:
+            prefixScripts = prefixScripts + "/"
+
+        self.conf_dict = {"htmlOutputPath": "Output/html",
+                          "processedDataPath": "Output/ProcessedData",
+                          "scriptsPath": prefixScripts + "Scripts",
+                          "projectTitle": "Project"}
 
     def get(self, attrname):
         if (attrname in self.conf_dict):
             return self.conf_dict[attrname]
         else:
-            raise AttributeError("There is no attribute " + attrname + " in the configuration file loaded!")
+            raise AttributeError("There is no attribute " + attrname +
+                                 " in the configuration file loaded!")
 
 def merge_two_dicts(x, y):
     z = x.copy()  # start with x's keys and values
@@ -291,3 +342,18 @@ def wbuildVersionIsCurrent():
     import wbuild
     dynamic_v = wbuild.__version__
     return dynamic_v in static_v
+
+def removeFilePrefix(f, prefix):
+    if f.startswith(prefix):
+        f = f[len(prefix):]
+        if len(prefix) > 0 and f.startswith("/"):
+            f = f[1:]
+
+    absPrefix = os.path.abspath(prefix)
+    if f.startswith(absPrefix):
+        f = f[(len(absPrefix)+1):]
+    return(f)
+
+
+
+
