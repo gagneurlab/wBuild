@@ -249,7 +249,7 @@ class Config:
     def __init__(self):
         # check if it is already initialized
         if self.instance != None:
-            self.conf = self.instance.conf
+            self.config = self.instance.config
             self.conf_dict = self.instance.conf_dict
             self.args = self.instance.args
             self.path = self.instance.path
