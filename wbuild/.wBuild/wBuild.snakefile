@@ -3,7 +3,7 @@ import wbuild
 import wbuild.scanFiles
 import wbuild.autolink
 
-if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in sys.argv):
+if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in sys.argv) and not "wbDump" in config.keys():
     wbuild.scanFiles.writeDependencyFile()
 
 include: "../.wBuild.depend"
@@ -37,3 +37,5 @@ rule markdown:
     output: expand("{htmlOutputPath}/{{file}}.html", htmlOutputPath = config["htmlOutputPath"])
     shell: "pandoc --from markdown --to html --css .wBuild/lib/github.css --toc --self-contained -s -o {output} {input}"
 
+rule restoreModDate:
+    shell: "find -type f -exec touch -r {} +"

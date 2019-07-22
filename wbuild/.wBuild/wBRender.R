@@ -1,44 +1,67 @@
+#
+# wBuild render script
+# 
 
 #require(knitrBootstrap)
 require(knitr)
-opts_knit$set(root.dir = getwd())
 require(rmarkdown)
-opts_chunk$set(echo=TRUE,message=FALSE,error=FALSE,warning=FALSE, cache=F)
-options(width=100)
+
+# default for knitr and rmarkdown
+opts_knit$set(root.dir=getwd())
+opts_chunk$set(echo=TRUE, message=FALSE, 
+		error=FALSE, warning=FALSE, cache=FALSE)
+
+# TODO could be an option in the wbuild.yaml
+options(width=120)
 
 source(".wBuild/render_child.R")
 source(".wBuild/rmarkdown_show_hide_table.R")
 
-#copy dependency to intermediate dir
-intermediates_dir = tempfile()
-i = dir.create(file.path(dirname(intermediates_dir), basename(intermediates_dir)), showWarnings = FALSE)
-#i = file.copy(".wBuild/rmarkdown_show_hide_function.html",intermediates_dir)
+# create tmp folder and tmp output folder
+intermediates_dir <- tempfile()
+tmp_output_dir <- tempfile()
+i <- dir.create(intermediates_dir, showWarnings=FALSE)
+i <- dir.create(tmp_output_dir, showWarnings=FALSE)
 
-file_input = snakemake@input[['RScript']]
-file_output = snakemake@output[['wBhtml']]
+# copy needed files over
+file.copy(".wBuild/lib", file.path(tmp_output_dir), recursive=TRUE)
+
+# get snakemake input
+file_input <- snakemake@input[['RScript']]
+file_output <- snakemake@output[['wBhtml']]
 
 
-sFile = tempfile()
-write(spin(text=readChar(file_input, file.info(file_input)$size),knit=FALSE),sFile)
-kProcessor = default_output_format(sFile)
-if (kProcessor$name=="html_document")
-{
-	libPath = paste0(paste0(rep('../',length(strsplit(file_input,'/')[[1]])-1),collapse=''),paste0(dirname(file_output), '/libR'))
-	#code_folding = ifelse(is.language(kProcessor$options$code_folding),"hide",kProcessor$options$code_folding)
-	#format = html_document(toc = TRUE,toc_float = TRUE,fig_retina = NULL,code_folding=code_folding,self_contained=FALSE,lib_dir = libPath,css=c('lib/add_content_table.css','lib/leo_style.css'),df_print ='tibble')
+sFile <- tempfile()
+spin_input <- readChar(file_input, file.info(file_input)$size)
+write(spin(text=spin_input, knit=FALSE), sFile)
+kProcessor <- default_output_format(sFile)
+
+# add needed default based on the document type
+if (kProcessor$name == "html_document"){
+	libPath <- file.path(tmp_output_dir, "libR")
 	
-	kProcessor$options$code_folding = ifelse(is.language(kProcessor$options$code_folding),"hide",kProcessor$options$code_folding)
-	kProcessor$options$toc = TRUE
-	kProcessor$options$toc_float = TRUE
-	kProcessor$options$fig_retina = NULL
-	kProcessor$options$self_contained = FALSE
-	kProcessor$options$lib_dir = libPath
-	kProcessor$options$css = c('lib/add_content_table.css','lib/leo_style.css')
-	kProcessor$options$df_print ='tibble'
-	format = do.call(eval(parse(text=kProcessor$name)),kProcessor$options)
+	kProcessor$options$code_folding = ifelse(
+			is.language(kProcessor$options$code_folding), 
+			"hide", kProcessor$options$code_folding)
+	kProcessor$options$toc <- TRUE
+	kProcessor$options$toc_float <- TRUE
+	kProcessor$options$fig_retina <- NULL
+	kProcessor$options$self_contained <- FALSE
+	kProcessor$options$lib_dir <- libPath
+	kProcessor$options$css <- c('lib/add_content_table.css', 'lib/leo_style.css')
+    kProcessor$options$df_print <- 'tibble'
 }else{
 	require(knitrBootstrap)
-	format = do.call(eval(parse(text=kProcessor$name)),kProcessor$options)
 }
+format <- do.call(eval(parse(text=kProcessor$name)), kProcessor$options)
 
-render(file_input,output_dir = dirname(file_output),clean=TRUE,intermediates_dir = intermediates_dir, output_file = basename(file_output),output_format = format)
+# render it to the tmp folder
+render(file_input, output_dir=tmp_output_dir, clean=TRUE,
+		intermediates_dir=intermediates_dir, output_file=basename(file_output),
+		output_format=format)
+
+# copy it to the output directory
+file.copy(list.files(tmp_output_dir, full.names=TRUE),
+		dirname(file_output), overwrite=TRUE, recursive=TRUE)
+
+
