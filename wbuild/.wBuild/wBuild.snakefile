@@ -3,12 +3,12 @@ import wbuild
 import wbuild.scanFiles
 import wbuild.autolink
 
-if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in sys.argv) and not "wbDump" in config.keys():
+if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in sys.argv):
     wbuild.scanFiles.writeDependencyFile()
 
 include: "../.wBuild.depend"
 
-if config["htmlIndex"] is None:
+if "htmlIndex" not in config:
     print("Setting html-Index to default name")
     config["htmlIndex"] = "index.html"
 

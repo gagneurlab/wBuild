@@ -104,10 +104,10 @@ def writeIndexHTMLMenu():
     template = open('.wBuild/template.html').read()
     template = Template(template).substitute(menu=menuString, title=pageTitle, rf=getRecentMenu())  # snakewbuild.yaml['projectTitle']
 
-    if conf.get("htmlIndex") is None:
-        filename_index = "index.html"
-    else:
+    try:
         filename_index = conf.get("htmlIndex")
+    except AttributeError as e:
+        filename_index = "index.html"
     print("Index filename", filename_index)
     f = open(htmlOutputPath + '/' + filename_index, 'w')
     f.write(template)
