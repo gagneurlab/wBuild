@@ -236,11 +236,16 @@ def writeIndexRule(wbRRows, wbMDrows, file):
 
     conf = Config()
     htmlOutputPath = conf.get("htmlOutputPath")
+    if conf.get("htmlIndex") is None:
+        filename_index = "index.html"
+    else:
+        filename_index = conf.get("htmlIndex")
+    print("Index filename", filename_index)
 
     file.write('\n')
     file.write('rule Index:\n')
     file.write('    input: \n        "' + '",\n        "'.join(inputFiles) + '"\n')
-    file.write('    output: "' + htmlOutputPath + '/index.html"\n')
+    file.write('    output: "' + htmlOutputPath + '/' + filename_index + '\n')
     # file.write('    script: ".wBuild/createIndex.py"\n')
     file.write('    run:\n')
     file.write('        import wbuild.createIndex\n')

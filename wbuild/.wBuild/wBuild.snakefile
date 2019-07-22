@@ -8,9 +8,13 @@ if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in
 
 include: "../.wBuild.depend"
 
+if config["htmlIndex"] is None:
+    print("Setting html-Index to default name")
+    config["htmlIndex"] = "index.html"
+
 rule show:
     input: "Output/all.done"
-    shell: "google-chrome {config[htmlOutputPath]}/index.html &"
+    shell: "google-chrome {config[htmlOutputPath]}/{config[htmlIndex]} &"
 
 rule mapScripts:
     input: "scriptMapping.wb"

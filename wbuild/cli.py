@@ -43,8 +43,10 @@ def init():
         sys.exit(2)
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
-    shutil.copy(str(templatePath / 'Snakefile'), '.')
-    shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
+    if not os.path.isfile("Snakefile"):
+        shutil.copy(str(templatePath / 'Snakefile'), '.')
+    if not os.path.isfile("wbuild.yaml"):
+        shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     if not os.path.isfile("readme.md"):
         copyReadme = input("wBuild needs readme.md in a root folder of your project. Shall we create the default "
                            "one? (y/n)")
