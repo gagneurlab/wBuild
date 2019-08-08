@@ -267,7 +267,21 @@ def writeIndexRule(wbRRows, wbMDrows, file):
         filename_index = conf.get("htmlIndex")
     except AttributeError as e:
         filename_index = "index.html"
-    print("Index filename", filename_index)
+    
+    try: 
+        indexWithFolderName = conf.get("indexWithFolderName")
+    except:
+        indexWithFolderName = False
+    
+    if indexWithFolderName:
+        print("Set index with foldername")
+        scriptsPath = conf.get("scriptsPath")
+        abs_path = str(os.path.abspath(scriptsPath))
+        print("AbsolutePath", abs_path)
+        name = abs_path.split("/")[-2]
+        filename_index = name + "_" + filename_index
+    
+    print("[INFO from scanFiles] Index filename", filename_index)
 
     file.write('\n')
     file.write('rule Index:\n')

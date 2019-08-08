@@ -72,8 +72,6 @@ def writeIndexHTMLMenu():
     conf = Config()
     htmlOutputPath = conf.get("htmlOutputPath")
     scriptsPath = conf.get("scriptsPath")
-    print("Paths for Scripts", scriptsPath)
-    print("AbsolutePath", pathlib.PurePath(scriptsPath))
     pageTitle = conf.get("projectTitle")
 
     wbData = parseWBInfosFromRFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
@@ -118,10 +116,13 @@ def writeIndexHTMLMenu():
     
     if indexWithFolderName:
         print("Set index with foldername")
-        name = pathlib.PurePath(scriptsPath).split("/")[-1]
+        scriptsPath = conf.get("scriptsPath")
+        abs_path = str(os.path.abspath(scriptsPath))
+        print("AbsolutePath", abs_path)
+        name = abs_path.split("/")[-2]
         filename_index = name + "_" + filename_index
     
-    print("[INFO] Index filename", filename_index)
+    print("[INFO from createIndex] Index filename", filename_index)
     f = open(htmlOutputPath + '/' + filename_index, 'w')
     f.write(template)
     f.close()
