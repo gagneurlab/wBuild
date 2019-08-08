@@ -295,7 +295,6 @@ class Config:
             logger.error("Error parsing wbuild.yaml - format is wrong. Working with defaults...")
         else:
             self.conf_dict = merge_two_dicts(self.conf_dict, configDict)
-
         #fill Singleton
         Config.instance = self
 

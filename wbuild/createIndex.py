@@ -72,6 +72,8 @@ def writeIndexHTMLMenu():
     conf = Config()
     htmlOutputPath = conf.get("htmlOutputPath")
     scriptsPath = conf.get("scriptsPath")
+    print("Paths for Scripts", scriptsPath)
+    print("AbsolutePath", pathlib.PurePath(scriptsPath))
     pageTitle = conf.get("projectTitle")
 
     wbData = parseWBInfosFromRFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
@@ -108,7 +110,18 @@ def writeIndexHTMLMenu():
         filename_index = conf.get("htmlIndex")
     except AttributeError as e:
         filename_index = "index.html"
-    print("Index filename", filename_index)
+    
+    try: 
+        indexWithFolderName = conf.get("indexWithFolderName")
+    except:
+        indexWithFolderName = False
+    
+    if indexWithFolderName:
+        print("Set index with foldername")
+        name = pathlib.PurePath(scriptsPath).split("/")[-1]
+        filename_index = name + "_" + filename_index
+    
+    print("[INFO] Index filename", filename_index)
     f = open(htmlOutputPath + '/' + filename_index, 'w')
     f.write(template)
     f.close()
