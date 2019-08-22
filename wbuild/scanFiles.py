@@ -40,8 +40,8 @@ def writeDependencyFile():
     htmlOutputPath = conf.get("htmlOutputPath")
     logger.debug("Loaded config.\n html output path (key htmlOutputPath): " + htmlOutputPath + "\n")
     scriptsPath = conf.get("scriptsPath")
-    logger.debug("Scripts path (key scriptsPath): " + scriptsPath + "\nprocessedDataPath: " + conf.get(
-        "processedDataPath") + "\n")
+    print("Scripts path (key scriptsPath): " + os.path.abspath(scriptsPath) + "\nprocessedDataPath: " + os.path.abspath(conf.get(
+        "processedDataPath")) + "\n")
     wbData = parseWBInfosFromRFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     with open('.wBuild.depend', 'w') as f: #start off with the header
@@ -274,7 +274,7 @@ def writeIndexRule(wbRRows, wbMDrows, file):
         indexWithFolderName = False
     
     if indexWithFolderName:
-        print("Set index with foldername")
+        print("Set index with foldername in SCANFILES")
         scriptsPath = conf.get("scriptsPath")
         abs_path = str(os.path.abspath(scriptsPath))
         print("AbsolutePath", abs_path)
