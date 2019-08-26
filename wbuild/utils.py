@@ -285,10 +285,6 @@ class Config:
                     break
         self.snakeroot = os.path.dirname(self.snakefile)
 
-        #abspathSnakefile = os.path.abspath(self.snakefile)
-        #print("[INFO] Abs path Snakefile", abspathSnakefile)
-
-
         #load defaults
         self.loadDefaultConfiguration()
 
@@ -307,7 +303,6 @@ class Config:
 
     def loadDefaultConfiguration(self):
         abspathSnakefile = os.path.abspath(self.snakefile)
-        print("[INFO] Abs path Snakefile", abspathSnakefile)
         prefixScripts = self.snakeroot
         if len(prefixScripts) > 0:
             prefixScripts = prefixScripts + "/"

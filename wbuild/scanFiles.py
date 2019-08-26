@@ -40,8 +40,6 @@ def writeDependencyFile():
     htmlOutputPath = conf.get("htmlOutputPath")
     logger.debug("Loaded config.\n html output path (key htmlOutputPath): " + htmlOutputPath + "\n")
     scriptsPath = conf.get("scriptsPath")
-    print("Scripts path (key scriptsPath): " + os.path.abspath(scriptsPath) + "\nprocessedDataPath: " + os.path.abspath(conf.get(
-        "processedDataPath")) + "\n")
     wbData = parseWBInfosFromRFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     with open('.wBuild.depend', 'w') as f: #start off with the header
@@ -267,21 +265,18 @@ def writeIndexRule(wbRRows, wbMDrows, file):
         filename_index = conf.get("htmlIndex")
     except AttributeError as e:
         filename_index = "index.html"
-    
     try: 
         indexWithFolderName = conf.get("indexWithFolderName")
     except:
         indexWithFolderName = False
-    
+
     if indexWithFolderName:
-        print("Set index with foldername in SCANFILES")
         scriptsPath = conf.get("scriptsPath")
         abs_path = str(os.path.abspath(scriptsPath))
-        print("AbsolutePath", abs_path)
         name = abs_path.split("/")[-2]
         filename_index = name + "_" + filename_index
     
-    print("[INFO from scanFiles] Index filename", filename_index)
+    #print("[INFO from scanFiles] Index filename", filename_index)
 
     file.write('\n')
     file.write('rule Index:\n')

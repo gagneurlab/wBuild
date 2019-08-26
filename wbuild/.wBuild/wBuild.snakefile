@@ -9,7 +9,6 @@ if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in
 include: "../.wBuild.depend"
 
 if "htmlIndex" not in config:
-    print("Setting html-Index to default name")
     config["htmlIndex"] = "index.html"
 
 rule show:
