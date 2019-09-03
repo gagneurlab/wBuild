@@ -14,14 +14,14 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'Click>=6.0',
     'click-log',
-    'PyYAML>=3.12',
+    'PyYAML>=4.2b1',
     'snakemake>=3.13.2',
     # TODO: put package requirements here
 ]
 
 setup_requirements = [
     'pytest-runner',
-    'pyyaml'
+    'pyyaml>=4.2b1'
     # TODO(wachutka): put setup requirements (distutils extensions, etc.) here
     # --- this todo really needed?
 ]
@@ -33,7 +33,7 @@ test_requirements = [
 
 setup(
     name='wbuild',
-    version='1.4.1',
+    version='1.4.2',
     description="Automatic build tool for R Reports",
     long_description=readme + '\n\n' + history,
     author="Leonhard Wachutka",

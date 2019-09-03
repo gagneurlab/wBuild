@@ -24,7 +24,7 @@ def setup_paths():
 
 @click.group()
 @click_log.simple_verbosity_option(logger)
-@click.version_option('1.4.1',prog_name='wBuild')
+@click.version_option('1.4.2',prog_name='wBuild')
 def main():
     pass
 
@@ -43,8 +43,10 @@ def init():
         sys.exit(2)
     templatePath, wbuildPath, demoPath = setup_paths()
     distutils.dir_util.copy_tree(str(wbuildPath), './.wBuild')
-    shutil.copy(str(templatePath / 'Snakefile'), '.')
-    shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
+    if not os.path.isfile("Snakefile"):
+        shutil.copy(str(templatePath / 'Snakefile'), '.')
+    if not os.path.isfile("wbuild.yaml"):
+        shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
     if not os.path.isfile("readme.md"):
         copyReadme = input("wBuild needs readme.md in a root folder of your project. Shall we create the default "
                            "one? (y/n)")

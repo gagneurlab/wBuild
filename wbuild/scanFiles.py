@@ -263,11 +263,30 @@ def writeIndexRule(wbRRows, wbMDrows, file):
 
     conf = Config()
     htmlOutputPath = conf.get("htmlOutputPath")
+    try:
+        filename_index = conf.get("htmlIndex")
+    except AttributeError as e:
+        filename_index = "index.html"
+    
+    try: 
+        indexWithFolderName = conf.get("indexWithFolderName")
+    except:
+        indexWithFolderName = False
+    
+    if indexWithFolderName:
+        print("Set index with foldername")
+        scriptsPath = conf.get("scriptsPath")
+        abs_path = str(os.path.abspath(scriptsPath))
+        print("AbsolutePath", abs_path)
+        name = abs_path.split("/")[-2]
+        filename_index = name + "_" + filename_index
+    
+    print("[INFO from scanFiles] Index filename", filename_index)
 
     file.write('\n')
     file.write('rule Index:\n')
     file.write('    input: \n        "' + '",\n        "'.join(inputFiles) + '"\n')
-    file.write('    output: "' + htmlOutputPath + '/index.html"\n')
+    file.write('    output: "' + htmlOutputPath + '/' + filename_index + '" \n')
     # file.write('    script: ".wBuild/createIndex.py"\n')
     file.write('    run:\n')
     file.write('        import wbuild.createIndex\n')

@@ -5,7 +5,8 @@ import shutil
 from string import Template
 from os import listdir
 from os.path import isfile, join
-from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, getYamlParam, Config
+from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, \
+        getYamlParam, Config, removeFilePrefix
 
 sys.path.insert(0, os.getcwd() + "/.wBuild")  # TODO - is this line required?
 
@@ -26,7 +27,9 @@ def writeSubMenu(top, wbData, level):
             # Is it a file
             if(len(pathlib.PurePath(r['file']).parts) == (level + 1)):
                 if getYamlParam(r, 'type') != 'script' and getYamlParam(r, 'type') != 'noindex':
-                    menuString += '<li><a href="javascript:navigate(\'' + pathlib.PurePath(r['outputFile']).name + '\');">' + pathlib.PurePath(r['file']).parts[level] + '</a></li>\n'
+                    menuString += ('<li><a href="javascript:navigate(\'' +
+                            pathlib.PurePath(r['outputFile']).name + '\');">' +
+                            pathlib.PurePath(r['file']).parts[level] + '</a></li>\n')
                 continue
             temp.append(pathlib.PurePath(r['file']).parts[level])
             newWb.append(r)
@@ -47,13 +50,18 @@ def getRecentMenu():
 
     :return: HTML string: "Recently viewed" menu contents
     """
-    menuString = ""
     conf = Config()
     htmlOutputPath = conf.get("htmlOutputPath")
-    rFiles = sorted([join(htmlOutputPath, f) for f in listdir(htmlOutputPath) if isfile(join(htmlOutputPath, f))], key=os.path.getmtime, reverse=True)[:10]
+    rFiles = sorted([join(htmlOutputPath, f) for f in listdir(htmlOutputPath)
+        if isfile(join(htmlOutputPath, f))], key=os.path.getmtime, reverse=True)
+    rFiles = rFiles[:10]
+
+    menuString = ""
     for f in rFiles:
         fo = pathlib.PurePath(f).name
-        menuString += '<p><a href="javascript:navigate(\'' + fo + '\');">' + fo.replace('_', ' ').replace('.html', '') + '</a></p>\n'
+        menuString += ('<p><a href="javascript:navigate(\'' +
+                fo + '\');">' + fo.replace('_', ' ').replace('.html', '') +
+                '</a></p>\n')
     return menuString
 
 
@@ -65,28 +73,57 @@ def writeIndexHTMLMenu():
     htmlOutputPath = conf.get("htmlOutputPath")
     scriptsPath = conf.get("scriptsPath")
     pageTitle = conf.get("projectTitle")
-    wbData = parseWBInfosFromRFiles(script_dir= scriptsPath, htmlPath=htmlOutputPath)
+
+    wbData = parseWBInfosFromRFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     wbData += mdData
-    menuString = ""
     temp = []
-    for r in wbData: #for all of the scanned files, collect their paths
+
+    # for all of the scanned files, collect their paths
+    for r in wbData:
+        # this is needed so the relative path to "../wbuild/Snakefile" is not
+        # part of the html sub menu
+        r['file'] = removeFilePrefix(r['file'], conf.snakeroot)
         temp.append(pathlib.PurePath(r['file']).parts[1])
-    temp = sorted(set(temp))
-    for top in temp:
-        menuString += '<li class="dropdown">\n'
-        #write the current directory's name to the main ("top") toolbar tab
-        menuString += '   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">' + top + '<span class="caret"></span></a>\n'
-        menuString += '   <ul class="dropdown-menu multi-level" role="menu">\n'
-        #write sub-directories to the dropdown list of the "top" tabs
-        menuString += writeSubMenu(top, wbData, 2)
-        menuString += '   </ul>\n'
-        menuString += '</li>\n'
+
+    menuString = ""
+    for top in sorted(set(temp)):
+        menuString += (
+            '<li class="dropdown">\n' +
+            #write the current directory's name to the main ("top") toolbar tab
+            '   <a href="#" class="dropdown-toggle" data-toggle="dropdown" ' +
+                    'role="button" aria-haspopup="true" aria-expanded="false">' +
+                    top + '<span class="caret"></span></a>\n'
+            '   <ul class="dropdown-menu multi-level" role="menu">\n' +
+            #write sub-directories to the dropdown list of the "top" tabs
+            writeSubMenu(top, wbData, 2) +
+            '   </ul>\n' +
+            '</li>\n')
+
     #fill the HTML template with the constructed tag structure
     template = open('.wBuild/template.html').read()
     template = Template(template).substitute(menu=menuString, title=pageTitle, rf=getRecentMenu())  # snakewbuild.yaml['projectTitle']
 
-    f = open(htmlOutputPath + '/index.html', 'w')
+    try:
+        filename_index = conf.get("htmlIndex")
+    except AttributeError as e:
+        filename_index = "index.html"
+    
+    try: 
+        indexWithFolderName = conf.get("indexWithFolderName")
+    except:
+        indexWithFolderName = False
+    
+    if indexWithFolderName:
+        print("Set index with foldername")
+        scriptsPath = conf.get("scriptsPath")
+        abs_path = str(os.path.abspath(scriptsPath))
+        print("AbsolutePath", abs_path)
+        name = abs_path.split("/")[-2]
+        filename_index = name + "_" + filename_index
+    
+    print("[INFO from createIndex] Index filename", filename_index)
+    f = open(htmlOutputPath + '/' + filename_index, 'w')
     f.write(template)
     f.close()
 
