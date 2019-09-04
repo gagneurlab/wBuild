@@ -5,4 +5,4 @@ htmlOutputPath = config["htmlOutputPath"]  if (config["htmlOutputPath"] != None)
 
 rule all:
 	input: rules.Index.output, htmlOutputPath + "/readme.html"
-	output: touch("Output/all.done")
+	output: touch(htmlOutputPath + "/all.done")
