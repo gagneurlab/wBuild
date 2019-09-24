@@ -276,7 +276,6 @@ def writeIndexRule(wbRRows, wbMDrows, file):
         name = abs_path.split("/")[-2]
         filename_index = name + "_" + filename_index
     
-    #print("[INFO from scanFiles] Index filename", filename_index)
 
     file.write('\n')
     file.write('rule Index:\n')

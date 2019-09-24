@@ -108,7 +108,6 @@ def writeDepSVG():
     htmlOutputPath = conf.get("htmlOutputPath")
     snakeroot = conf.snakeroot
     foldername = snakeroot.split("/")[-1]
-    print("Foldername", foldername)
     
     try:
         filename_SVG = conf.get("ruleGraphPath") #### should be .md file
@@ -125,7 +124,6 @@ def writeDepSVG():
                     filename_SVG = f
  
     svgString = '<li><a href="javascript:navigate(' + "'{}'".format(filename_SVG) + ');">Dependency</a></li>' 
-    print(svgString)
     return svgString
 
 def writeIndexHTMLMenu():
@@ -167,7 +165,6 @@ def writeIndexHTMLMenu():
             
     readmeString, readmeIframeString, readmeFilename = writeReadme()
     depSVGString = writeDepSVG()
-    #print("SVG", depSVGString)
     
     #fill the HTML template with the constructed tag structure
     template = open('.wBuild/template.html').read()
@@ -191,7 +188,6 @@ def writeIndexHTMLMenu():
         name = abs_path.split("/")[-2]
         filename_index = name + "_" + filename_index
     
-    #print("[INFO from createIndex] Index filename", filename_index)
     f = open(htmlOutputPath + '/' + filename_index, 'w')
     f.write(template)
     f.close()
