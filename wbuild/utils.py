@@ -245,6 +245,8 @@ class Config:
     snakefile = "Snakefile"
     snakeroot = ""
     instance = None
+    
+
 
     def __init__(self):
         # check if it is already initialized
@@ -266,6 +268,7 @@ class Config:
         self.snakefile = self.args.snakefile
         self.config = parse_config(self.args)
 
+                
         if self.path is None:
             for p in ["wbuild.yaml", "config.yaml", "wBuild.yaml"]:
                 if os.path.exists(p):
@@ -299,6 +302,7 @@ class Config:
         Config.instance = self
 
     def loadDefaultConfiguration(self):
+        abspathSnakefile = os.path.abspath(self.snakefile)
         prefixScripts = self.snakeroot
         if len(prefixScripts) > 0:
             prefixScripts = prefixScripts + "/"

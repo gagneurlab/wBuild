@@ -9,11 +9,14 @@ if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in
 include: "../.wBuild.depend"
 
 if "htmlIndex" not in config:
-    print("Setting html-Index to default name")
     config["htmlIndex"] = "index.html"
+if "allDone" not in config:
+    config["allDone"] = "Output/all.done"
+
+
 
 rule show:
-    input: "Output/all.done"
+    input: config["allDone"]
     shell: "google-chrome {config[htmlOutputPath]}/{config[htmlIndex]} &"
 
 rule mapScripts:
@@ -29,7 +32,7 @@ rule clean:
     shell: "rm -R {config[htmlOutputPath]}* || true && rm .wBuild.depend || true && rm -R .wBuild/__pycache__ || true "
 
 rule publish:
-    input: "Output/all.done"
+    input: config["allDone"]
     shell: "rsync -Ort {config[htmlOutputPath]} {config[webDir]}"
 
 rule markdown:
