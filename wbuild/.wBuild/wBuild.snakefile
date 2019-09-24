@@ -4,9 +4,9 @@ import wbuild.scanFiles
 import wbuild.autolink
 
 if not '--dag' in sys.argv and not any("snakemake-bash-completion" in s for s in sys.argv):
-    wbuild.scanFiles.writeDependencyFile()
+    depFile = wbuild.scanFiles.writeDependencyFile()
 
-include: "../.wBuild.depend"
+include: depFile
 
 if "htmlIndex" not in config:
     config["htmlIndex"] = "index.html"
