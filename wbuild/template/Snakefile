@@ -1,5 +1,9 @@
+import pathlib
+import wbuild
+config['wBuildPath'] =  str(pathlib.Path(wbuild.__file__).parent)
+
 configfile: "wbuild.yaml"
-include: ".wBuild/wBuild.snakefile"
+include: config['wBuildPath'] + "/wBuild.snakefile"
 
 htmlOutputPath = config["htmlOutputPath"]  if (config["htmlOutputPath"] != None) else "Output/html"
 

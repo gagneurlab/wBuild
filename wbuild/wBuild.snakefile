@@ -38,7 +38,7 @@ rule publish:
 rule markdown:
     input: "{file}.md"
     output: expand("{htmlOutputPath}/{{file}}.html", htmlOutputPath = config["htmlOutputPath"])
-    shell: "pandoc --from markdown --to html --css .wBuild/lib/github.css --toc --self-contained -s -o {output} {input}"
+    shell: "pandoc --from markdown --to html --css {config[wBuildPath]}/html/lib/github.css --toc --self-contained -s -o {output} {input}"
 
 rule restoreModDate:
     shell: "find -type f -exec touch -r {} +"

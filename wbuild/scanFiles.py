@@ -11,6 +11,10 @@ import wbuild
 pathsep = "/"
 sys.path.insert(0, os.getcwd() + "/.wBuild")
 
+#wbuildPath = pathlib.Path(wbuild.__file__).parent
+#Config().conf_dict.setdefault('wBuildPath',str(wbuildPath))
+#print(Config().conf_dict.items())
+
 # SNAKEMAKE  = ["input", "output", "threads"]
 
 #dict containing snakemake supported fields
@@ -212,12 +216,12 @@ def writeRule(r, file, dump=False):
         wbInfos["script"] = '\'' + inputFile + '\''
     elif wbInfos.get("type") == 'noindex':
         wbInfos["output"] = insertPlaceholders(ensureString(wbInfos.get("output")), inputFile)
-        wbInfos["script"] = "'" + str(wbuildPath / 'wBRender.R') + "'"
+        wbInfos["script"] = "'" + str(wbuildPath / 'R'/'wBRender.R') + "'"
     else:
         wbInfos["output"] = insertPlaceholders(joinEmpty([ensureString(wbInfos.get("output")), "wBhtml = '" + r['outputFile'] + "'"]), inputFile)
-        wbInfos["script"] = "'" + str(wbuildPath / 'wBRender.R') + "'"
+        wbInfos["script"] = "'" + str(wbuildPath / 'R'/'wBRender.R') + "'"
     if dump==True:
-        wbInfos["script"] = "'" + str(wbuildPath / 'wBSMDump.R') + "'"
+        wbInfos["script"] = "'" + str(wbuildPath / 'R'/'wBSMDump.R') + "'"
     
     for i in SNAKEMAKE_FIELDS:
         if i not in ['output', 'script', 'input', 'run', 'shell'] and i in wbInfos.keys():
@@ -248,7 +252,7 @@ def writeMdRule(ruleInfos, file):
     file.write('rule ' + pathsepsToUnderscore(ruleInfos['file'], True) + ':\n')
     file.write('    input: "' + ruleInfos['file'] + '"\n')
     file.write('    output: "' + ruleInfos['outputFile'] + '"\n')
-    file.write('    shell: "pandoc --from markdown --to html --css .wBuild/lib/github.css --toc --self-contained -s -o {output} {input}"\n')
+    file.write('    shell: "pandoc --from markdown --to html --css {config[wBuildPath]}/html/lib/github.css --toc --self-contained -s -o {output} {input}"\n')
 
     file.write('\n')
 

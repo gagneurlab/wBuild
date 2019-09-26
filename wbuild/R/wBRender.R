@@ -5,7 +5,6 @@
 #require(knitrBootstrap)
 require(knitr)
 require(rmarkdown)
-
 # default for knitr and rmarkdown
 opts_knit$set(root.dir=getwd())
 opts_chunk$set(echo=TRUE, message=FALSE, 
@@ -13,9 +12,9 @@ opts_chunk$set(echo=TRUE, message=FALSE,
 
 # TODO could be an option in the wbuild.yaml
 options(width=120)
-
-source(".wBuild/render_child.R")
-source(".wBuild/rmarkdown_show_hide_table.R")
+wBuildPath = snakemake@config[['wBuildPath']]
+source(paste0(wBuildPath, "/R/render_child.R"))
+source(paste0(wBuildPath, "/R/rmarkdown_show_hide_table.R"))
 
 # create tmp folder and tmp output folder
 intermediates_dir <- tempfile()
@@ -24,7 +23,7 @@ i <- dir.create(intermediates_dir, showWarnings=FALSE)
 i <- dir.create(tmp_output_dir, showWarnings=FALSE)
 
 # copy needed files over
-file.copy(".wBuild/lib", file.path(tmp_output_dir), recursive=TRUE)
+file.copy(paste0(wBuildPath,"/html/lib"), file.path(tmp_output_dir), recursive=TRUE)
 
 # get snakemake input
 file_input <- snakemake@input[['RScript']]
