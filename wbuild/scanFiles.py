@@ -212,12 +212,12 @@ def writeRule(r, file, dump=False):
         wbInfos["script"] = '\'' + inputFile + '\''
     elif wbInfos.get("type") == 'noindex':
         wbInfos["output"] = insertPlaceholders(ensureString(wbInfos.get("output")), inputFile)
-        wbInfos["script"] = "'" + str(wbuildPath / '.wBuild/wBRender.R') + "'"
+        wbInfos["script"] = "'" + str(wbuildPath / 'wBRender.R') + "'"
     else:
         wbInfos["output"] = insertPlaceholders(joinEmpty([ensureString(wbInfos.get("output")), "wBhtml = '" + r['outputFile'] + "'"]), inputFile)
-        wbInfos["script"] = "'" + str(wbuildPath / '.wBuild/wBRender.R') + "'"
+        wbInfos["script"] = "'" + str(wbuildPath / 'wBRender.R') + "'"
     if dump==True:
-        wbInfos["script"] = "'" + str(wbuildPath / '.wBuild/wBSMDump.R') + "'"
+        wbInfos["script"] = "'" + str(wbuildPath / 'wBSMDump.R') + "'"
     
     for i in SNAKEMAKE_FIELDS:
         if i not in ['output', 'script', 'input', 'run', 'shell'] and i in wbInfos.keys():
