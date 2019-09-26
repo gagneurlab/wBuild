@@ -2,6 +2,8 @@ import os
 import sys
 import pathlib
 import shutil
+import wbuild
+
 from string import Template
 from os import listdir
 from os.path import isfile, join
@@ -167,7 +169,9 @@ def writeIndexHTMLMenu():
     depSVGString = writeDepSVG()
     
     #fill the HTML template with the constructed tag structure
-    template = open('.wBuild/template.html').read()
+    wbuildPath = pathlib.Path(wbuild.__file__).parent
+    
+    template = open(str(wbuildPath / "template.html")).read()
     template = Template(template).substitute(menu=menuString, title=pageTitle, rf=getRecentMenu(),
                         readme=readmeString, readmeIframe=readmeIframeString, readmeFilename=readmeFilename
                         , depSVG=depSVGString)
