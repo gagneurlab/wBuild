@@ -124,10 +124,14 @@ def ensureString(elem):
             return "'" + elem + "'"
         else:
             return elem
+    elif type(elem) is int:
+        return str(elem)
     elif type(elem) is dict:
-        raise TypeError("A wBuild tag is a dict, whereas it can be list or string only. Please check if you have indented"
-                        " all the YAML \'output\' tags in your scripts properly. \nwBuild output should be listed one level deeper than external (knitr) output."
-                        "(The latter one should be on the same level with \'wb\' tag)")
+        elemArr = [k + " = " + escapeSMString(elem[k]) for k in elem]
+        return ", ".join(elemArr)
+        #raise TypeError("A wBuild tag is a dict, whereas it can be list or string only. Please check if you have indented"
+        #                " all the YAML \'output\' tags in your scripts properly. \nwBuild output should be listed one level deeper than external (knitr) output."
+        #                "(The latter one should be on the same level with \'wb\' tag)")
     else:
         raise TypeError("Can't parse type " + str(type(elem)) + "as a valid workflow information under a wBuild YAML tag (input or output).")
 
@@ -213,7 +217,11 @@ def writeRule(r, file, dump=False):
         wbInfos["output"] = insertPlaceholders(joinEmpty([ensureString(wbInfos.get("output")), "wBhtml = '" + r['outputFile'] + "'"]), inputFile)
         wbInfos["script"] = "'" + str(wbuildPath / '.wBuild/wBRender.R') + "'"
     if dump==True:
-        wbInfos["script"] = str(wbuildPath / '.wBuild/wBSMDump.R')
+        wbInfos["script"] = "'" + str(wbuildPath / '.wBuild/wBSMDump.R') + "'"
+    
+    for i in SNAKEMAKE_FIELDS:
+        if i not in ['output', 'script', 'input', 'run', 'shell'] and i in wbInfos.keys():
+            wbInfos[i] = ensureString(wbInfos.get(i))
     # remove wb related elements
     # wbInfos = {key: wbInfos[key] for key in wbInfos if key not in WB_FIELDS}
     # if not set(wbInfos.keys()).issubset(SNAKEMAKE_FIELDS):
