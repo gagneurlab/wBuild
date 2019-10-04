@@ -213,7 +213,7 @@ def writeRule(r, file, dump=False):
     wbInfos["input"] = insertPlaceholders(joinEmpty([ensureString(wbInfos.get("input")), "RScript = '" + inputFile + "'"]), inputFile)
     if wbInfos.get("type") == 'script':
         wbInfos["output"] = insertPlaceholders(ensureString(wbInfos.get("output")), inputFile)
-        wbInfos["script"] = '\'' + inputFile + '\''
+        wbInfos["script"] = "'" + os.getcwd() + '/' + inputFile + "'"
     elif wbInfos.get("type") == 'noindex':
         wbInfos["output"] = insertPlaceholders(ensureString(wbInfos.get("output")), inputFile)
         wbInfos["script"] = "'" + str(wbuildPath / 'R'/'wBRender.R') + "'"
