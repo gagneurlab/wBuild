@@ -171,7 +171,7 @@ def writeIndexHTMLMenu():
     #fill the HTML template with the constructed tag structure
     wbuildPath = pathlib.Path(wbuild.__file__).parent
     
-    template = open(str(wbuildPath / "template.html")).read()
+    template = open(str(wbuildPath / "html/template.html")).read()
     template = Template(template).substitute(menu=menuString, title=pageTitle, rf=getRecentMenu(),
                         readme=readmeString, readmeIframe=readmeIframeString, readmeFilename=readmeFilename
                         , depSVG=depSVGString)
@@ -206,4 +206,7 @@ def ci():
 
     if os.path.exists(libDir):
         shutil.rmtree(libDir)
-    shutil.copytree('.wBuild/lib', libDir)
+    
+    wbuildPath = pathlib.Path(wbuild.__file__).parent
+    shutil.copytree(str(wbuildPath) + "/html/lib", libDir)
+    
