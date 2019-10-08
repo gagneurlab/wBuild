@@ -167,15 +167,13 @@ def writeIndexHTMLMenu():
             
     readmeString, readmeIframeString, readmeFilename = writeReadme()
     depSVGString = writeDepSVG()
-    
+
     #fill the HTML template with the constructed tag structure
     wbuildPath = pathlib.Path(wbuild.__file__).parent
-    
-    template = open(str(wbuildPath / "template.html")).read()
+    template = open(str(wbuildPath / "html/template.html")).read()
     template = Template(template).substitute(menu=menuString, title=pageTitle, rf=getRecentMenu(),
                         readme=readmeString, readmeIframe=readmeIframeString, readmeFilename=readmeFilename
                         , depSVG=depSVGString)
-                        
                         
     try:
         filename_index = conf.get("htmlIndex")
@@ -186,12 +184,12 @@ def writeIndexHTMLMenu():
         indexWithFolderName = conf.get("indexWithFolderName")
     except:
         indexWithFolderName = False
-    
+
     if indexWithFolderName:
         abs_path = str(os.path.abspath(scriptsPath))
         name = abs_path.split("/")[-2]
         filename_index = name + "_" + filename_index
-    
+
     f = open(htmlOutputPath + '/' + filename_index, 'w')
     f.write(template)
     f.close()
@@ -206,4 +204,8 @@ def ci():
 
     if os.path.exists(libDir):
         shutil.rmtree(libDir)
-    shutil.copytree('.wBuild/lib', libDir)
+
+
+    wbuildPath = pathlib.Path(wbuild.__file__).parent
+    shutil.copytree(str(wbuildPath) + "/html/lib", libDir) ### quick fix for line below
+    #shutil.copytree('.wBuild/lib', libDir) ######### .wBuild/llib exitiert nicht mehr, in wBRender.R: file.copy(paste0(wBuildPath,"/html/lib"), file.path(tmp_output_dir), recursive=TRUE)
