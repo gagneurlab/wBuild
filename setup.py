@@ -4,6 +4,11 @@
 """The setup script."""
 
 from setuptools import setup, find_packages
+import sys
+
+if sys.version_info < (3, 5):
+    print("At least Python 3.5 is required.\n", file=sys.stderr)
+    exit(1)
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -15,8 +20,7 @@ requirements = [
     'Click>=6.0',
     'click-log',
     'PyYAML>=4.2b1',
-    'snakemake>=3.13.2',
-    # TODO: put package requirements here
+    'snakemake>=5.5.1',
 ]
 
 setup_requirements = [
@@ -54,12 +58,6 @@ setup(
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
     ],
     test_suite='tests',
