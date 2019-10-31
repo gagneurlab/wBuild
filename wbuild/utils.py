@@ -275,6 +275,8 @@ class Config:
                     self.path = p
                     break
         else:
+            if type(self.path) is list:
+                self.path=self.path[0]
             self.path=os.path.abspath(self.path)
 
         # this is taken from the snakemake main file
