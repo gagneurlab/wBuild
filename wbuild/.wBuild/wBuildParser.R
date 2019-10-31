@@ -1,3 +1,12 @@
+for(p in c("stringr", "yaml", "magrittr", "gsubfn"))
+	if(!requireNamespace(p, quietly=TRUE))
+		install.packages(p)
+library(stringr)
+library(methods)
+library(yaml)
+library(magrittr)
+library(gsubfn)
+		
 parseWBHeader = function(filename, ...)
 {
 	addWildCards = list(...)
@@ -6,7 +15,6 @@ parseWBHeader = function(filename, ...)
 		filename = snakemake@input[['RScript']]
 	}
 	
-	library(stringr)
 	wbPD = 'Output/ProcessedData'
 	wildcards = list(
 			`wbPD` = 'Output/ProcessedData',
@@ -17,11 +25,7 @@ parseWBHeader = function(filename, ...)
 	wildcards = c(wildcards,addWildCards)
 	if(!exists('snakemake') || snakemake@rule == 'WB')
 	{
-		library(methods)
-		library(yaml)
-		library(magrittr)
-		library(gsubfn)
-		
+	
 		wb = readLines(filename)%>%str_subset("^#'")%>%str_replace("^#'",'')%>%paste0(collapse='\n')%>%
 				str_replace("\\n---(.|\\n)*",'')%>%yaml.load%>%`[[`('wb')
 		

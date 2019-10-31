@@ -1,5 +1,9 @@
+for(p in c("stringr", "gsubfn"))
+	if(!requireNamespace(p, quietly=TRUE))
+		install.packages(p)
 library(stringr)
 library(gsubfn)
+
 parseWBHeader2 = function(file, wildcards = list(), debug = T)
 {
 	# Are we interactive or in real snakemake run?
