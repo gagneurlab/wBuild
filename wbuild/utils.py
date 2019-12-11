@@ -129,7 +129,7 @@ def hasYAMLHeader(filepath):
     return False
 
 
-def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
+def parseWBInfosFromScriptFiles(script_dir="Scripts", htmlPath="Output/html", pattern = None):
     """
 
     :param script_dir: Relative path to the Scripts directory
@@ -140,16 +140,21 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
       - param - parsed yaml params
     """
     parsedInfos = []
+    if not pattern:
+        pattern = ['*.r', '*.R']
+    elif type(pattern) is str:
+        pattern = [pattern]
+
     #errorOccured = False
-    for filename in findFilesRecursive(script_dir, ['*.r', '*.R']):
-        parsedInfos.extend(parseWBInfosFromRFile(filename, htmlPath))
+    for filename in findFilesRecursive(script_dir, pattern):
+        parsedInfos.extend(parseWBInfosFromScriptFile(filename, htmlPath))
 
     logger.debug("Parsed informations from R files: " + str(parsedInfos))
     #if errorOccured:
     #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
 
-def parseWBInfosFromRFile(filename, htmlPath="Output/html"):
+def parseWBInfosFromScriptFile(filename, htmlPath="Output/html"):
     """
     :param filename: Relative path to the Scripts directory
     :param htmlPath: Relative path to the html output path
@@ -172,7 +177,6 @@ def parseWBInfosFromRFile(filename, htmlPath="Output/html"):
         outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
         parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
 
-    logger.debug("Parsed informations from R files: " + str(parsedInfos))
     #if errorOccured:
     #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
