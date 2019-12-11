@@ -32,6 +32,12 @@ class UtilsTestCase(unittest.TestCase):
             mo.assert_called_with('.')
             self.assertEqual("---\n wb:\n -iris: \"Data\"\n---", yamlRead)
 
+    def test_detectsYamlHeaderInIpynb(self):
+        self.assertTrue(hasYAMLHeader(os.path.join(os.path.dirname(__file__), 'resources', "test.ipynb")))
+
+    def test_parsesYamlHeaderInIpynb(self):
+        self.assertTrue(parseYAMLHeader(os.path.join(os.path.dirname(__file__), 'resources', "test.ipynb")))
+
 
 if __name__ == '__main__':
     unittest.main()

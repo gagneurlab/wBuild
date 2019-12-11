@@ -7,6 +7,7 @@ import yaml.parser
 import yaml.error
 import operator
 import re
+import json
 from functools import reduce
 from snakemake.logging import logger
 from snakemake import get_argument_parser, parse_config, SNAKEFILE_CHOICES
@@ -62,6 +63,21 @@ def parseYAMLHeader(filepath):
     :param filepath: path to the file
     :return: String representation of the YAML header in the file, including inter-document framing ("---")
     """
+    if filepath.endswith(".R") or filepath.endswith(".r"):
+        result = '\n'.join(parseYAMLHeaderR(filepath))
+    elif filepath.endswith(".ipynb"):
+        result = ''.join(parseYAMLHeaderIpynb(filepath))
+    else:
+        raise Exception("Parsing YAML header from this file not supported. Allowed extensions: .R, .r, .ipynb, "
+                        "recognized " + filepath.split('.')[-1])
+
+    logger.debug("Got " + result + "as a result of parsing YAML header from " + filepath + ".\n")
+    return result
+
+def parseYAMLHeaderR(filepath):
+    """
+    Parse yaml header from R script
+    """
     yamlHeader = []
     for i, line in enumerate(open(filepath).readlines()):
         # process
@@ -70,11 +86,32 @@ def parseYAMLHeader(filepath):
         # terminate if that's already "#'---" (=end of YAML-designated area)
         if i != 0 and line.startswith("#'---"):
             break
+    return yamlHeader
 
-    result = '\n'.join(yamlHeader)
-    logger.debug("Got " + result + "as a result of parsing YAML header from " + filepath + ".\n")
-    return result
+def parseYAMLHeaderIpynb(filepath):
+    """
+    Parse yaml header from IPython notebook
+    :param filepath:
+    :return:
+    """
+    notebook = json.load(open(filepath, "r"))
+    yamlHeader = []
+    for cell in notebook["cells"]:
+        if cell["cell_type"] != "code":
+            continue
+        code = cell["source"]
+        if not code[0].startswith("#'---"): #not header cell
+            continue
+        for i, line in enumerate(code):
+            yamlHeader.append(line.strip()[2:])
 
+            # terminate if that's already "#'---" (=end of YAML-designated area)
+            if i != 0 and line.startswith("#'---"):
+                break
+        if yamlHeader:
+            break
+
+    return yamlHeader
 
 def hasYAMLHeader(filepath):
     """
@@ -86,6 +123,9 @@ def hasYAMLHeader(filepath):
     line = lines[0]
     if(line.startswith("#'---")):
         return True
+    for cell in json.load(open(filepath, 'r'))["cells"]:
+        if cell["cell_type"] == "code" and cell["source"][0].startswith("#'---"):
+            return True
     return False
 
 
@@ -245,7 +285,7 @@ class Config:
     snakefile = "Snakefile"
     snakeroot = ""
     instance = None
-    
+
 
 
     def __init__(self):
@@ -268,7 +308,7 @@ class Config:
         self.snakefile = self.args.snakefile
         self.config = parse_config(self.args)
 
-                
+
         if self.path is None:
             for p in ["wbuild.yaml", "config.yaml", "wBuild.yaml"]:
                 if os.path.exists(p):
