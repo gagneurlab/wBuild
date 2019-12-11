@@ -142,22 +142,7 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
     parsedInfos = []
     #errorOccured = False
     for filename in findFilesRecursive(script_dir, ['*.r', '*.R']):
-        if not hasYAMLHeader(filename):
-            # Ignore files without YAML infos
-            continue
-        header = parseYAMLHeader(filename)
-        # run all the synthax checks - will raise an error if it fails
-        yamlParamsDict = parseYamlParams(header, filename)
-        if yamlParamsDict == None: #parsing error occured
-            continue #go on parsing next file
-
-
-        if type(yamlParamsDict) is str: #allow parsing one tag without double points as string; put it in a dict and check later on
-            yamlParamsDict = {yamlParamsDict: None}
-
-        if('wb' in yamlParamsDict):# the header contains wb informations
-            outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
-            parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
+        parsedInfos.extend(parseWBInfosFromRFile(filename, htmlPath))
 
     logger.debug("Parsed informations from R files: " + str(parsedInfos))
     #if errorOccured:
