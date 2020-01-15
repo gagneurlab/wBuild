@@ -32,6 +32,8 @@ SNAKEMAKE_FIELDS = ["input",
                     "script"]
 
 
+
+
 def writeDependencyFile():
     """
     Entry point for writing .wBuild.depend.
@@ -46,7 +48,7 @@ def writeDependencyFile():
     htmlOutputPath = conf.get("htmlOutputPath")
     logger.debug("Loaded config.\n html output path (key htmlOutputPath): " + htmlOutputPath + "\n")
     scriptsPath = conf.get("scriptsPath")
-    wbRData = parseWBInfosFromScriptFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath, pattern= [".R", ".r"])
+    wbRData = parseWBInfosFromScriptFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath, pattern= [".R", ".r", ".Rmd"])
     wbIpynbData = parseWBInfosFromScriptFiles(scriptsPath, htmlOutputPath, pattern=".ipynb")
     mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     dependFile = tempfile.NamedTemporaryFile('w',delete=False)
@@ -57,6 +59,10 @@ def writeDependencyFile():
         f.write('######\n')
         # write rules
         for r in wbRData:
+            writeRule(r, f)
+        for r in wbIpynbData:
+            writeRmdConversionRule(r, f) # convert to Rmd
+            r['file'] = r['file'].replace(".ipynb", ".Rmd")
             writeRule(r, f)
         # write md rules
         for r in mdData:
@@ -191,6 +197,9 @@ def insertPlaceholders(dest, source):
 
     return dest
 
+def writeRmdConversionRule(r, f):
+    # TODO
+    pass
 
 def writeRule(r, file, dump=False):
     """
