@@ -63,8 +63,8 @@ def parseYAMLHeader(filepath):
     :param filepath: path to the file
     :return: String representation of the YAML header in the file, including inter-document framing ("---")
     """
-    if filepath.endswith(".R") or filepath.endswith(".r"):
-        result = '\n'.join(parseYAMLHeaderR(filepath))
+    if re.search(r"\.R", filepath, re.IGNORECASE) is not None or re.search(r"\.Rmd", filepath, re.IGNORECASE):
+        result = '\n'.join(parseYAMLHeaderPlain(filepath))
     elif filepath.endswith(".ipynb"):
         result = ''.join(parseYAMLHeaderIpynb(filepath))
     else:
@@ -74,18 +74,20 @@ def parseYAMLHeader(filepath):
     logger.debug("Got " + result + "as a result of parsing YAML header from " + filepath + ".\n")
     return result
 
-def parseYAMLHeaderR(filepath):
+def parseYAMLHeaderPlain(filepath):
     """
-    Parse yaml header from R script
+    Lookup and parse YAML header from "plain text" file
     """
     yamlHeader = []
-    for i, line in enumerate(open(filepath).readlines()):
-        # process
+    lineit = iter(open(filepath).readlines())
+    line = ""
+    while line.startswith("#'---"): # YAML options chunk begins
+        line = next(lineit)
+    yamlHeader.append(line.strip()[2:])
+    line = next(lineit) #next line after YAML begin/end separator
+    while not line.startswith("#'---"):
         yamlHeader.append(line.strip()[2:])
-
-        # terminate if that's already "#'---" (=end of YAML-designated area)
-        if i != 0 and line.startswith("#'---"):
-            break
+    yamlHeader.append("#'---") #end separator
     return yamlHeader
 
 def parseYAMLHeaderIpynb(filepath):
@@ -140,7 +142,7 @@ def parseWBInfosFromScriptFiles(script_dir="Scripts", htmlPath="Output/html", pa
       - param - parsed yaml params
     """
     parsedInfos = []
-    if not pattern:
+    if pattern is None:
         pattern = ['*.r', '*.R']
     elif type(pattern) is str:
         pattern = [pattern]
