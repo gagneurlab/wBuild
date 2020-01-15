@@ -1,13 +1,13 @@
 #
 # wBuild render script
-# 
+#
 
 #require(knitrBootstrap)
 require(knitr)
 require(rmarkdown)
 # default for knitr and rmarkdown
 opts_knit$set(root.dir=getwd())
-opts_chunk$set(echo=TRUE, message=FALSE, 
+opts_chunk$set(echo=TRUE, message=FALSE,
 		error=FALSE, warning=FALSE, cache=FALSE)
 
 # TODO could be an option in the wbuild.yaml
@@ -32,15 +32,20 @@ file_output <- snakemake@output[['wBhtml']]
 
 sFile <- tempfile()
 spin_input <- readChar(file_input, file.info(file_input)$size)
-write(spin(text=spin_input, knit=FALSE), sFile)
+isRScript <- any(endsWith(file_input, c(".r", ".R")))
+if (isRScript) {
+    write(spin(text=spin_input, knit=FALSE), sFile)
+} else {
+    write(spin_input, sFile)
+}
 kProcessor <- default_output_format(sFile)
 
 # add needed default based on the document type
 if (kProcessor$name == "html_document"){
 	libPath <- file.path(tmp_output_dir, "libR")
-	
+
 	kProcessor$options$code_folding = ifelse(
-			is.language(kProcessor$options$code_folding), 
+			is.language(kProcessor$options$code_folding),
 			"hide", kProcessor$options$code_folding)
 	kProcessor$options$toc <- TRUE
 	kProcessor$options$toc_float <- TRUE
