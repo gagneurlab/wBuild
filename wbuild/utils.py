@@ -122,9 +122,9 @@ def hasYAMLHeader(filepath):
     """
     with open(filepath, "r") as f:
         lines = f.readlines()
-    line = lines[0]
-    if(line.startswith("#'---")):
-        return True
+    for line in lines:
+        if(line.startswith("#'---")):
+            return True
     for cell in json.load(open(filepath, 'r'))["cells"]:
         if cell["cell_type"] == "code" and cell["source"][0].startswith("#'---"):
             return True
@@ -166,7 +166,6 @@ def parseWBInfosFromScriptFile(filename, htmlPath="Output/html"):
       - param - parsed yaml params
     """
     parsedInfos = []
-    #errorOccured = False
     if not hasYAMLHeader(filename):
         # Ignore files without YAML infos
         print('Header not valid')
@@ -179,8 +178,6 @@ def parseWBInfosFromScriptFile(filename, htmlPath="Output/html"):
         outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
         parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
 
-    #if errorOccured:
-    #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
 
 
