@@ -66,7 +66,7 @@ def parseYAMLHeader(filepath):
     if re.search(r"\.R", filepath, re.IGNORECASE) is not None or re.search(r"\.Rmd", filepath, re.IGNORECASE) is not None:
         result = '\n'.join(parseYAMLHeaderPlain(filepath))
     elif filepath.endswith(".ipynb"):
-        result = ''.join(parseYAMLHeaderIpynb(filepath))
+        result = '\n'.join(parseYAMLHeaderIpynb(filepath))
     else:
         raise Exception("Parsing YAML header from this file not supported. Allowed extensions: .R, .r, .ipynb, "
                         "recognized " + filepath.split('.')[-1])
@@ -88,7 +88,7 @@ def parseYAMLHeaderPlain(filepath):
     while not line.startswith("#'---"):
         yamlHeader.append(line.strip()[2:])
         line = next(lineit)
-    yamlHeader.append("#'---") #end separator
+    yamlHeader.append("---") #end separator
     return yamlHeader
 
 def parseYAMLHeaderIpynb(filepath):
