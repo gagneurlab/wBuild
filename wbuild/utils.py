@@ -63,7 +63,7 @@ def parseYAMLHeader(filepath):
     :param filepath: path to the file
     :return: String representation of the YAML header in the file, including inter-document framing ("---")
     """
-    if re.search(r"\.R", filepath, re.IGNORECASE) is not None or re.search(r"\.Rmd", filepath, re.IGNORECASE):
+    if re.search(r"\.R", filepath, re.IGNORECASE) is not None or re.search(r"\.Rmd", filepath, re.IGNORECASE) is not None:
         result = '\n'.join(parseYAMLHeaderPlain(filepath))
     elif filepath.endswith(".ipynb"):
         result = ''.join(parseYAMLHeaderIpynb(filepath))

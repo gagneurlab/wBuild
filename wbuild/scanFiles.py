@@ -48,8 +48,8 @@ def writeDependencyFile():
     htmlOutputPath = conf.get("htmlOutputPath")
     logger.debug("Loaded config.\n html output path (key htmlOutputPath): " + htmlOutputPath + "\n")
     scriptsPath = conf.get("scriptsPath")
-    wbRData = parseWBInfosFromScriptFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath, pattern= [".R", ".r", ".Rmd"])
-    wbIpynbData = parseWBInfosFromScriptFiles(scriptsPath, htmlOutputPath, pattern=".ipynb")
+    wbRData = parseWBInfosFromScriptFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath, pattern= ["*.R", "*.r", "*.Rmd"])
+    wbIpynbData = parseWBInfosFromScriptFiles(scriptsPath, htmlOutputPath, pattern="*.ipynb")
     mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     dependFile = tempfile.NamedTemporaryFile('w',delete=False)
     with dependFile as f: #start off with the header
