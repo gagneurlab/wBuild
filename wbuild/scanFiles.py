@@ -119,6 +119,9 @@ def escapeSMString(item):
 
 
 def ensureString(elem):
+    """
+    Enstringify all parameter types. Used for e.g. writing string to snakemake rules
+    """
     if elem is None:
         return ''
     elif type(elem) is list:
@@ -140,9 +143,6 @@ def ensureString(elem):
     elif type(elem) is dict:
         elemArr = [k + " = " + escapeSMString(elem[k]) for k in elem]
         return ", ".join(elemArr)
-        #raise TypeError("A wBuild tag is a dict, whereas it can be list or string only. Please check if you have indented"
-        #                " all the YAML \'output\' tags in your scripts properly. \nwBuild output should be listed one level deeper than external (knitr) output."
-        #                "(The latter one should be on the same level with \'wb\' tag)")
     else:
         raise TypeError("Can't parse type " + str(type(elem)) + "as a valid workflow information under a wBuild YAML tag (input or output).")
 
@@ -197,8 +197,34 @@ def insertPlaceholders(dest, source):
 
     return dest
 
-def writeRmdConversionRule(r, f):
-    # TODO
+def writeRmdConversionRule(r, file, dump = False):
+
+    wbInfos = r["param"]["wb"]
+    inputFile = r['file'] #input R/Rmd script for Snakemake
+
+
+    wbuildPath = pathlib.Path(wbuild.__file__).parent
+
+    if wbInfos == None:
+        return
+
+    # determine input, output and script
+    wbInfos["input"] = inputFile
+    wbInfos["output"] = insertPlaceholders(ensureString(wbInfos.get("output")), inputFile)
+    wbInfos["shell"] = "jupytext --to rmarkdown {input}"
+
+    if dump==True:
+        wbInfos["script"] = "'" + str(wbuildPath / 'R'/'wBSMDump.R') + "'"
+
+    for i in SNAKEMAKE_FIELDS:
+        if i not in ['output', 'script', 'input', 'run', 'shell'] and i in wbInfos.keys():
+            wbInfos[i] = ensureString(wbInfos.get(i))
+    wbInfos['rule'] = pathsepsToUnderscore(r['file'], True) # convert filepath to the unique id of the rule
+    # write to file
+    file.write('\n')
+    dumpSMRule(wbInfos, file, inputFile)
+    file.write('\n')
+
     pass
 
 def writeRule(r, file, dump=False):
