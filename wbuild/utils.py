@@ -152,7 +152,7 @@ def parseWBInfosFromScriptFiles(script_dir="Scripts", htmlPath="Output/html", pa
     for filename in findFilesRecursive(script_dir, pattern):
         parsedInfos.extend(parseWBInfosFromScriptFile(filename, htmlPath))
 
-    logger.debug("Parsed informations from R files: " + str(parsedInfos))
+    logger.debug("Parsed informations from script files: " + str(parsedInfos))
     #if errorOccured:
     #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos

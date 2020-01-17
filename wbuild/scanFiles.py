@@ -7,6 +7,7 @@ from wbuild.utils import parseWBInfosFromScriptFiles, parseWBInfosFromScriptFile
     Config, wbuildVersionIsCurrent, bcolors
 import tempfile
 import wbuild
+import copy
 
 pathsep = "/"
 sys.path.insert(0, os.getcwd() + "/.wBuild")
@@ -50,6 +51,9 @@ def writeDependencyFile():
     scriptsPath = conf.get("scriptsPath")
     wbRData = parseWBInfosFromScriptFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath, pattern= ["*.R", "*.r", "*.Rmd"])
     wbIpynbData = parseWBInfosFromScriptFiles(scriptsPath, htmlOutputPath, pattern="*.ipynb")
+    # since .ipynb are converted to Rmd first and then rendered, remove all Rmd co-occurences from R data
+    ipynbRmdNames = list(map(lambda x: x["file"].replace(".ipynb", ""), wbIpynbData))
+    wbRData = list(filter(lambda x: not any(re.match(fn, x["file"]) for fn in ipynbRmdNames), wbRData))
     mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     dependFile = tempfile.NamedTemporaryFile('w',delete=False)
     with dependFile as f: #start off with the header
@@ -63,15 +67,17 @@ def writeDependencyFile():
         for r in wbIpynbData:
             writeRmdConversionRule(r, f) # convert to Rmd
             r['file'] = r['file'].replace(".ipynb", ".Rmd")
+            wbRData.append(r)
             writeRule(r, f)
         # write md rules
         for r in mdData:
             writeMdRule(r, f)
 
+        logger.debug("wbRData : " + str(wbRData))
         # write build index rule
         writeIndexRule(wbRData, mdData, f)
     logger.info("Dependencies file generated.\n")
-
+    logger.debug("Dependencies file name: %s" % dependFile.name)
     return(dependFile.name)
 
 def writeWBParseDependencyFile(filename):
@@ -199,7 +205,7 @@ def insertPlaceholders(dest, source):
 
 def writeRmdConversionRule(r, file, dump = False):
 
-    wbInfos = r["param"]["wb"]
+    wbInfos = copy.deepcopy(r["param"]["wb"])
     inputFile = r['file'] #input R/Rmd script for Snakemake
 
 
@@ -209,9 +215,9 @@ def writeRmdConversionRule(r, file, dump = False):
         return
 
     # determine input, output and script
-    wbInfos["input"] = inputFile
-    wbInfos["output"] = insertPlaceholders(ensureString(wbInfos.get("output")), inputFile)
-    wbInfos["shell"] = "jupytext --to rmarkdown {input}"
+    wbInfos["input"] = "\"%s\"" % (inputFile)
+    wbInfos["output"] = "\"%s\"" % (inputFile.replace(".ipynb", ".Rmd"))
+    wbInfos["shell"] = "\"jupytext --to rmarkdown {input}\""
 
     if dump==True:
         wbInfos["script"] = "'" + str(wbuildPath / 'R'/'wBSMDump.R') + "'"
