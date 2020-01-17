@@ -210,11 +210,9 @@ def writeRule(r, file, dump=False):
     """
     #TODO cleanup boilerplate commented code here
     wbInfos = r["param"]["wb"]
-    inputFile = r['file'] #input R script for Snakemake
+    inputFile = r['file'] #input R/Rmd script for Snakemake
 
     wbuildPath = pathlib.Path(wbuild.__file__).parent
-    # extract rule
-    # rule = r['file'].replace('.','_').replace('/','_')
 
     if wbInfos == None:
         return
@@ -236,19 +234,9 @@ def writeRule(r, file, dump=False):
     for i in SNAKEMAKE_FIELDS:
         if i not in ['output', 'script', 'input', 'run', 'shell'] and i in wbInfos.keys():
             wbInfos[i] = ensureString(wbInfos.get(i))
-    # remove wb related elements
-    # wbInfos = {key: wbInfos[key] for key in wbInfos if key not in WB_FIELDS}
-    # if not set(wbInfos.keys()).issubset(SNAKEMAKE_FIELDS):
-    #    Warning("File: {0}. The following fields don't correspond to any snakemake or wBuild tag: {1}"
-    #            .format(r['file'], ",".join(set(wbInfos.keys()).difference(SNAKEMAKE_FIELDS))))
-
-    # remove fields not in SNAKEMAKE_FIELDS
-    # wbInfos = {key: wbInfos[key] for key in wbInfos if key in SNAKEMAKE_FIELDS}
     wbInfos['rule'] = pathsepsToUnderscore(r['file'], True) # convert filepath to the unique id of the rule
     # write to file
     file.write('\n')
-    # dumpDict = {'rule ' + rule: wbInfos}
-    # file.write(yaml.dump(dumpDict, default_flow_style = False, indent=4).replace("\'\'\'", "'").replace("\'\'", "'"))
     dumpSMRule(wbInfos, file, inputFile)
     file.write('\n')
 
@@ -308,7 +296,6 @@ def writeIndexRule(wbRRows, wbMDrows, file):
     file.write('rule Index:\n')
     file.write('    input: \n        "' + '",\n        "'.join(inputFiles) + '"\n')
     file.write('    output: "' + htmlOutputPath + '/' + filename_index + '" \n')
-    # file.write('    script: ".wBuild/createIndex.py"\n')
     file.write('    run:\n')
     file.write('        import wbuild.createIndex\n')
     file.write('        wbuild.createIndex.ci()\n')
