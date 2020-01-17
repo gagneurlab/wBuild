@@ -81,12 +81,13 @@ def parseYAMLHeaderPlain(filepath):
     yamlHeader = []
     lineit = iter(open(filepath).readlines())
     line = ""
-    while line.startswith("#'---"): # YAML options chunk begins
+    while not line.startswith("#'---"): # YAML options chunk begins
         line = next(lineit)
     yamlHeader.append(line.strip()[2:])
     line = next(lineit) #next line after YAML begin/end separator
     while not line.startswith("#'---"):
         yamlHeader.append(line.strip()[2:])
+        line = next(lineit)
     yamlHeader.append("#'---") #end separator
     return yamlHeader
 
