@@ -139,7 +139,7 @@ def writeIndexHTMLMenu():
     pageTitle = conf.get("projectTitle")
     snakeroot = conf.snakeroot
 
-    wbData = parseWBInfosFromScriptFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
+    wbData = parseWBInfosFromScriptFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath, pattern=["*.R", "*.r", "*.Rmd"])
     mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
     wbData += mdData
     temp = []
