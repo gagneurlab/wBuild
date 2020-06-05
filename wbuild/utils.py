@@ -275,6 +275,10 @@ class Config:
                     self.path = p
                     break
         else:
+            if type(self.path) is list:
+                if len(self.path) != 1:
+                    raise Exception("Path is a list of more than one element! '" + str(self.path) + "'")
+                self.path = self.path[0]
             self.path=os.path.abspath(self.path)
 
         # this is taken from the snakemake main file
