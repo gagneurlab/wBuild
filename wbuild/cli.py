@@ -24,7 +24,7 @@ def setup_paths():
 
 @click.group()
 @click_log.simple_verbosity_option(logger)
-@click.version_option('1.6.4',prog_name='wBuild')
+@click.version_option('1.7.0',prog_name='wBuild')
 def main():
     pass
 

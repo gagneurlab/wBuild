@@ -4,7 +4,7 @@
 
 __author__ = """Leonhard Wachutka"""
 __email__ = 'leonhard@wachutka.eu'
-__version__ = '1.6.4'
+__version__ = '1.7.0'
 
 
 from . import autolink
