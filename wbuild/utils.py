@@ -7,6 +7,7 @@ import yaml.parser
 import yaml.error
 import operator
 import re
+import json
 from functools import reduce
 from snakemake.logging import logger
 from snakemake import get_argument_parser, parse_config, SNAKEFILE_CHOICES
@@ -62,19 +63,58 @@ def parseYAMLHeader(filepath):
     :param filepath: path to the file
     :return: String representation of the YAML header in the file, including inter-document framing ("---")
     """
-    yamlHeader = []
-    for i, line in enumerate(open(filepath).readlines()):
-        # process
-        yamlHeader.append(line.strip()[2:])
+    if re.search(r"\.R", filepath, re.IGNORECASE) is not None or re.search(r"\.Rmd", filepath, re.IGNORECASE) is not None:
+        result = '\n'.join(parseYAMLHeaderPlain(filepath))
+    elif filepath.endswith(".ipynb"):
+        result = '\n'.join(parseYAMLHeaderIpynb(filepath))
+    else:
+        raise Exception("Parsing YAML header from this file not supported. Allowed extensions: .R, .r, .ipynb, "
+                        "recognized " + filepath.split('.')[-1])
 
-        # terminate if that's already "#'---" (=end of YAML-designated area)
-        if i != 0 and line.startswith("#'---"):
-            break
-
-    result = '\n'.join(yamlHeader)
     logger.debug("Got " + result + "as a result of parsing YAML header from " + filepath + ".\n")
     return result
 
+def parseYAMLHeaderPlain(filepath):
+    """
+    Lookup and parse YAML header from "plain text" file
+    """
+    yamlHeader = []
+    lineit = iter(open(filepath).readlines())
+    line = ""
+    while not line.startswith("#'---"): # YAML options chunk begins
+        line = next(lineit)
+    yamlHeader.append(line.strip()[2:])
+    line = next(lineit) #next line after YAML begin/end separator
+    while not line.startswith("#'---"):
+        yamlHeader.append(line.strip()[2:])
+        line = next(lineit)
+    yamlHeader.append("---") #end separator
+    return yamlHeader
+
+def parseYAMLHeaderIpynb(filepath):
+    """
+    Parse yaml header from IPython notebook
+    :param filepath:
+    :return:
+    """
+    notebook = json.load(open(filepath, "r"))
+    yamlHeader = []
+    for cell in notebook["cells"]:
+        if cell["cell_type"] != "code":
+            continue
+        code = cell["source"]
+        if not code[0].startswith("#'---"): #not header cell
+            continue
+        for i, line in enumerate(code):
+            yamlHeader.append(line.strip()[2:])
+
+            # terminate if that's already "#'---" (=end of YAML-designated area)
+            if i != 0 and line.startswith("#'---"):
+                break
+        if yamlHeader:
+            break
+
+    return yamlHeader
 
 def hasYAMLHeader(filepath):
     """
@@ -83,13 +123,16 @@ def hasYAMLHeader(filepath):
     """
     with open(filepath, "r") as f:
         lines = f.readlines()
-    line = lines[0]
-    if(line.startswith("#'---")):
-        return True
+    for line in lines:
+        if(line.startswith("#'---")):
+            return True
+    for cell in json.load(open(filepath, 'r'))["cells"]:
+        if cell["cell_type"] == "code" and cell["source"][0].startswith("#'---"):
+            return True
     return False
 
 
-def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
+def parseWBInfosFromScriptFiles(script_dir="Scripts", htmlPath="Output/html", pattern = None):
     """
 
     :param script_dir: Relative path to the Scripts directory
@@ -100,31 +143,21 @@ def parseWBInfosFromRFiles(script_dir="Scripts", htmlPath="Output/html"):
       - param - parsed yaml params
     """
     parsedInfos = []
+    if pattern is None:
+        pattern = ['*.r', '*.R']
+    elif type(pattern) is str:
+        pattern = [pattern]
+
     #errorOccured = False
-    for filename in findFilesRecursive(script_dir, ['*.r', '*.R']):
-        if not hasYAMLHeader(filename):
-            # Ignore files without YAML infos
-            continue
-        header = parseYAMLHeader(filename)
-        # run all the synthax checks - will raise an error if it fails
-        yamlParamsDict = parseYamlParams(header, filename)
-        if yamlParamsDict == None: #parsing error occured
-            continue #go on parsing next file
+    for filename in findFilesRecursive(script_dir, pattern):
+        parsedInfos.extend(parseWBInfosFromScriptFile(filename, htmlPath))
 
-
-        if type(yamlParamsDict) is str: #allow parsing one tag without double points as string; put it in a dict and check later on
-            yamlParamsDict = {yamlParamsDict: None}
-
-        if('wb' in yamlParamsDict):# the header contains wb informations
-            outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
-            parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
-
-    logger.debug("Parsed informations from R files: " + str(parsedInfos))
+    logger.debug("Parsed informations from script files: " + str(parsedInfos))
     #if errorOccured:
     #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
 
-def parseWBInfosFromRFile(filename, htmlPath="Output/html"):
+def parseWBInfosFromScriptFile(filename, htmlPath="Output/html"):
     """
     :param filename: Relative path to the Scripts directory
     :param htmlPath: Relative path to the html output path
@@ -134,7 +167,6 @@ def parseWBInfosFromRFile(filename, htmlPath="Output/html"):
       - param - parsed yaml params
     """
     parsedInfos = []
-    #errorOccured = False
     if not hasYAMLHeader(filename):
         # Ignore files without YAML infos
         print('Header not valid')
@@ -147,9 +179,6 @@ def parseWBInfosFromRFile(filename, htmlPath="Output/html"):
         outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(filename)[0]) + ".html"
         parsedInfos.append({'file': linuxify(filename), 'outputFile': outFile, 'param': yamlParamsDict})
 
-    logger.debug("Parsed informations from R files: " + str(parsedInfos))
-    #if errorOccured:
-    #    raise ValueError("Errors occured in parsing the R files. Please fix them.") TODO really raise a ValueError?
     return parsedInfos
 
 
@@ -245,7 +274,7 @@ class Config:
     snakefile = "Snakefile"
     snakeroot = ""
     instance = None
-    
+
 
 
     def __init__(self):
@@ -268,7 +297,7 @@ class Config:
         self.snakefile = self.args.snakefile
         self.config = parse_config(self.args)
 
-                
+
         if self.path is None:
             for p in ["wbuild.yaml", "config.yaml", "wBuild.yaml"]:
                 if os.path.exists(p):
