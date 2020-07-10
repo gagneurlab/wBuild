@@ -1,0 +1,51 @@
+{% set name = "wBuild" %}
+{% set version = "1.7.0" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+#  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+#  sha256: d77c7af77e51bc8eefd2922530782b3cc1c60ae95748d9827b8fc893bc1035e6
+  path: ..
+
+build:
+  number: 0
+  entry_points:
+    - wbuild=wbuild.cli:main
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - pip
+    - python
+    - pytest-runner
+    - pytest
+    - Click >=6.0
+    - click-log
+    - PyYAML >=4.2b1
+    - snakemake >=3.13.2
+  run:
+    - python
+    - Click >=6.0
+    - click-log
+    - PyYAML >=4.2b1
+    - snakemake >=3.13.2
+
+test:
+  imports:
+    - wbuild
+
+about:
+  home: "https://github.com/gagneurlab/wBuild"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Automatic build tool for R Reports"
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - mumichae
