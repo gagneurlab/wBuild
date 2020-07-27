@@ -25,12 +25,12 @@ def test_newDirSuccessfullyInitiated(testdirectory):
     open(init_dir.path() + '/readme.md', 'w+')
     r = init_dir.run("wbuild init")
 
-    assert r.stdout.match('*init...done*')
+    assert r.stderr.match('*init...done*')
 
 
 def test_wBuildDemo_isCreated(testdirectory):
     init_dir = testdirectory.mkdir("demo_test")
     print("Directory created!")
     r = init_dir.run("wbuild demo")
-    assert r.stdout.match('*demo...done*')
+    assert r.stderr.match('*demo...done*')
 
