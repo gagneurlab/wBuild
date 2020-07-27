@@ -153,23 +153,28 @@ def parseWBInfosFromRFile(filename, htmlPath="Output/html"):
     return parsedInfos
 
 
-def parseMDFiles(script_dir="Scripts", htmlPath="Output/html"):
+def parseMDFiles(script_dir="Scripts", htmlPath="Output/html", readmePath=None):
     """
 
     :param script_dir: Relative path to the Scripts directory
     :param htmlPath: Relative path to the html output path
+    :param htmlPath: Relative path to the readme
     :return: a list of dictionaries with fields:
       - file - what is the input .md file
       - outputFile - there to put the output html file
       - param - parsed yaml header - always an empty list
     """
     logger.debug("Finding .md files:\n")
-    foundMDFiles = []
-    for f in findFilesRecursive(script_dir, ['*.md']):
+    htmlFiles = []
+    foundMDFiles = findFilesRecursive(script_dir, ['*.md'])
+    if readmePath is not None:
+        foundMDFiles.append(readmePath)
+
+    for f in foundMDFiles:
         outFile = htmlPath + "/" + pathsepsToUnderscore(os.path.splitext(f)[0])+ ".html"
         logger.debug("Found " + outFile + ".\n")
-        foundMDFiles.append({'file': linuxify(f), 'outputFile': outFile, 'param': []})
-    return foundMDFiles
+        htmlFiles.append({'file': linuxify(f), 'outputFile': outFile, 'param': []})
+    return htmlFiles
 
 
 def getYamlParam(r, paramName):
@@ -245,7 +250,7 @@ class Config:
     snakefile = "Snakefile"
     snakeroot = ""
     instance = None
-    
+
 
 
     def __init__(self):
@@ -268,7 +273,7 @@ class Config:
         self.snakefile = self.args.snakefile
         self.config = parse_config(self.args)
 
-                
+
         if self.path is None:
             for p in ["wbuild.yaml", "config.yaml", "wBuild.yaml"]:
                 if os.path.exists(p):
@@ -305,16 +310,36 @@ class Config:
         #fill Singleton
         Config.instance = self
 
+        # check if readme file exists
+        readme = self.get("readmePath")
+        if not readme.endswith(".md"):
+            raise ValueError("Readme file is '{}' but should end with '.md'".format(readme))
+
     def loadDefaultConfiguration(self):
-        abspathSnakefile = os.path.abspath(self.snakefile)
         prefixScripts = self.snakeroot
         if len(prefixScripts) > 0:
             prefixScripts = prefixScripts + "/"
 
+        # Readme
+        readmePath = "readme.md"
+        abspathSnakeroot = os.path.abspath(self.snakeroot)
+        onlyfiles = [f for f in os.listdir(abspathSnakeroot)]
+        for f in onlyfiles:
+            f = os.path.join(abspathSnakeroot, f)
+            if not os.path.isfile(f):
+                continue
+            if ("readme" in f) and f.endswith(".md"):
+                readmePath = f
+                break
+
         self.conf_dict = {"htmlOutputPath": "Output/html",
                           "processedDataPath": "Output/ProcessedData",
                           "scriptsPath": prefixScripts + "Scripts",
-                          "projectTitle": "Project"}
+                          "projectTitle": "Project",
+                          "readmePath": readmePath}
+
+    def getConfig(self):
+        return self.conf_dict
 
     def get(self, attrname):
         if (attrname in self.conf_dict):

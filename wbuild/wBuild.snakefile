@@ -29,7 +29,7 @@ rule graph:
     shell: "snakemake --dag | dot -Tsvg -Grankdir=LR > {config[htmlOutputPath]}/dep.svg"
 
 rule clean:
-    shell: "rm -R {config[htmlOutputPath]}* || true && rm .wBuild.depend || true && rm -R .wBuild/__pycache__ || true "
+    shell: "rm -Rf {config[htmlOutputPath]}* .wBuild/__pycache__"
 
 rule publish:
     input: config["allDone"]
