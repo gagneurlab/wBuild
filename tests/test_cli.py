@@ -4,7 +4,6 @@
 """Tests for `wbuild` command-line interface."""
 from unittest import mock
 
-import os
 from click.testing import CliRunner
 from wbuild import cli
 
@@ -29,8 +28,20 @@ def test_newDirSuccessfullyInitiated(testdirectory):
 
 
 def test_wBuildDemo_isCreated(testdirectory):
-    init_dir = testdirectory.mkdir("demo_test")
+    demo_dir = testdirectory.mkdir("demo_test")
     print("Directory created!")
-    r = init_dir.run("wbuild demo")
+    r = demo_dir.run("wbuild demo")
     assert r.stderr.match('*demo...done*')
+
+
+def test_wBuildDemo_isRun(testdirectory):
+    run_dir = testdirectory.mkdir("demo_test_run")
+    run_dir.run("wbuild demo")
+    r = run_dir.run("snakemake -n")
+    assert len(r.stdout.output) == 160
+
+    run_dir.run("snakemake --cores 1")
+    r = run_dir.run("snakemake -n")
+    assert r.stdout.match("*Nothing to be done.*")
+
 
