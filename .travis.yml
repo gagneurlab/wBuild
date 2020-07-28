@@ -18,8 +18,13 @@ addons:
       - r-base
     update: true
 
+env:
+  global:
+    - R_LIBS_SITE="$HOME/R/Library"
+
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
+    - mkdir -p $R_LIBS_SITE
     - Rscript wbuild/R/installRpackages.R
     - pip install -U tox-travis
 

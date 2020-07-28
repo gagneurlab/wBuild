@@ -1,5 +1,7 @@
 options(repos=structure(c(CRAN="https://cloud.r-project.org")))
 
+print(.libPaths())
+
 packages <- c("data.table", "DT", "gsubfn", "knitr", "magrittr", "methods", "stringr", "yaml")
 installed <- rownames(installed.packages())
 for (pckg_name in packages) {
