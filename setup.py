@@ -15,9 +15,7 @@ requirements = [
     'Click>=6.0',
     'click-log',
     'PyYAML>=4.2b1',
-    'snakemake>=3.13.2',
-    'pandoc',
-    'graphviz'
+    'snakemake>=3.13.2'
     # TODO: put package requirements here
 ]
 

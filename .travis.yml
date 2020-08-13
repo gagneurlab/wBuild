@@ -17,6 +17,8 @@ addons:
   apt:
     packages:
       - r-base
+      - pandoc
+      - graphviz
     update: true
 
 before_install:
