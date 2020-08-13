@@ -1,6 +1,7 @@
 # Config file for automatic testing at travis-ci.org
 # This file will be regenerated if you run travis_pypi_setup.py
 
+dist: xenial
 language: python
 python:
   - 3.8
@@ -18,19 +19,19 @@ addons:
       - r-base
     update: true
 
-env:
-  global:
-    - R_LIBS="$HOME/R/Library"
+before_install:
+    - sudo mkdir -p /usr/local/lib/R/site-library
+    - echo 'R_LIBS=/usr/local/lib/R/site-library:/usr/lib/R/library:/usr/lib/R/site-library/' > ~/.Renviron
+    - cat ~/.Renviron
+    - sudo chmod 2777 /usr/local/lib/R/site-library
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-    - mkdir -p $R_LIBS
     - Rscript wbuild/R/installRpackages.R
     - pip install -U tox-travis
 
 # command to run tests, e.g. python setup.py test
 script:
-    - echo $R_LIBS
     - Rscript -e ".libPaths()"
     - Rscript -e "rownames(installed.packages())"
     - tox
