@@ -2,6 +2,16 @@ import pathlib
 import wbuild
 config['wBuildPath'] =  str(pathlib.Path(wbuild.__file__).parent)
 
+import subprocess
+resp = subprocess.run('Rscript -e ".libPaths()"', shell=True,
+                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+print(resp.stdout)
+
+print(subprocess.run('Rscript -e "rownames(installed.packages())" | wc -l',
+                     shell=True,
+                     stdout=subprocess.PIPE,
+                     stderr=subprocess.STDOUT).stdout)
+
 configfile: "wbuild.yaml"
 include: config['wBuildPath'] + "/wBuild.snakefile"
 

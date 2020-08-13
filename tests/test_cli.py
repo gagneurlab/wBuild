@@ -34,12 +34,15 @@ def test_wBuildDemo_isCreated(testdirectory):
     assert r.stderr.match('*demo...done*')
 
 
-def test_wBuildDemo_isRun(testdirectory):
-    run_dir = testdirectory.mkdir("demo_test_run")
+def test_wBuildDemo_dryRun(testdirectory):
+    run_dir = testdirectory.mkdir("demo_test_dryrun")
     run_dir.run("wbuild demo")
     r = run_dir.run("snakemake -n")
     assert len(r.stdout.output) == 160
 
+def test_wBuildDemo_isRun(testdirectory):
+    run_dir = testdirectory.mkdir("demo_test_run")
+    run_dir.run("wbuild demo")
     run_dir.run("snakemake --cores 1")
     r = run_dir.run("snakemake -n")
     assert r.stdout.match("*Nothing to be done.*")
