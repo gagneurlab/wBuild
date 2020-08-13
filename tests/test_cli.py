@@ -15,6 +15,7 @@ def test_wBuildHelp_isShown():
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help' in help_result.output
+    print(help_result.output)
     assert 'Show this message and exit.' in help_result.output
 
 
@@ -43,8 +44,7 @@ def test_wBuildDemo_dryRun(testdirectory):
 def test_wBuildDemo_isRun(testdirectory):
     run_dir = testdirectory.mkdir("demo_test_run")
     run_dir.run("wbuild demo")
-    run_dir.run("snakemake --cores 1")
-    r = run_dir.run("snakemake -n")
-    assert r.stdout.match("*Nothing to be done.*")
-
+    r = run_dir.run("snakemake --cores 1")
+    assert "Finished job 0." in r.stderr.output
+    assert "18 of 18 steps (100%) done" in r.stderr.output
 

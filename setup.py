@@ -16,6 +16,8 @@ requirements = [
     'click-log',
     'PyYAML>=4.2b1',
     'snakemake>=3.13.2',
+    'pandoc',
+    'graphviz'
     # TODO: put package requirements here
 ]
 
@@ -29,6 +31,7 @@ setup_requirements = [
 test_requirements = [
     'pytest',
     'pytest-testdirectory',
+    'pytest-icdiff'
 ]
 
 setup(
