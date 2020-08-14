@@ -158,7 +158,7 @@ def parseMDFiles(script_dir="Scripts", htmlPath="Output/html", readmePath=None):
 
     :param script_dir: Relative path to the Scripts directory
     :param htmlPath: Relative path to the html output path
-    :param htmlPath: Relative path to the readme
+    :param readmePath: Relative path to the readme
     :return: a list of dictionaries with fields:
       - file - what is the input .md file
       - outputFile - there to put the output html file
