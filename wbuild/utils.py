@@ -336,7 +336,9 @@ class Config:
                           "processedDataPath": "Output/ProcessedData",
                           "scriptsPath": prefixScripts + "Scripts",
                           "projectTitle": "Project",
-                          "readmePath": readmePath}
+                          "readmePath": readmePath,
+                          "htmlIndex": "index.html",
+                          "indexWithFolderName" : False}
 
     def getConfig(self):
         return self.conf_dict

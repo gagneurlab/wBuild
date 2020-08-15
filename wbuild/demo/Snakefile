@@ -14,3 +14,12 @@ rule all:
 rule downloadIris:
     output: 'Data/iris_downloaded.data'
     shell: "wget http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data -O {output}"
+
+subdir = "Scripts/Analysis1/010_BasicInput/"
+index_name = "Analysis1_BasicInput_index.html"
+input, output = wbuild.createIndex.createIndexRule(scriptsPath=subdir, index_name=index_name)
+rule subIndex:
+    input: input
+    output: output
+    run:
+        wbuild.createIndex.ci(subdir, index_name)

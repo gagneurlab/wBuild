@@ -79,13 +79,9 @@ def getRecentMenu():
                 '</a></p>\n')
     return menuString
 
-def writeReadme():
+def writeReadme(readmePath, htmlOutputPath):
     """ Extract readme file from readme path in config.
     If not specified file containing <readme> in scriptsPath with be chosen"""
-
-    conf = Config()
-    readmePath = conf.get("readmePath") #### should be .md file
-    htmlOutputPath = conf.get("htmlOutputPath")
 
     readmeFilename = os.path.basename(readmePath.replace(".md", ".html"))
     readmeFilename = os.path.join(htmlOutputPath, readmeFilename)
@@ -121,14 +117,26 @@ def writeDepSVG():
     svgString = '<li><a href="javascript:navigate(' + "'{}'".format(filename_SVG) + ');">Dependency</a></li>'
     return svgString
 
-def writeIndexHTMLMenu():
+def getFilenameIndex(scriptsPath):
+    conf = Config()
+    htmlIndex = conf.get("htmlIndex")
+    indexWithFolderName = conf.get("indexWithFolderName")
+    if indexWithFolderName:
+        abs_path = str(os.path.abspath(scriptsPath))
+        name = abs_path.split("/")[-2]
+        htmlIndex = name + "_" + htmlIndex
+    return htmlIndex
+
+def writeIndexHTMLMenu(scriptsPath=None, index_name=None):
     """
     Scan for files involved in the current HTML rendering and fill the HTML quick access toolbar correspondingly
     """
     conf = Config()
 
+    if scriptsPath is None:
+        scriptsPath = conf.get("scriptsPath")
     htmlOutputPath = conf.get("htmlOutputPath")
-    scriptsPath = conf.get("scriptsPath")
+    readmePath = conf.get("readmePath")
     pageTitle = conf.get("projectTitle")
     snakeroot = conf.snakeroot
 
@@ -158,7 +166,7 @@ def writeIndexHTMLMenu():
             '   </ul>\n' +
             '</li>\n')
 
-    readmeString, readmeIframeString, readmeFilename = writeReadme()
+    readmeString, readmeIframeString, readmeFilename = writeReadme(readmePath, htmlOutputPath)
     depSVGString = writeDepSVG()
 
     #fill the HTML template with the constructed tag structure
@@ -169,32 +177,52 @@ def writeIndexHTMLMenu():
                         readme=readmeString, readmeIframe=readmeIframeString, readmeFilename=readmeFilename
                         , depSVG=depSVGString)
 
-
-    try:
-        filename_index = conf.get("htmlIndex")
-    except AttributeError as e:
-        filename_index = "index.html"
-
-    try:
-        indexWithFolderName = conf.get("indexWithFolderName")
-    except:
-        indexWithFolderName = False
-
-    if indexWithFolderName:
-        abs_path = str(os.path.abspath(scriptsPath))
-        name = abs_path.split("/")[-2]
-        filename_index = name + "_" + filename_index
-
-    f = open(htmlOutputPath + '/' + filename_index, 'w')
+    _, output = createIndexRule(scriptsPath, index_name)
+    f = open(output, 'w')
     f.write(template)
     f.close()
 
 
-def ci():
-    writeIndexHTMLMenu()
+def createIndexRule(scriptsPath=None, index_name=None, wbData=None, mdData=None):
+    conf = Config()
+    if scriptsPath is None:
+        scriptsPath = conf.get("scriptsPath")
+    htmlOutputPath = conf.get("htmlOutputPath")
+    readmePath = conf.get("readmePath")
+    if index_name is None:
+        index_name = getFilenameIndex(scriptsPath)
+
+    # gather index input files
+    inputFiles = []
+
+    if wbData is None:
+        wbData = parseWBInfosFromRFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath)
+
+    if mdData is None:
+        mdData = parseMDFiles(script_dir=scriptsPath, htmlPath=htmlOutputPath, readmePath=readmePath)
+
+    for r in wbData:
+        # ignore if the file is script or noindex
+        if getYamlParam(r, 'type') == 'script' or getYamlParam(r, 'type') == 'noindex':
+            continue
+        inputFiles.append(r['outputFile'])
+
+        for r in mdData:
+            inputFiles.append(r['outputFile'])
+
+    output = htmlOutputPath + '/' + index_name
+    return inputFiles, output
+
+
+def ci(scriptsPath=None, index_prefix=None):
 
     conf = Config()
+    if scriptsPath is None:
+        scriptsPath = conf.get("scriptsPath")
     htmlOutputPath = conf.get("htmlOutputPath")
+
+    writeIndexHTMLMenu(scriptsPath, index_prefix)
+
     libDir = htmlOutputPath + "/lib"
 
     if os.path.exists(libDir):

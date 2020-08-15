@@ -40,10 +40,19 @@ def test_wBuildDemo_dryRun(testdirectory):
     r = run_dir.run("snakemake -n")
     assert len(r.stdout.output) == 160
 
+
 def test_wBuildDemo_isRun(testdirectory):
     run_dir = testdirectory.mkdir("demo_test_run")
     run_dir.run("wbuild demo")
     r = run_dir.run("snakemake --cores 1")
     assert "Finished job 0." in r.stderr.output
     assert "18 of 18 steps (100%) done" in r.stderr.output
+
+
+def test_wBuildDemo_subindex(testdirectory):
+    run_dir = testdirectory.mkdir("demo_test_subindex")
+    run_dir.run("wbuild demo")
+    r = run_dir.run("snakemake subIndex --cores 1")
+    assert "Finished job 0." in r.stderr.output
+    assert "4 of 4 steps (100%) done" in r.stderr.output
 
