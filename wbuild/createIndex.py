@@ -85,6 +85,7 @@ def writeReadme(readmePath, htmlOutputPath):
 
     readmeFilename = os.path.basename(readmePath.replace(".md", ".html"))
     readmeFilename = os.path.join(htmlOutputPath, readmeFilename)
+    readmeFilename = os.path.abspath(readmeFilename)
 
     readmeString = '<li><a href="javascript:navigate(' + " '{}'".format(readmeFilename) + ');">Readme</a></li> '
     readmeIframeString = '<iframe id="Iframe" src="' + readmeFilename + '" width=100% height=95% ></iframe> '
