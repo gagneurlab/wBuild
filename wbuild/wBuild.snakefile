@@ -26,7 +26,8 @@ rule mapScripts:
         wbuild.autolink.autolink("scriptMapping.wb")
 
 rule graph:
-    shell: "snakemake --dag | dot -Tsvg -Grankdir=LR > {config[htmlOutputPath]}/dep.svg"
+    output: config["htmlOutputPath"] + "/dep.svg"
+    shell: "snakemake --rulegraph | dot -Tsvg -Grankdir=LR > {output}"
 
 rule clean:
     shell: "rm -Rf {config[htmlOutputPath]}* .wBuild/__pycache__"

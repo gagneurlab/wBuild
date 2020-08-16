@@ -9,7 +9,7 @@ conf = wbuild.utils.Config()
 htmlOutputPath = conf.get("htmlOutputPath")
 
 rule all:
-    input: rules.Index.output
+    input: rules.Index.output, rules.graph.output
 
 rule downloadIris:
     output: 'Data/iris_downloaded.data'
