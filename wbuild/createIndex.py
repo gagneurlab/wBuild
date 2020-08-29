@@ -215,19 +215,19 @@ def createIndexRule(scriptsPath=None, index_name=None, wbData=None, mdData=None)
     return inputFiles, output
 
 
-def ci(scriptsPath=None, index_prefix=None):
+def ci(scriptsPath=None, index_name=None):
 
     conf = Config()
     if scriptsPath is None:
         scriptsPath = conf.get("scriptsPath")
     htmlOutputPath = conf.get("htmlOutputPath")
 
-    writeIndexHTMLMenu(scriptsPath, index_prefix)
+    writeIndexHTMLMenu(scriptsPath, index_name)
 
     libDir = htmlOutputPath + "/lib"
 
-    if os.path.exists(libDir):
-        shutil.rmtree(libDir)
-
-    wbuildPath = pathlib.Path(wbuild.__file__).parent
-    shutil.copytree(str(wbuildPath) + "/html/lib", libDir)
+    #if os.path.exists(libDir):
+    #    shutil.rmtree(libDir)
+    if not os.path.exists(libDir):
+        wbuildPath = pathlib.Path(wbuild.__file__).parent
+        shutil.copytree(str(wbuildPath) + "/html/lib", libDir)
