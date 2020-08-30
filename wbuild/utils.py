@@ -33,6 +33,15 @@ def checkFilename(filename):
         raise ValueError("- are not allowed in the filenames. File: {0}", filename)
     return True
 
+
+def findFirstFile(startingPath, pattern="readme", ext=".md", re_flags=0):
+    pattern = re.compile(pattern, flags=re_flags)
+    onlyfiles = [f for f in os.listdir(startingPath) if os.path.isfile(os.path.join(startingPath, f))]
+    for f in onlyfiles:
+        if pattern.match(f) and f.endswith(ext):
+            return os.path.join(startingPath, f)
+    return None
+
 def findFilesRecursive(startingPath, patterns):
     """
     :param startingPath: root path of the search
@@ -167,7 +176,7 @@ def parseMDFiles(script_dir="Scripts", htmlPath="Output/html", readmePath=None):
     logger.debug("Finding .md files:\n")
     htmlFiles = []
     foundMDFiles = findFilesRecursive(script_dir, ['*.md'])
-    if readmePath is not None:
+    if readmePath is not None and readmePath not in foundMDFiles:
         foundMDFiles.append(readmePath)
 
     for f in foundMDFiles:

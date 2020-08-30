@@ -47,14 +47,9 @@ def init():
         shutil.copy(str(templatePath / 'Snakefile'), '.')
     if not os.path.isfile("wbuild.yaml"):
         shutil.copy(str(templatePath / 'wbuild.yaml'), '.')
-    
+
     ### search for a file containing the word readme and .md
-    readme_exists = False
-    onlyfiles = [f for f in os.listdir(".") if os.path.isfile(os.path.join(".", f))]
-    for f in onlyfiles:
-        if ("readme" in f) and f.endswith(".md"):
-            readme_exists = True
-    if not readme_exists:
+    if utils.findFirstFile(".", "readme", "md") is None:
         copyReadme = input("wBuild needs readme.md in a root folder of your project. Shall we create the default "
                            "one? (y/n)")
         if 'y' in copyReadme:

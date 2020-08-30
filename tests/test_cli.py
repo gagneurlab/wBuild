@@ -56,5 +56,5 @@ def test_wBuildDemo_subindex(testdirectory):
     run_dir.run("wbuild demo")
     r = run_dir.run("snakemake subIndex --cores 1")
     assert "Finished job 0." in r.stderr.output
-    assert "4 of 4 steps (100%) done" in r.stderr.output
+    assert "3 of 3 steps (100%) done" in r.stderr.output
 

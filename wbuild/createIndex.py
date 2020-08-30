@@ -3,12 +3,13 @@ import sys
 import pathlib
 import shutil
 import wbuild
+import re
 
 from string import Template
 from os import listdir
 from os.path import isfile, join
 from wbuild.utils import parseWBInfosFromRFiles, parseMDFiles, \
-        getYamlParam, Config, removeFilePrefix
+        getYamlParam, Config, removeFilePrefix, findFirstFile, pathsepsToUnderscore
 
 sys.path.insert(0, os.getcwd() + "/.wBuild")  # TODO - is this line required?
 
@@ -93,10 +94,10 @@ def writeReadme(readmePath, htmlOutputPath):
 
     return readmeString, readmeIframeString, readmeFilename
 
-def writeDepSVG():
+def writeDepSVG(graph_prefix="dep"):
     """ Search for rule graph. If path not specified in config, take default dep.svg in snakeroot path"""
+    # mumichae: Is this search really necessary?
     conf = Config()
-    scriptsPath = conf.get("scriptsPath")
     htmlOutputPath = conf.get("htmlOutputPath")
     snakeroot = conf.snakeroot
     foldername = snakeroot.split("/")[-1]
@@ -115,6 +116,7 @@ def writeDepSVG():
                 if (foldername in f) and f.endswith(".svg"):
                     filename_SVG = f
 
+    filename_SVG = os.path.abspath(htmlOutputPath) + "/" + graph_prefix + ".svg"
     svgString = '<li><a href="javascript:navigate(' + "'{}'".format(filename_SVG) + ');">Dependency</a></li>'
     return svgString
 
@@ -139,7 +141,6 @@ def writeIndexHTMLMenu(scriptsPath=None, index_name=None):
     if scriptsPath is None:
         scriptsPath = conf.get("scriptsPath")
     htmlOutputPath = conf.get("htmlOutputPath")
-    readmePath = conf.get("readmePath")
     pageTitle = conf.get("projectTitle")
     snakeroot = conf.snakeroot
 
@@ -169,8 +170,10 @@ def writeIndexHTMLMenu(scriptsPath=None, index_name=None):
             '   </ul>\n' +
             '</li>\n')
 
+    _, output, graph_prefix, readmePath = createIndexRule(scriptsPath, index_name)
+
     readmeString, readmeIframeString, readmeFilename = writeReadme(readmePath, htmlOutputPath)
-    depSVGString = writeDepSVG()
+    depSVGString = writeDepSVG(graph_prefix)
 
     #fill the HTML template with the constructed tag structure
     wbuildPath = pathlib.Path(wbuild.__file__).parent
@@ -180,7 +183,6 @@ def writeIndexHTMLMenu(scriptsPath=None, index_name=None):
                         readme=readmeString, readmeIframe=readmeIframeString, readmeFilename=readmeFilename
                         , depSVG=depSVGString)
 
-    _, output, graph_prefix = createIndexRule(scriptsPath, index_name)
     f = open(output, 'w')
     f.write(template)
     f.close()
@@ -189,9 +191,14 @@ def writeIndexHTMLMenu(scriptsPath=None, index_name=None):
 def createIndexRule(scriptsPath=None, index_name=None, wbData=None, mdData=None):
     conf = Config()
     if scriptsPath is None:
+        readmePath = conf.get("readmePath")
         scriptsPath = conf.get("scriptsPath")
+    else: # find readme file
+        readmePath = findFirstFile(scriptsPath, ".*readme.*", "md", re.I)
+        if readmePath is None:
+            readmePath = scriptsPath + "/readme.md"
+            open(readmePath, "a").close()
     htmlOutputPath = conf.get("htmlOutputPath")
-    readmePath = conf.get("readmePath")
     htmlIndex = conf.get("htmlIndex")
     index_name = createIndexName(scriptsPath, index_name)
 
@@ -217,8 +224,10 @@ def createIndexRule(scriptsPath=None, index_name=None, wbData=None, mdData=None)
         index_name = index_name + "_" # separator for distinct index_name
 
     output = "/".join([htmlOutputPath, index_name + htmlIndex])
-    graph_prefix = "/".join([htmlOutputPath, index_name + "dep"])
-    return inputFiles, output, graph_prefix
+    graph_prefix = index_name + "dep"
+    # readme html
+    readmePath = htmlOutputPath + "/" + pathsepsToUnderscore(os.path.splitext(readmePath)[0]) + ".html"
+    return inputFiles, output, graph_prefix, readmePath
 
 
 def ci(scriptsPath=None, index_name=None):

@@ -1,5 +1,6 @@
 import pathlib
 import wbuild
+from wbuild.createIndex import createIndexRule, ci
 config['wBuildPath'] =  str(pathlib.Path(wbuild.__file__).parent)
 
 configfile: "wbuild.yaml"
@@ -17,9 +18,9 @@ rule downloadIris:
 
 subdir = "Scripts/Analysis1/010_BasicInput/"
 index_name = "Analysis1_BasicInput"
-input, output, graph_prefix = wbuild.createIndex.createIndexRule(scriptsPath=subdir, index_name=index_name)
+input, output, _, _ = createIndexRule(scriptsPath=subdir, index_name=index_name)
 rule subIndex:
     input: input
     output: output
     run:
-        wbuild.createIndex.ci(subdir, index_name)
+        ci(subdir, index_name)
