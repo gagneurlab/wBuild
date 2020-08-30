@@ -1,4 +1,5 @@
 import sys
+import json
 import wbuild
 import wbuild.scanFiles
 import wbuild.autolink
@@ -12,7 +13,7 @@ if "htmlIndex" not in config:
     config["htmlIndex"] = "index.html"
 if "allDone" not in config:
     config["allDone"] = "Output/all.done"
-
+htmlOutputPath = config["htmlOutputPath"]
 
 
 rule show:
@@ -24,6 +25,18 @@ rule mapScripts:
     output: touch("Output/scriptMapping.done")
     run:
         wbuild.autolink.autolink("scriptMapping.wb")
+
+def get_index_html(wildcards):
+    filename = "_".join([wildcards.subindex, config["htmlIndex"]])
+    return os.path.join(htmlOutputPath, filename)
+
+rule graph_single:
+    input: get_index_html
+    output: htmlOutputPath + "/{subindex}_dep.{ext}"
+    shell:
+        """
+        snakemake --rulegraph {input} | dot -T{wildcards.ext} -Grankdir=LR > {output}
+        """
 
 rule graph:
     output: config["htmlOutputPath"] + "/dep.svg"

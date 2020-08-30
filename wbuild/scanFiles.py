@@ -273,7 +273,7 @@ def writeIndexRule(wbData, mdData, file, ignoreMD=False, dump=False):
         for r in mdData:
             writeMdRule(r, file)
 
-    input, output = wbuild.createIndex.createIndexRule(wbData=wbData, mdData=mdData)
+    input, output, graph_prefix = wbuild.createIndex.createIndexRule(wbData=wbData, mdData=mdData)
     # write rule
     file.write('\n')
     file.write('rule Index:\n')
