@@ -266,6 +266,9 @@ def writeIndexRule(wbData, mdData, file, ignoreMD=False, dump=False):
     :param wbMDrows: info dict parsed from MD wB files
     :param file: file to print the index rule to
     """
+    conf = Config()
+    htmlOutputPath = conf.get("htmlOutputPath")
+
     for r in wbData:
         writeRule(r, file, dump)
 
@@ -273,16 +276,19 @@ def writeIndexRule(wbData, mdData, file, ignoreMD=False, dump=False):
         for r in mdData:
             writeMdRule(r, file)
 
-    input, output, _, _ = wbuild.createIndex.createIndexRule(wbData=wbData, mdData=mdData)
+    input, output, graphPath, _ = wbuild.createIndex.createIndexRule(wbData=wbData, mdData=mdData)
     # write rule
     file.write('\n')
     file.write('rule Index:\n')
     file.write('    input: \n        "' + '",\n        "'.join(input) + '"\n')
-    file.write('    output: "' + output + '" \n')
+    file.write('    output: \n')
+    file.write('        index = "' + output + '", \n')
+    file.write('        graph = "' + graphPath + '" \n')
     # file.write('    script: ".wBuild/createIndex.py"\n')
     file.write('    run:\n')
     file.write('        import wbuild.createIndex\n')
     file.write('        wbuild.createIndex.ci()\n')
+    file.write('        shell("snakemake --rulegraph | dot -Tsvg -Grankdir=LR > {output.graph}")\n')
     file.write('\n')
 
 

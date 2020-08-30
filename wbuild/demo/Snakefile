@@ -18,9 +18,13 @@ rule downloadIris:
 
 subdir = "Scripts/Analysis1/010_BasicInput/"
 index_name = "Analysis1_BasicInput"
-input, output, _, _ = createIndexRule(scriptsPath=subdir, index_name=index_name)
+input, index_file, graph_file, _ = createIndexRule(scriptsPath=subdir, index_name=index_name)
+
 rule subIndex:
     input: input
-    output: output
+    output:
+        index = index_file,
+        graph = graph_file
     run:
         ci(subdir, index_name)
+        shell("snakemake --rulegraph {output.index} | dot -Tsvg -Grankdir=LR > {output.graph}")

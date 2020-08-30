@@ -80,25 +80,26 @@ def getRecentMenu():
                 '</a></p>\n')
     return menuString
 
-def writeReadme(readmePath, htmlOutputPath):
-    """ Extract readme file from readme path in config.
-    If not specified file containing <readme> in scriptsPath with be chosen"""
+def writeReadme(readmePath):
+    """
+    Create readme file output for html template
+    readmePath: html readme path
+    """
 
-    readmeFilename = os.path.basename(readmePath.replace(".md", ".html"))
-    readmeFilename = os.path.join(htmlOutputPath, readmeFilename)
-    readmeFilename = os.path.abspath(readmeFilename)
-
+    readmeFilename = os.path.abspath(readmePath)
     readmeString = '<li><a href="javascript:navigate(' + " '{}'".format(readmeFilename) + ');">Readme</a></li> '
     readmeIframeString = '<iframe id="Iframe" src="' + readmeFilename + '" width=100% height=95% ></iframe> '
     readmeFilename = '"{}" '.format(readmeFilename)
 
     return readmeString, readmeIframeString, readmeFilename
 
-def writeDepSVG(graph_prefix="dep"):
+def writeDepSVG(graphPath=None):
     """ Search for rule graph. If path not specified in config, take default dep.svg in snakeroot path"""
     # mumichae: Is this search really necessary?
     conf = Config()
     htmlOutputPath = conf.get("htmlOutputPath")
+    if graphPath is None:
+        graphPath = os.path.abspath(htmlOutputPath) + "/dep.svg"
     snakeroot = conf.snakeroot
     foldername = snakeroot.split("/")[-1]
 
@@ -116,7 +117,7 @@ def writeDepSVG(graph_prefix="dep"):
                 if (foldername in f) and f.endswith(".svg"):
                     filename_SVG = f
 
-    filename_SVG = os.path.abspath(htmlOutputPath) + "/" + graph_prefix + ".svg"
+    filename_SVG = os.path.abspath(graphPath)
     svgString = '<li><a href="javascript:navigate(' + "'{}'".format(filename_SVG) + ');">Dependency</a></li>'
     return svgString
 
@@ -170,10 +171,9 @@ def writeIndexHTMLMenu(scriptsPath=None, index_name=None):
             '   </ul>\n' +
             '</li>\n')
 
-    _, output, graph_prefix, readmePath = createIndexRule(scriptsPath, index_name)
-
-    readmeString, readmeIframeString, readmeFilename = writeReadme(readmePath, htmlOutputPath)
-    depSVGString = writeDepSVG(graph_prefix)
+    _, output, graphPath, readmePath = createIndexRule(scriptsPath, index_name)
+    readmeString, readmeIframeString, readmeFilename = writeReadme(readmePath)
+    depSVGString = writeDepSVG(graphPath)
 
     #fill the HTML template with the constructed tag structure
     wbuildPath = pathlib.Path(wbuild.__file__).parent
@@ -190,7 +190,7 @@ def writeIndexHTMLMenu(scriptsPath=None, index_name=None):
 
 def createIndexRule(scriptsPath=None, index_name=None, wbData=None, mdData=None):
     conf = Config()
-    if scriptsPath is None:
+    if scriptsPath is None or scriptsPath == "Scripts":
         readmePath = conf.get("readmePath")
         scriptsPath = conf.get("scriptsPath")
     else: # find readme file
@@ -224,17 +224,15 @@ def createIndexRule(scriptsPath=None, index_name=None, wbData=None, mdData=None)
         index_name = index_name + "_" # separator for distinct index_name
 
     output = "/".join([htmlOutputPath, index_name + htmlIndex])
-    graph_prefix = index_name + "dep"
+    graphPath = "/".join([htmlOutputPath, index_name + "dep.svg"])
     # readme html
     readmePath = htmlOutputPath + "/" + pathsepsToUnderscore(os.path.splitext(readmePath)[0]) + ".html"
-    return inputFiles, output, graph_prefix, readmePath
+    return inputFiles, output, graphPath, readmePath
 
 
 def ci(scriptsPath=None, index_name=None):
 
     conf = Config()
-    if scriptsPath is None:
-        scriptsPath = conf.get("scriptsPath")
     htmlOutputPath = conf.get("htmlOutputPath")
 
     writeIndexHTMLMenu(scriptsPath, index_name)

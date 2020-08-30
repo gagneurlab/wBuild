@@ -40,7 +40,7 @@ def test_wBuildDemo_dryRun(testdirectory):
     r = run_dir.run("snakemake -n")
     message = "This was a dry-run (flag -n). The order of jobs does not reflect the order of execution."
     assert message in r.stdout.output
-    assert len(r.stdout.output) == 167
+    assert "\t18" in r.stdout.output
 
 
 def test_wBuildDemo_isRun(testdirectory):
@@ -48,7 +48,7 @@ def test_wBuildDemo_isRun(testdirectory):
     run_dir.run("wbuild demo")
     r = run_dir.run("snakemake --cores 1")
     assert "Finished job 0." in r.stderr.output
-    assert "19 of 19 steps (100%) done" in r.stderr.output
+    assert "18 of 18 steps (100%) done" in r.stderr.output
 
 
 def test_wBuildDemo_subindex(testdirectory):

@@ -30,6 +30,7 @@ def get_index_html(wildcards):
     filename = "_".join([wildcards.subindex, config["htmlIndex"]])
     return os.path.join(htmlOutputPath, filename)
 
+# could remove?
 rule graph_single:
     input: get_index_html
     output: htmlOutputPath + "/{subindex}_dep.{ext}"
@@ -38,9 +39,10 @@ rule graph_single:
         snakemake --rulegraph {input} | dot -T{wildcards.ext} -Grankdir=LR > {output}
         """
 
+# obsolete
 rule graph:
-    output: config["htmlOutputPath"] + "/dep.svg"
-    shell: "snakemake --rulegraph | dot -Tsvg -Grankdir=LR > {output}"
+    input: config["htmlOutputPath"] + "/dep.svg"
+    #shell: "snakemake --rulegraph | dot -Tsvg -Grankdir=LR > {output}"
 
 rule clean:
     shell: "rm -Rf {config[htmlOutputPath]}* .wBuild/__pycache__"
