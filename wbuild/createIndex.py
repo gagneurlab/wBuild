@@ -85,7 +85,6 @@ def writeReadme(readmePath):
     Create readme file output for html template
     readmePath: html readme path
     """
-
     readmeFilename = os.path.abspath(readmePath)
     readmeString = '<li><a href="javascript:navigate(' + " '{}'".format(readmeFilename) + ');">Readme</a></li> '
     readmeIframeString = '<iframe id="Iframe" src="' + readmeFilename + '" width=100% height=95% ></iframe> '

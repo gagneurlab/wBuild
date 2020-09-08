@@ -59,9 +59,9 @@ def writeDependencyFile():
 
         # write build index rule
         writeIndexRule(wbData, mdData, f)
-    logger.info("Dependencies file generated.\n")
+    logger.info("Dependencies file generated at: {}\n".format(dependFile.name))
 
-    return (dependFile.name)
+    return dependFile.name
 
 
 def writeWBParseDependencyFile(filename):
@@ -288,7 +288,7 @@ def writeIndexRule(wbData, mdData, file, ignoreMD=False, dump=False):
     file.write('    run:\n')
     file.write('        import wbuild.createIndex\n')
     file.write('        wbuild.createIndex.ci()\n')
-    file.write('        shell("snakemake --rulegraph | dot -Tsvg -Grankdir=LR > {output.graph}")\n')
+    file.write('        shell("snakemake --rulegraph | dot -Tsvg -Grankdir=RL > {output.graph}")\n')
     file.write('\n')
 
 

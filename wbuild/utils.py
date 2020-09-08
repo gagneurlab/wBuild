@@ -325,10 +325,6 @@ class Config:
             raise ValueError("Readme file is '{}' but should end with '.md'".format(readme))
 
     def loadDefaultConfiguration(self):
-        prefixScripts = self.snakeroot
-        if len(prefixScripts) > 0:
-            prefixScripts = prefixScripts + "/"
-
         # Readme
         readmePath = "readme.md"
         abspathSnakeroot = os.path.abspath(self.snakeroot)
@@ -343,7 +339,7 @@ class Config:
 
         self.conf_dict = {"htmlOutputPath": "Output/html",
                           "processedDataPath": "Output/ProcessedData",
-                          "scriptsPath": prefixScripts + "Scripts",
+                          "scriptsPath": "Scripts",
                           "projectTitle": "Project",
                           "readmePath": readmePath,
                           "htmlIndex": "index.html",
