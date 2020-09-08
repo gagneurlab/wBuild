@@ -235,7 +235,12 @@ def writeRule(r, file, dump=False):
 
     # remove fields not in SNAKEMAKE_FIELDS
     # wbInfos = {key: wbInfos[key] for key in wbInfos if key in SNAKEMAKE_FIELDS}
-    wbInfos['rule'] = pathsepsToUnderscore(r['file'], True)  # convert filepath to the unique id of the rule
+
+    # remove "Scripts" prefix for prettier rule names
+    filename = r['file']
+    filename = filename.replace("Scripts/", "")
+
+    wbInfos['rule'] = pathsepsToUnderscore(filename, True)  # convert filepath to the unique id of the rule
     # write to file
     file.write('\n')
     # dumpDict = {'rule ' + rule: wbInfos}
@@ -249,8 +254,12 @@ def writeMdRule(ruleInfos, file):
     :param ruleInfos:
     :param file: file to write the rule to
     """
+    # remove "Scripts" prefix for prettier rule names
+    filename = ruleInfos['file']
+    filename = filename.replace("Scripts/", "")
+
     file.write('\n')
-    file.write('rule ' + pathsepsToUnderscore(ruleInfos['file'], True) + ':\n')
+    file.write('rule ' + pathsepsToUnderscore(filename, True) + ':\n')
     file.write('    input: "' + ruleInfos['file'] + '"\n')
     file.write('    output: "' + ruleInfos['outputFile'] + '"\n')
     file.write(
