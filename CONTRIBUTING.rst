@@ -145,7 +145,7 @@ Ready to contribute? Here's how to set up `wbuild` for local development.
 
 7. Submit a pull request through the GitHub website.
 
-If the pull request adds functionality, we kindly ask you to also update the docs, telling about this new cool stuff! 
+If the pull request adds functionality, we kindly ask you to also update the docs, telling about this new cool stuff!
 Put your new functionality into a function with a docstring, and add this feature to the list in README.rst.
 
 Code documentation
@@ -155,32 +155,32 @@ The code of wBuild is well-documented, and it would be nice to keep it that way.
 here you find the documentation for the functions of wBuild:
 
 CLI (:code:`wbuild.cli`)
-""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: wbuild.cli
    :members:
 
 Files scanning (:code:`wbuild.scanFiles`)
-"""""""""""""""""""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 .. automodule:: wbuild.scanFiles
    :members:
 
 Service functions (:code:`wbuild.utils`)
-""""""""""""""""""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: wbuild.utils
    :members:
 
 HTML output index creation (:code:`wbuild.createIndex`)
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. automodule:: wbuild.createIndex
    :members:
 
 Script mapping (:code:`wbuild.autolink`)
-""""""""""""""""""""""""""""""""""""""""
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 See also :ref:`the overview of this feature <script-mapping>`
 

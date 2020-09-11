@@ -58,7 +58,7 @@ snakemake restoreModDate
     Restore previous modification date of all the files. Comes handy for pulling changes from VCS, where all the mod.dates
     get changed.
 
-:ref:`See more <special-features>` about this down the page.
+:ref:`See more <snakemake-features>` about this down the page.
 
 .. _yaml-headers:
 
@@ -244,20 +244,79 @@ src
     A **YAML list** of *file* paths to create links from.
 dst
     A **YAML list** of **directories** paths to put file links *into*.
-    
-Running :code:`snakemake mapScripts` then creates symbolic links for *all the 'src' files* in any of *'dst' directories*. **IMPORTANT**: Give only paths _without_ Scripts directory name - Scripts path will automatically be taken from :ref:`configuration file <configuration-file>` under key :code:`scriptsPath`.
+
+Running :code:`snakemake mapScripts` then creates symbolic links for *all the 'src' files* in any of *'dst' directories*.
+
+.. note:
+
+    Give only paths *without* Scripts directory name - Scripts path will automatically be taken from
+    :ref:`configuration file <configuration-file>` under key :code:`scriptsPath`.
 
 Below is an example of a proper :code:`scriptsMapping.wb` file:
 
 .. code-block:: yaml
 
-  - src: 
+  - src:
     - _Template/preprocessData.R
     - _Template/PCAoutliers.R
-    dst: 
+    dst:
     - Principal_Analysis/allIntensities
     - Principal_Analysis/withoutFamilies
     - Principal_Analysis/withoutReplicates
     - Principal_Analysis/withoutReplicatesAndFamilies
 
 Here, we map two scripts, :code:`preprocessData.R` and :code:`PCAoutliers.R`, to be in each of the four projects of :code:`Principal_Analysis`. :ref:`Placeholders <use-placeholders>` then do their thing to speak to the right :code:`ProcessedData` sub-directories, based on the current subproject.
+
+
+.. _subindex:
+
+HTML Subindex
+-------------
+
+For subdirectories under the :code:`Scripts/` directory you can also create a separate HTML index file.
+This is particularly useful when you have a larger, more modular workflow and you want to view the results of one module
+as soon as they have successfully finished.
+
+In order to create a subindex, you need to create a new rule in your :code:`Snakefile`.
+
+.. note::
+
+    The subdirectory path has to be within the script directory so that all HTML pages get rendered correctly.
+
+
+Here is an example from the Demo project.
+
+.. code-block:: python
+
+
+    from wbuild.createIndex import createIndexRule, ci
+
+    subdir = "Scripts/Analysis1/010_BasicInput/"
+    index_name = "Analysis1_BasicInput"
+    input, index_file, graph_file, _ = createIndexRule(scriptsPath=subdir, index_name=index_name)
+
+    rule subIndex:
+        input: input
+        output:
+            index = index_file,
+            graph = graph_file
+        run:
+            # 1. create the index file
+            ci(subdir, index_name)
+            # 2. create the dependency graph
+            shell("snakemake --rulegraph {output.index} | dot -Tsvg -Grankdir=LR > {output.graph}")
+
+The :code:`wbuild.createIndex.createIndexRule()` function takes in the relative subdirectory path and an index name,
+which is prepended to the index HTML file.
+In this example, the HTML index file is called :code:`Analysis1_BasicInput_index.html` under the :code:`htmlOutputPath`.
+The function returns a list of all HTML output files, the index file name, the dependency graph file name and the
+readme HTML file name.
+
+Using this information, you can assemble your rule, where the HTML file list is the input and the output is the index
+file name.
+You need to call the :code:`wbuild.createIndex.ci()` function to write the index HTML file.
+You should also include the instructions to generate your dependency graph file.
+The standard way is to use the snakemake option :code:`--rulegraph` to create a graph of all dependencies of the index file.
+This gives you a :code:`graphviz` output that you can pipe into an the dependency graph file that you obtained from
+:code:`wbuild.createIndex.createIndexRule()`.
+Optionally, you can also use the :code:`--dag` option, which gives you the complete job graph.
