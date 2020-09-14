@@ -1,16 +1,30 @@
 import pathlib
 import wbuild
+from wbuild.createIndex import createIndexRule, ci
 config['wBuildPath'] =  str(pathlib.Path(wbuild.__file__).parent)
 
 configfile: "wbuild.yaml"
 include: config['wBuildPath'] + "/wBuild.snakefile"
 
-htmlOutputPath = config["htmlOutputPath"]  if (config["htmlOutputPath"] != None) else "Output/html"
+conf = wbuild.utils.Config()
+htmlOutputPath = conf.get("htmlOutputPath")
 
 rule all:
-    input: rules.Index.output, htmlOutputPath + "/readme.html"
-    output: touch("Output/all.done")
+    input: rules.Index.output, rules.graph.output
 
 rule downloadIris:
     output: 'Data/iris_downloaded.data'
     shell: "wget http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data -O {output}"
+
+subdir = "Scripts/Analysis1/010_BasicInput/"
+index_name = "Analysis1_BasicInput"
+input, index_file, graph_file, _ = createIndexRule(scriptsPath=subdir, index_name=index_name)
+
+rule subIndex:
+    input: input
+    output:
+        index = index_file,
+        graph = graph_file
+    run:
+        ci(subdir, index_name)
+        shell("snakemake --rulegraph {output.index} | dot -Tsvg -Grankdir=LR > {output.graph}")

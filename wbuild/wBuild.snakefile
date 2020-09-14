@@ -1,4 +1,5 @@
 import sys
+import json
 import wbuild
 import wbuild.scanFiles
 import wbuild.autolink
@@ -12,7 +13,7 @@ if "htmlIndex" not in config:
     config["htmlIndex"] = "index.html"
 if "allDone" not in config:
     config["allDone"] = "Output/all.done"
-
+htmlOutputPath = config["htmlOutputPath"]
 
 
 rule show:
@@ -25,11 +26,26 @@ rule mapScripts:
     run:
         wbuild.autolink.autolink("scriptMapping.wb")
 
+def get_index_html(wildcards):
+    filename = "_".join([wildcards.subindex, config["htmlIndex"]])
+    return os.path.join(htmlOutputPath, filename)
+
+# could remove?
+rule graph_single:
+    input: get_index_html
+    output: htmlOutputPath + "/{subindex}_dep.{ext}"
+    shell:
+        """
+        snakemake --rulegraph {input} | dot -T{wildcards.ext} -Grankdir=LR > {output}
+        """
+
+# obsolete
 rule graph:
-    shell: "snakemake --dag | dot -Tsvg -Grankdir=LR > {config[htmlOutputPath]}/dep.svg"
+    input: config["htmlOutputPath"] + "/dep.svg"
+    #shell: "snakemake --rulegraph | dot -Tsvg -Grankdir=LR > {output}"
 
 rule clean:
-    shell: "rm -R {config[htmlOutputPath]}* || true && rm .wBuild.depend || true && rm -R .wBuild/__pycache__ || true "
+    shell: "rm -Rf {config[htmlOutputPath]}* .wBuild/__pycache__"
 
 rule publish:
     input: config["allDone"]

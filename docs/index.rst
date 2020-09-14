@@ -1,5 +1,5 @@
 Welcome to wBuild's documentation!
-======================================
+==================================
 
 Contents:
 
@@ -15,5 +15,5 @@ Contents:
    history
 
 Search the documentation
-===============
+========================
 :ref:`search`

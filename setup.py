@@ -15,7 +15,7 @@ requirements = [
     'Click>=6.0',
     'click-log',
     'PyYAML>=4.2b1',
-    'snakemake>=3.13.2',
+    'snakemake>=5.21.0'
     # TODO: put package requirements here
 ]
 
@@ -29,6 +29,7 @@ setup_requirements = [
 test_requirements = [
     'pytest',
     'pytest-testdirectory',
+    'pytest-icdiff'
 ]
 
 setup(
@@ -51,16 +52,12 @@ setup(
     zip_safe=False,
     keywords='wbuild',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     test_suite='tests',
     tests_require=test_requirements,
