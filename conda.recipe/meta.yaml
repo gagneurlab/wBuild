@@ -1,5 +1,5 @@
 {% set name = "wBuild" %}
-{% set version = "1.7.0" %}
+{% set version = "1.7.1" %}
 
 package:
   name: "{{ name|lower }}"
