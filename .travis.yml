@@ -1,7 +1,7 @@
 # Config file for automatic testing at travis-ci.org
 # This file will be regenerated if you run travis_pypi_setup.py
 
-dist: xenial
+dist: focal
 language: python
 python:
   - 3.8
@@ -17,6 +17,7 @@ addons:
     update: true
 
 before_install:
+    - Rscript --version
     - sudo mkdir -p /usr/local/lib/R/site-library
     - echo 'R_LIBS=/usr/local/lib/R/site-library:/usr/lib/R/library:/usr/lib/R/site-library/' > ~/.Renviron
     - cat ~/.Renviron
