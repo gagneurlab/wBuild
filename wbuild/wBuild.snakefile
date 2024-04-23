@@ -36,13 +36,13 @@ rule graph_single:
     output: htmlOutputPath + "/{subindex}_dep.{ext}"
     shell:
         """
-        snakemake --rulegraph {input} | dot -T{wildcards.ext} -Grankdir=LR > {output}
+        snakemake --rulegraph {input} | sed -ne '/digraph snakemake_dag/,/}}/p' | dot -T{wildcards.ext} -Grankdir=LR > {output}
         """
 
 # obsolete
 rule graph:
     input: config["htmlOutputPath"] + "/dep.svg"
-    #shell: "snakemake --rulegraph | dot -Tsvg -Grankdir=LR > {output}"
+    #shell: "snakemake --rulegraph | sed -ne '/digraph snakemake_dag/,/}}/p' | dot -Tsvg -Grankdir=LR > {output}"
 
 rule clean:
     shell: "rm -Rf {config[htmlOutputPath]}* .wBuild/__pycache__"

@@ -27,4 +27,4 @@ rule subIndex:
         graph = graph_file
     run:
         ci(subdir, index_name)
-        shell("snakemake --rulegraph {output.index} | dot -Tsvg -Grankdir=LR > {output.graph}")
+        shell("snakemake --rulegraph {output.index} | sed -ne '/digraph snakemake_dag/,/}}/p' | dot -Tsvg -Grankdir=LR > {output.graph}")
